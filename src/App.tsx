@@ -322,7 +322,6 @@ function Game() {
         onHelp={dialogManager.dialogs.help.onOpen}
         onStats={dialogManager.dialogs.stats.onOpen}
         onSettings={dialogManager.dialogs.settings.onOpen}
-        onAbout={dialogManager.dialogs.about.onOpen}
         onArchive={dialogManager.dialogs.archive.onOpen}
         onToggleTabs={() => setTabsVisible(!tabsVisible)}
         isArchive={customDayNumber !== null}

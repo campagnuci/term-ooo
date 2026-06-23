@@ -11,18 +11,6 @@ export const SOUNDS_CONFIG: SoundConfig[] = [
     preload: false
   },
   {
-    event: 'waiting',
-    file: '/assets/sounds/os_cara_no_teto.mp3', // Odemetro: Ó os cara no teto!
-    volume: 0.5,
-    preload: true
-  },
-  {
-    event: 'lastAttempt',
-    file: '/assets/sounds/eu_e_vc_gostoso.mp3', // SMzin: agora sou eu e você, meu gostoso!
-    volume: 0.5,
-    preload: true
-  },
-  {
     event: 'gameOver',
     file: '/assets/sounds/game-over.mp3', // TODO: Criar sample de áudio
     volume: 0.8,
@@ -34,7 +22,7 @@ export const SOUNDS_CONFIG: SoundConfig[] = [
     volume: 0.9,
     preload: false
   },
-  
+
   // Eventos secundários (lazy load)
   {
     event: 'win',

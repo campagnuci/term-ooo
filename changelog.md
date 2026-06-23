@@ -29,7 +29,6 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 - Hook `useSoundEffects` com cache e preload inteligente
 - Toggle "Efeitos Sonoros" no SettingsDialog
 - 6 eventos de áudio configurados (vitória, derrota, compartilhar, etc)
-- Som "eu_e_vc_gostoso" na última tentativa do modo Quarteto
 - Campo `soundEnabled` em Settings (default: true)
 - Cache de HTMLAudioElement para otimização de performance
 - Preload automático de sons críticos na inicialização

@@ -120,15 +120,6 @@ export function SettingsDialog({
                 <motion.div variants={itemVariants} className="text-xs text-muted-foreground text-center py-2 space-y-2">
                   <p>Jogo inspirado em Term.ooo / Wordle</p>
                   <p>Clone educativo sem fins comerciais</p>
-
-                  {/* Konami Code Hint */}
-                  <div className="pt-2 border-t border-night-600">
-                    <p className="text-[10px] text-muted-foreground flex items-center justify-center gap-1">
-                      <span className="text-muted-foreground">🎮</span>
-                      <span>Dev:</span>
-                      <code className="bg-night-800 px-1 rounded text-muted-foreground">↑↑↓↓←→←→BA</code>
-                    </p>
-                  </div>
                 </motion.div>
               </motion.div>
             )}

@@ -3,7 +3,6 @@ import {
   Menu,
   HelpCircle,
   Calendar,
-  Info,
   BarChart3,
   Settings,
   Home,
@@ -16,7 +15,6 @@ interface HeaderProps {
   onHelp: () => void
   onStats: () => void
   onSettings: () => void
-  onAbout: () => void
   onArchive: () => void
   onToggleTabs: () => void
   isArchive: boolean
@@ -28,7 +26,6 @@ export function Header({
   onHelp,
   onStats,
   onSettings,
-  onAbout,
   onArchive,
   onToggleTabs,
   isArchive,
@@ -120,15 +117,6 @@ export function Header({
               <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
             </Button>
           )}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onAbout}
-            aria-label="Sobre"
-            className="text-muted-foreground hover:text-foreground"
-          >
-            <Info className="w-4 h-4 sm:w-5 sm:h-5" />
-          </Button>
           <Button
             variant="ghost"
             size="icon"

@@ -148,8 +148,6 @@ Sistema de áudio com memes que tocam em momentos específicos do jogo!
 
 | Evento | Momento | Arquivo | Status |
 |--------|---------|---------|--------|
-| `waiting` | Após 15s de inatividade no primeiro chute | `os_cara_no_teto.mp3` | ✅ |
-| `lastAttempt` | Última tentativa do modo Quarteto | `eu_e_vc_gostoso.mp3` | ✅ |
 | `share` | Ao compartilhar resultado | - | 🔜 |
 | `gameOver` | Ao perder o jogo | - | 🔜 |
 | `firstTryWin` | Vitória na primeira tentativa | - | 🔜 |
@@ -356,10 +354,7 @@ term-ooo/
 ├── public/                      # Assets estáticos
 │   └── assets/
 │       ├── mp3/
-│       │   └── bodao.mp3       # Áudio do Bodão
 │       └── sounds/             # 🆕 Efeitos sonoros e memes
-│           ├── eu_e_vc_gostoso.mp3
-│           └── os_cara_no_teto.mp3
 ├── database/                    # Arquivos de referência
 │   └── term.ooo.js             # Código original (para estudo)
 ├── .github/
@@ -626,7 +621,7 @@ _Red Bull realmente te dá asas... asas para:_
 
 ---
 
-**Desenvolvido com 💚, muito ☕ e 5 latas de Red Bull**  
+**Desenvolvido com 💚, muito ☕ e 5 latas de Red Bull**
 _Enquanto assistia o Orochinho mandando ver no Termo_
 
 ---
