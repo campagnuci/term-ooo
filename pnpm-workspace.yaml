@@ -1,2 +1,5 @@
 # Este não é um monorepo, então não tem packages
 packages: []
+allowBuilds:
+  esbuild: true
+  msw: true

@@ -17,7 +17,7 @@ interface UseChatConnectionProps {
   maxReconnectAttempts?: number
   reconnectDelayBase?: number
   heartbeatInterval?: number
-  onMessage?: (data: any) => void
+  onMessage?: (data: unknown) => void
   onConnected?: () => void
   onDisconnected?: () => void
 }
@@ -41,8 +41,8 @@ export function useChatConnection({
 
   const wsRef = useRef<WebSocket | null>(null)
   const reconnectAttemptsRef = useRef(0)
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const heartbeatIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const heartbeatIntervalRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const lastPingTimeRef = useRef<number | null>(null)
   const isIntentionalCloseRef = useRef(false)
   const hasErrorRef = useRef(false)  // Detectar erro para interromper reconexão
@@ -78,7 +78,7 @@ export function useChatConnection({
 
   // Conectar
   const connect = useCallback(() => {
-    if (wsRef.current?.readyState === WebSocket.OPEN || 
+    if (wsRef.current?.readyState === WebSocket.OPEN ||
         wsRef.current?.readyState === WebSocket.CONNECTING) {
       return
     }
@@ -100,14 +100,14 @@ export function useChatConnection({
       ws.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data)
-          
+
           // Processar pong localmente
           if (data.type === 'pong' && lastPingTimeRef.current) {
             const latency = Date.now() - lastPingTimeRef.current
             setState(prev => ({ ...prev, latency }))
             lastPingTimeRef.current = null
           }
-          
+
           onMessage?.(data)
         } catch (error) {
           console.error('[ChatConnection] Erro ao parsear mensagem:', error)
@@ -125,8 +125,8 @@ export function useChatConnection({
         onDisconnected?.()
 
         // Reconectar apenas se não foi intencional, não houve erro e está dentro do limite
-        const shouldReconnect = 
-          !isIntentionalCloseRef.current && 
+        const shouldReconnect =
+          !isIntentionalCloseRef.current &&
           !hasErrorRef.current &&
           reconnectAttemptsRef.current < maxReconnectAttempts
 
@@ -149,17 +149,17 @@ export function useChatConnection({
     isIntentionalCloseRef.current = true
     hasErrorRef.current = false
     clearTimers()
-    
+
     if (wsRef.current) {
       wsRef.current.close()
       wsRef.current = null
     }
-    
+
     setState(prev => ({ ...prev, connected: false, isConnecting: false, latency: null }))
   }, [clearTimers])
 
   // Enviar mensagem
-  const send = useCallback((data: any) => {
+  const send = useCallback((data: unknown) => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {
       wsRef.current.send(JSON.stringify(data))
       return true

@@ -38,9 +38,9 @@ function Game() {
 
   // Controlar se já mostramos HelpDialog para este gameState
   const helpDialogShownRef = useRef<string>('')
-  
+
   // Controlar som de "waiting" após primeiro chute
-  const waitingTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const waitingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const waitingSoundPlayedRef = useRef<string>('') // Guarda modo+dateKey para tocar apenas uma vez
 
   const { mode, customDayNumber } = useGameMode({ location, navigate })
@@ -87,7 +87,7 @@ function Game() {
       setTimeout(() => {
         dialogManager.openDialog('stats')
       }, 800)
-    }, [dialogManager.openDialog])
+    }, [dialogManager])
   })
 
   useStatsTracker({ gameState, mode, customDayNumber, setStats })
@@ -109,26 +109,26 @@ function Game() {
 
       return () => clearTimeout(timer)
     }
-  }, [gameState?.currentRow, gameState?.dateKey, mode, dialogManager.openDialog])
+  }, [gameState, mode, dialogManager])
 
   // Som de "waiting" após primeiro chute (15 segundos de inatividade)
   useEffect(() => {
     if (!gameState) return
-    
+
     // Limpar timer anterior se existir
     if (waitingTimerRef.current) {
       clearTimeout(waitingTimerRef.current)
       waitingTimerRef.current = null
     }
-    
+
     const stateKey = `${mode}-${gameState.dateKey}`
-    
+
     // Condições para iniciar timer:
     // 1. Acabou de dar o primeiro chute (currentRow === 1)
     // 2. Ainda não tocou o som para este modo+dia
     // 3. Jogo não acabou
     if (
-      gameState.currentRow === 1 && 
+      gameState.currentRow === 1 &&
       waitingSoundPlayedRef.current !== stateKey &&
       !gameState.isGameOver
     ) {
@@ -140,7 +140,7 @@ function Game() {
         }
       }, 15000) // 15 segundos
     }
-    
+
     // Limpar timer quando mudar de linha (usuário deu o segundo chute)
     return () => {
       if (waitingTimerRef.current) {
@@ -148,7 +148,7 @@ function Game() {
         waitingTimerRef.current = null
       }
     }
-  }, [gameState?.currentRow, gameState?.dateKey, gameState?.isGameOver, mode, playSound])
+  }, [gameState, mode, playSound])
 
   // Salvar configurações
   useEffect(() => {
@@ -217,7 +217,7 @@ function Game() {
         currentGuess: newGuess,
       }
     })
-  }, [])
+  }, [setGameState])
 
   // Handler para submeter guess (ENTER)
   const handleSubmitGuess = useCallback(() => {
@@ -284,7 +284,7 @@ function Game() {
         setTimeout(() => dialogManager.dialogs.stats.onOpen(), newlyCompletedBoardIndices.length > 0 ? 2200 : 1200)
       }
     }
-  }, [gameState, settings, mode, animActions, dialogManager, playSound])
+  }, [gameState, settings, animActions, playSound, mode, setGameState, dialogManager.dialogs.stats])
 
   // Hook de keyboard input
   const { handleKey } = useKeyboardInput({
