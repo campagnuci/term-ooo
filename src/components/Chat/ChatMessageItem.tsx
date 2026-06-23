@@ -41,7 +41,7 @@ export function ChatMessageItem({
   if (variant === 'system') {
     return (
       <div className={cn("flex justify-center", className)}>
-        <div className="px-3 py-1 bg-gray-800/50 rounded-full text-xs text-gray-400">
+        <div className="px-3 py-1 bg-night-800/50 rounded-full text-xs text-muted-foreground">
           {message.text || message.message}
         </div>
       </div>
@@ -61,14 +61,14 @@ export function ChatMessageItem({
         className={cn(
           "max-w-[80%] px-3 py-2 rounded-lg",
           "transition-colors duration-200",
-          isOwnMessage 
-            ? 'bg-blue-600 text-white' 
-            : 'bg-gray-700 text-gray-100'
+          isOwnMessage
+            ? 'bg-eucalyptus text-[#eafbe0]'
+            : 'bg-night-700 text-foreground'
         )}
       >
         {/* Nickname (apenas para mensagens de outros) */}
         {!isOwnMessage && message.nickname && (
-          <div className="text-xs font-semibold mb-1 text-blue-300">
+          <div className="text-xs font-semibold mb-1 text-pistachio">
             {message.nickname}
           </div>
         )}
@@ -82,7 +82,7 @@ export function ChatMessageItem({
         <div 
           className={cn(
             "text-xs mt-1",
-            isOwnMessage ? 'text-blue-200' : 'text-gray-400'
+            isOwnMessage ? 'text-foreground/70' : 'text-muted-foreground'
           )}
         >
           {formatChatTimestamp(message.timestamp)}

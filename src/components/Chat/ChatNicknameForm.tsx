@@ -9,9 +9,21 @@ interface ChatNicknameFormProps {
   onSubmit: (nickname: string) => void
   error: string | null
   isConnecting: boolean
+  title?: string
+  subtitle?: string
+  submitLabel?: string
+  submittingLabel?: string
 }
 
-export function ChatNicknameForm({ onSubmit, error, isConnecting }: ChatNicknameFormProps) {
+export function ChatNicknameForm({
+  onSubmit,
+  error,
+  isConnecting,
+  title = 'Bem-vindo ao Chat!',
+  subtitle = 'Escolha um nickname para começar a conversar',
+  submitLabel = 'Entrar no Chat',
+  submittingLabel = 'Entrando...',
+}: ChatNicknameFormProps) {
   const [nickname, setNickname] = useState('')
   const [localError, setLocalError] = useState<string | null>(null)
 
@@ -40,10 +52,8 @@ export function ChatNicknameForm({ onSubmit, error, isConnecting }: ChatNickname
   return (
     <div className="flex-1 flex flex-col items-center justify-center p-6 space-y-6">
       <div className="text-center space-y-2">
-        <h3 className="text-xl font-bold text-white">Bem-vindo ao Chat!</h3>
-        <p className="text-gray-400 text-sm">
-          Escolha um nickname para começar a conversar
-        </p>
+        <h3 className="text-xl font-bold text-foreground">{title}</h3>
+        <p className="text-muted-foreground text-sm">{subtitle}</p>
       </div>
 
       <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-4">
@@ -55,10 +65,10 @@ export function ChatNicknameForm({ onSubmit, error, isConnecting }: ChatNickname
             placeholder="Seu nickname"
             maxLength={CHAT_CONFIG.MAX_NICKNAME_LENGTH}
             disabled={isConnecting}
-            className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50"
+            className="w-full px-4 py-3 bg-night-800 text-foreground rounded-lg border border-night-600 focus:border-eucalyptus focus:outline-none focus:ring-2 focus:ring-eucalyptus/50 disabled:opacity-50"
             autoFocus
           />
-          <div className="mt-1 text-xs text-gray-500 text-right">
+          <div className="mt-1 text-xs text-muted-foreground text-right">
             {nickname.length}/{CHAT_CONFIG.MAX_NICKNAME_LENGTH}
           </div>
         </div>
@@ -72,13 +82,13 @@ export function ChatNicknameForm({ onSubmit, error, isConnecting }: ChatNickname
         <button
           type="submit"
           disabled={!nickname.trim() || isConnecting}
-          className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
+          className="w-full px-4 py-3 bg-eucalyptus hover:bg-eucalyptus-light disabled:bg-night-700 disabled:cursor-not-allowed text-[#eafbe0] font-medium rounded-lg transition-colors"
         >
-          {isConnecting ? 'Entrando...' : 'Entrar no Chat'}
+          {isConnecting ? submittingLabel : submitLabel}
         </button>
       </form>
 
-      <div className="text-xs text-gray-500 text-center">
+      <div className="text-xs text-muted-foreground text-center">
         <p>Seu nickname será visível para todos</p>
         <p>Seja respeitoso e divirta-se!</p>
       </div>

@@ -165,16 +165,16 @@ export function ShareDropdown({
         </Button>
       </DropdownMenuTrigger>
       
-      <DropdownMenuContent align="end" className="w-60 bg-gray-900 border-gray-800 text-gray-100">
+      <DropdownMenuContent align="end" className="w-60 bg-night-800 border-night-600 text-foreground">
         
         {/* Redes Sociais de Texto (Links Diretos) */}
-        <DropdownMenuItem onClick={handleWhatsApp} disabled={isLoading} className="cursor-pointer focus:bg-gray-800 focus:text-white py-2.5">
+        <DropdownMenuItem onClick={handleWhatsApp} disabled={isLoading} className="cursor-pointer focus:bg-night-700 focus:text-foreground py-2.5">
           <MessageCircle className="w-4 h-4 mr-3 text-green-500" />
           WhatsApp
         </DropdownMenuItem>
 
-        <DropdownMenuItem onClick={handleTwitter} disabled={isLoading} className="cursor-pointer focus:bg-gray-800 focus:text-white py-2.5">
-          <XIcon className="w-4 h-4 mr-3 text-white" />
+        <DropdownMenuItem onClick={handleTwitter} disabled={isLoading} className="cursor-pointer focus:bg-night-700 focus:text-foreground py-2.5">
+          <XIcon className="w-4 h-4 mr-3 text-foreground" />
           X / Twitter
         </DropdownMenuItem>
         
@@ -184,7 +184,7 @@ export function ShareDropdown({
           <DropdownMenuItem 
             onClick={() => executeShareAction(onShareImage)} 
             disabled={isLoading} 
-            className="cursor-pointer focus:bg-gray-800 focus:text-white py-2.5"
+            className="cursor-pointer focus:bg-night-700 focus:text-foreground py-2.5"
           >
             <Instagram className="w-4 h-4 mr-3 text-pink-500" />
             Instagram
@@ -193,22 +193,22 @@ export function ShareDropdown({
 
         {/* Menu Nativo Genérico (Texto) */}
         {capabilities.canShareNative && (
-          <DropdownMenuItem onClick={handleNativeShareText} disabled={isLoading} className="cursor-pointer focus:bg-gray-800 focus:text-white py-2.5">
+          <DropdownMenuItem onClick={handleNativeShareText} disabled={isLoading} className="cursor-pointer focus:bg-night-700 focus:text-foreground py-2.5">
             <MoreHorizontal className="w-4 h-4 mr-3 text-yellow-500" />
             Mais opções...
           </DropdownMenuItem>
         )}
         
-        <DropdownMenuSeparator className="bg-gray-800 my-1" />
+        <DropdownMenuSeparator className="bg-night-700 my-1" />
         
         {/* Ações de Arquivo e Clipboard */}
-        <DropdownMenuItem onClick={() => executeShareAction(onShareImage)} disabled={isLoading} className="cursor-pointer focus:bg-gray-800 focus:text-white py-2.5">
+        <DropdownMenuItem onClick={() => executeShareAction(onShareImage)} disabled={isLoading} className="cursor-pointer focus:bg-night-700 focus:text-foreground py-2.5">
           <ImageIcon className="w-4 h-4 mr-3 text-purple-400" />
           {capabilities.canShareFiles ? 'Baixar/Outros' : 'Baixar Imagem'}
         </DropdownMenuItem>
         
-        <DropdownMenuItem onClick={handleCopyText} disabled={isLoading} className="cursor-pointer focus:bg-gray-800 focus:text-white py-2.5">
-          <Type className="w-4 h-4 mr-3 text-gray-400" />
+        <DropdownMenuItem onClick={handleCopyText} disabled={isLoading} className="cursor-pointer focus:bg-night-700 focus:text-foreground py-2.5">
+          <Type className="w-4 h-4 mr-3 text-muted-foreground" />
           Copiar Texto
         </DropdownMenuItem>
 

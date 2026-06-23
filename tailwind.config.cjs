@@ -18,6 +18,21 @@ module.exports = {
     },
     extend: {
       colors: {
+        // Paleta da marca (chrome) — não usar nos componentes do jogo.
+        pistachio: {
+          DEFAULT: '#b2d98b',
+          fg: '#06231a',
+        },
+        eucalyptus: {
+          DEFAULT: '#1d665d',
+          light: '#247a6f',
+        },
+        night: {
+          DEFAULT: '#061611', // black glaze
+          600: '#16443c',
+          700: '#123a32',
+          800: '#0c2620',
+        },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',

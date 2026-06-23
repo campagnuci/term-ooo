@@ -162,6 +162,19 @@ export function useKeyboardInput({
     const handleKeyDown = (e: KeyboardEvent) => {
       if (disabled) return
 
+      // Ignorar quando o foco está num campo editável (ex.: chat da sala),
+      // para não digitar no tabuleiro enquanto se escreve uma mensagem.
+      const target = e.target as HTMLElement | null
+      if (
+        target &&
+        (target.isContentEditable ||
+          target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.tagName === 'SELECT')
+      ) {
+        return
+      }
+
       const key = e.key.toUpperCase()
 
       if (key === 'ENTER') {

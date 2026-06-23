@@ -41,11 +41,11 @@ export function ChatButton({
         active={hasNewMessages}
         animate={true}
         size="lg"
-        color={!hasNewMessages ? [37, 99, 235] : [251, 191, 36]} // blue-600 / amber-400
+        color={!hasNewMessages ? [29, 102, 93] : [251, 191, 36]} // eucalyptus / amber-400
         onClick={onClick}
         className={cn(
-          'bg-gradient-to-br from-blue-600 to-blue-800',
-          'hover:from-blue-500 hover:to-blue-700',
+          'bg-gradient-to-br from-eucalyptus to-night-700',
+          'hover:from-eucalyptus-light hover:to-eucalyptus',
           'shadow-lg transition-opacity',
           !connected && 'opacity-50'
         )}
@@ -55,14 +55,14 @@ export function ChatButton({
       
       {/* Badge com contador de usuários online */}
       {connected && onlineCount > 0 && (
-        <span className="absolute -top-1 -right-1 bg-green-500 text-white text-[11px] md:text-sm font-bold rounded-full size-5 md:size-6 flex items-center justify-center border-2 border-gray-900">
+        <span className="absolute -top-1 -right-1 bg-green-500 text-white text-[11px] md:text-sm font-bold rounded-full size-5 md:size-6 flex items-center justify-center border-2 border-night">
           {onlineCount > 99 ? '99+' : onlineCount}
         </span>
       )}
       
       {/* Indicador de desconexão */}
       {!connected && (
-        <span className="absolute -top-1 -right-1 bg-red-500 size-3 md:size-4 rounded-full border-2 border-gray-900 animate-pulse" />
+        <span className="absolute -top-1 -right-1 bg-red-500 size-3 md:size-4 rounded-full border-2 border-night animate-pulse" />
       )}
     </div>
   )

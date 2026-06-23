@@ -23,8 +23,8 @@ export function HelpDialog({ open, onOpenChange }: HelpDialogProps) {
       onOpenChange={onOpenChange}
       title="Como Jogar"
       description="Instruções sobre como jogar Termo, Dueto e Quarteto"
-      borderColor="border-blue-600"
-      titleGradientClassName="bg-gradient-to-r from-blue-400 to-cyan-500"
+      borderColor="border-night-600"
+      titleGradientClassName="bg-gradient-to-r from-pistachio to-eucalyptus"
     >
       <ResponsiveScrollArea 
         desktopClassName="max-h-[calc(85vh-80px)] px-6"
@@ -56,7 +56,7 @@ export function HelpDialog({ open, onOpenChange }: HelpDialogProps) {
                 <Tile letter="M" state="empty" gameMode="uno" />
                 <Tile letter="O" state="empty" gameMode="uno" />
               </div>
-              <p className="text-xs text-gray-300">
+              <p className="text-xs text-foreground">
                 A letra <strong>T</strong> faz parte da palavra e está na posição correta.
               </p>
             </div>
@@ -69,7 +69,7 @@ export function HelpDialog({ open, onOpenChange }: HelpDialogProps) {
                 <Tile letter="H" state="empty" gameMode="uno" />
                 <Tile letter="A" state="empty" gameMode="uno" />
               </div>
-              <p className="text-xs text-gray-300">
+              <p className="text-xs text-foreground">
                 A letra <strong>I</strong> faz parte da palavra, mas está na posição errada.
               </p>
             </div>
@@ -82,13 +82,13 @@ export function HelpDialog({ open, onOpenChange }: HelpDialogProps) {
                 <Tile letter="D" state="empty" gameMode="uno" />
                 <Tile letter="O" state="empty" gameMode="uno" />
               </div>
-                    <p className="text-xs text-gray-300">
+                    <p className="text-xs text-foreground">
                       A letra <strong>N</strong> não faz parte da palavra.
                     </p>
                   </div>
                 </motion.div>
                 
-                <motion.div variants={itemVariants} className="border-t border-gray-700 pt-3 space-y-2 text-xs text-gray-300">
+                <motion.div variants={itemVariants} className="border-t border-night-600 pt-3 space-y-2 text-xs text-foreground">
                   <p>
                     • Os acentos são preenchidos automaticamente, e não são considerados nas dicas.
                   </p>

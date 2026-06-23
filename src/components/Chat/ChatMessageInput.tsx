@@ -39,7 +39,7 @@ export function ChatMessageInput({ onSend, disabled = false }: ChatMessageInputP
   }
 
   return (
-    <div className="p-4 border-t border-gray-700 bg-gray-800/50">
+    <div className="p-4 border-t border-night-600 bg-night-800/50">
       <MessageInput
         ref={inputRef}
         value={text}
@@ -50,10 +50,10 @@ export function ChatMessageInput({ onSend, disabled = false }: ChatMessageInputP
         disabled={disabled}
         maxLength={CHAT_CONFIG.MAX_MESSAGE_LENGTH}
         autoFocus
-        className="border-gray-600 text-white placeholder:text-gray-400"
+        className="border-night-600 text-foreground placeholder:text-muted-foreground"
       />
-      
-      <div className="mt-2 text-xs text-gray-500">
+
+      <div className="mt-2 text-xs text-muted-foreground">
         <span className="font-medium">Enter</span> para enviar • <span className="font-medium">Shift+Enter</span> para nova linha
       </div>
     </div>

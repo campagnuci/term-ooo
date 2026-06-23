@@ -40,8 +40,8 @@ export function SettingsDialog({
       onOpenChange={onOpenChange}
       title="Configurações"
       description="Configurações do jogo incluindo modo difícil e alto contraste"
-      borderColor="border-purple-600"
-      titleGradientClassName="bg-gradient-to-r from-purple-400 to-pink-500"
+      borderColor="border-eucalyptus"
+      titleGradientClassName="bg-gradient-to-r from-pistachio to-eucalyptus"
       maxHeight="none"
     >
       <ContentWrapper>
@@ -53,10 +53,10 @@ export function SettingsDialog({
                 animate="visible"
                 className="space-y-6 py-4 pr-4"
               >
-                <motion.div variants={itemVariants} className="flex items-center justify-between py-3 border-b border-gray-700">
+                <motion.div variants={itemVariants} className="flex items-center justify-between py-3 border-b border-night-600">
                   <div className="flex-1">
                     <div className="font-semibold">Contraste Alto</div>
-                    <div className="text-xs text-gray-400">
+                    <div className="text-xs text-muted-foreground">
                       Para melhor distinção de cores
                     </div>
                   </div>
@@ -65,11 +65,11 @@ export function SettingsDialog({
                     onCheckedChange={handleHighContrastChange}
                   />
                 </motion.div>
-                
-                <motion.div variants={itemVariants} className="flex items-center justify-between py-3 border-b border-gray-700">
+
+                <motion.div variants={itemVariants} className="flex items-center justify-between py-3 border-b border-night-600">
                   <div className="flex-1">
                     <div className="font-semibold">Modo Difícil</div>
-                    <div className="text-xs text-gray-400">
+                    <div className="text-xs text-muted-foreground">
                       Todas as dicas devem ser usadas
                     </div>
                   </div>
@@ -78,11 +78,11 @@ export function SettingsDialog({
                     onCheckedChange={handleHardModeChange}
                   />
                 </motion.div>
-                
-                <motion.div variants={itemVariants} className="flex items-center justify-between py-3 border-b border-gray-700">
+
+                <motion.div variants={itemVariants} className="flex items-center justify-between py-3 border-b border-night-600">
                   <div className="flex-1">
                     <div className="font-semibold">Efeitos Sonoros</div>
-                    <div className="text-xs text-gray-400">
+                    <div className="text-xs text-muted-foreground">
                       Sons e memes durante o jogo
                     </div>
                   </div>
@@ -91,29 +91,42 @@ export function SettingsDialog({
                     onCheckedChange={(checked) => onSettingsChange({ ...settings, soundEnabled: checked })}
                   />
                 </motion.div>
-                
-                <motion.div variants={itemVariants} className="py-3 border-b border-gray-700">
+
+                <motion.div variants={itemVariants} className="flex items-center justify-between py-3 border-b border-night-600">
+                  <div className="flex-1">
+                    <div className="font-semibold">Mostrar tutorial ao abrir</div>
+                    <div className="text-xs text-muted-foreground">
+                      Abrir "Como jogar" automaticamente ao iniciar
+                    </div>
+                  </div>
+                  <Switch
+                    checked={settings.showHelpOnStart}
+                    onCheckedChange={(checked) => onSettingsChange({ ...settings, showHelpOnStart: checked })}
+                  />
+                </motion.div>
+
+                <motion.div variants={itemVariants} className="py-3 border-b border-night-600">
                   <button
                     onClick={() => {
                       onOpenChange(false)
                       onOpenStats()
                     }}
-                    className="text-blue-400 hover:text-blue-300 font-semibold transition-colors"
+                    className="text-pistachio hover:text-pistachio font-semibold transition-colors"
                   >
                     Ver Estatísticas
                   </button>
                 </motion.div>
-                
-                <motion.div variants={itemVariants} className="text-xs text-gray-400 text-center py-2 space-y-2">
+
+                <motion.div variants={itemVariants} className="text-xs text-muted-foreground text-center py-2 space-y-2">
                   <p>Jogo inspirado em Term.ooo / Wordle</p>
                   <p>Clone educativo sem fins comerciais</p>
-                  
+
                   {/* Konami Code Hint */}
-                  <div className="pt-2 border-t border-gray-800">
-                    <p className="text-[10px] text-gray-600 flex items-center justify-center gap-1">
-                      <span className="text-gray-500">🎮</span>
+                  <div className="pt-2 border-t border-night-600">
+                    <p className="text-[10px] text-muted-foreground flex items-center justify-center gap-1">
+                      <span className="text-muted-foreground">🎮</span>
                       <span>Dev:</span>
-                      <code className="bg-gray-800 px-1 rounded text-gray-500">↑↑↓↓←→←→BA</code>
+                      <code className="bg-night-800 px-1 rounded text-muted-foreground">↑↑↓↓←→←→BA</code>
                     </p>
                   </div>
                 </motion.div>

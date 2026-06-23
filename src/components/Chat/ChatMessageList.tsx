@@ -26,8 +26,8 @@ export function ChatMessageList({ messages, currentUserId }: ChatMessageListProp
     return (
       <div className="flex-1 flex items-center justify-center p-6">
         <div className="text-center space-y-2">
-          <p className="text-gray-400">Nenhuma mensagem ainda</p>
-          <p className="text-gray-500 text-sm">Seja o primeiro a conversar!</p>
+          <p className="text-muted-foreground">Nenhuma mensagem ainda</p>
+          <p className="text-muted-foreground text-sm">Seja o primeiro a conversar!</p>
         </div>
       </div>
     )

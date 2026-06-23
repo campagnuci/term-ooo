@@ -6,7 +6,8 @@ import {
   Info,
   BarChart3,
   Settings,
-  Home
+  Home,
+  Users
 } from "lucide-react";
 import { Button } from './ui/button'
 
@@ -43,7 +44,7 @@ export function Header({
   }
 
   return (
-    <header className="border-b border-slate-700 bg-slate-900/50 backdrop-blur-sm flex-shrink-0 z-10">
+    <header className="border-b border-night-600 bg-night-800/50 backdrop-blur-sm flex-shrink-0 z-10">
       <div className="max-w-7xl mx-auto px-2 py-2 sm:px-4 sm:py-3 flex md:grid md:grid-cols-3 items-center justify-between">
         {/* Left section: Toggle + Logo (mobile) / Toggle + Buttons (desktop) */}
         <div className="flex items-center gap-1 sm:gap-2 md:justify-start">
@@ -52,13 +53,13 @@ export function Header({
             size="icon"
             onClick={onToggleTabs}
             aria-label="Alternar modos de jogo"
-            className="text-slate-300 hover:text-white"
+            className="text-muted-foreground hover:text-foreground"
           >
             <Menu className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
 
           {/* Logo on mobile */}
-          <h1 className="text-white text-base sm:text-lg md:hidden uppercase tracking-wider font-bold">
+          <h1 className="text-foreground text-base sm:text-lg md:hidden uppercase tracking-wider font-bold">
             {title}
           </h1>
 
@@ -68,7 +69,7 @@ export function Header({
             size="icon"
             onClick={onHelp}
             aria-label="Ajuda"
-            className="text-slate-300 hover:text-white"
+            className="text-muted-foreground hover:text-foreground"
           >
             <HelpCircle className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
@@ -76,7 +77,7 @@ export function Header({
 
         {/* Center logo (desktop only) */}
         <div className="hidden md:flex items-center justify-center flex-col gap-1">
-          <h1 className="text-white text-lg md:text-xl lg:text-2xl uppercase tracking-wider font-bold">
+          <h1 className="text-foreground text-lg md:text-xl lg:text-2xl uppercase tracking-wider font-bold">
             {title}
           </h1>
           {isArchive && archiveDayNumber && (
@@ -88,13 +89,23 @@ export function Header({
 
         {/* Right buttons */}
         <div className="flex items-center gap-1 sm:gap-2 md:justify-end">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate('/sala')}
+            aria-label="Multijogador"
+            title="Multijogador"
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <Users className="w-4 h-4 sm:w-5 sm:h-5" />
+          </Button>
           {isArchive ? (
             <Button
               variant="ghost"
               size="icon"
               onClick={handleBackToToday}
               aria-label="Voltar para Hoje"
-              className="text-green-400 hover:text-green-300 hidden md:flex"
+              className="text-pistachio hover:text-foreground hidden md:flex"
             >
               <Home className="w-4 h-4 sm:w-5 sm:h-5" />
             </Button>
@@ -104,7 +115,7 @@ export function Header({
               size="icon"
               onClick={onArchive}
               aria-label="Arquivo de Dias Anteriores"
-              className="text-slate-300 hover:text-white"
+              className="text-muted-foreground hover:text-foreground"
             >
               <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
             </Button>
@@ -114,7 +125,7 @@ export function Header({
             size="icon"
             onClick={onAbout}
             aria-label="Sobre"
-            className="text-slate-300 hover:text-white"
+            className="text-muted-foreground hover:text-foreground"
           >
             <Info className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
@@ -123,7 +134,7 @@ export function Header({
             size="icon"
             onClick={onStats}
             aria-label="Estatísticas"
-            className="text-slate-300 hover:text-white"
+            className="text-muted-foreground hover:text-foreground"
           >
             <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
@@ -132,7 +143,7 @@ export function Header({
             size="icon"
             onClick={onSettings}
             aria-label="Configurações"
-            className="text-slate-300 hover:text-white"
+            className="text-muted-foreground hover:text-foreground"
           >
             <Settings className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>

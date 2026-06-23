@@ -88,10 +88,10 @@ export function ArchiveDialog({ open, onOpenChange, currentMode }: ArchiveDialog
                                         defaultMonth={yesterday}
                                         hidden={{ after: yesterday }}
                                         className="
-                                                rounded-lg 
-                                                border-2 border-orange-600/30 
-                                                bg-gray-800/50 
-                                                text-white 
+                                                rounded-lg
+                                                border-2 border-orange-600/30
+                                                bg-night-800/50
+                                                text-foreground
                                                 p-2 sm:p-4
                                                 [&_.rdp-months]:flex [&_.rdp-months]:justify-center
                                                 [&_.rdp-table]:w-full 
@@ -105,11 +105,11 @@ export function ArchiveDialog({ open, onOpenChange, currentMode }: ArchiveDialog
                                                 "
                                         buttonVariant="ghost"
                                         classNames={{
-                                            caption_label: "text-white font-semibold",
-                                            today: "bg-orange-600/30 text-white font-bold",
+                                            caption_label: "text-foreground font-semibold",
+                                            today: "bg-orange-600/30 text-foreground font-bold",
                                             day: "items-center justify-center whitespace-nowrap rounded-md text-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground data-[selected-single=true]:bg-primary data-[selected-single=true]:text-primary-foreground data-[range-middle=true]:bg-accent data-[range-middle=true]:text-accent-foreground data-[range-start=true]:bg-primary data-[range-start=true]:text-primary-foreground data-[range-end=true]:bg-primary data-[range-end=true]:text-primary-foreground group-data-[focused=true]/day:border-ring group-data-[focused=true]/day:ring-ring/50 flex aspect-square h-auto w-full min-w-[--cell-size] flex-col gap-1 font-normal leading-none data-[range-end=true]:rounded-md data-[range-middle=true]:rounded-none data-[range-start=true]:rounded-md group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:ring-[3px] [&>span]:text-xs [&>span]:opacity-70 rdp-day rdp-day_button",
-                                            disabled: "text-gray-600 opacity-40",
-                                            outside: "text-gray-600 opacity-30",
+                                            disabled: "text-muted-foreground opacity-40",
+                                            outside: "text-muted-foreground opacity-30",
                                         }}
                                     />
                                 </motion.div>
@@ -117,9 +117,9 @@ export function ArchiveDialog({ open, onOpenChange, currentMode }: ArchiveDialog
                                 {selectedDayNumber && (
                                     <motion.div
                                         variants={itemVariants}
-                                        className="text-center bg-gray-800/50 rounded-lg py-2 sm:py-3 px-3 sm:px-4 border border-gray-700"
+                                        className="text-center bg-night-800/50 rounded-lg py-2 sm:py-3 px-3 sm:px-4 border border-night-600"
                                     >
-                                        <p className="text-xs text-gray-400 mb-1">
+                                        <p className="text-xs text-muted-foreground mb-1">
                                             Dia selecionado:
                                         </p>
                                         <p className="text-base sm:text-lg font-bold bg-gradient-to-r from-orange-400 to-yellow-500 bg-clip-text text-transparent">
@@ -131,13 +131,13 @@ export function ArchiveDialog({ open, onOpenChange, currentMode }: ArchiveDialog
                                 <motion.div variants={itemVariants} className="flex gap-2 w-full pt-2">
                                     <Button
                                         variant="outline"
-                                        className="flex-1 bg-gray-800 hover:bg-gray-700 border-gray-600 text-white"
+                                        className="flex-1 bg-night-800 hover:bg-night-700 border-night-600 text-foreground"
                                         onClick={() => onOpenChange(false)}
                                     >
                                         Cancelar
                                     </Button>
                                     <Button
-                                        className="flex-1 bg-gradient-to-r from-orange-600 to-yellow-600 hover:from-orange-700 hover:to-yellow-700 text-white"
+                                        className="flex-1 bg-gradient-to-r from-orange-600 to-yellow-600 hover:from-orange-700 hover:to-yellow-700 text-[#eafbe0]"
                                         onClick={handlePlay}
                                         disabled={!selectedDate}
                                     >

@@ -43,12 +43,12 @@ export function DialogShell({
         desktopClassName={cn(
           maxWidthClass,
           maxHeightClass,
-          'bg-gradient-to-b from-gray-900 to-gray-800 text-white border-2 p-0'
+          'bg-gradient-to-b from-night-800 to-night text-foreground border-2 p-0'
         )}
         mobileClassName={
           cn(
             maxWidth === 'full' ? 'w-full' : '',
-            'bg-gradient-to-b from-gray-900 to-gray-800 text-white border-l-2 p-0'
+            'bg-gradient-to-b from-night-800 to-night text-foreground border-l-2 p-0'
           )
         }
         className={borderColor}
@@ -66,7 +66,7 @@ export function DialogShell({
           </ResponsiveDialogTitle>
           <ResponsiveDialogDescription
             desktopClassName={showDescription ? "" : "sr-only"}
-            mobileClassName={showDescription ? "text-center text-gray-400 text-xs pt-2" : "sr-only"}
+            mobileClassName={showDescription ? "text-center text-muted-foreground text-xs pt-2" : "sr-only"}
           >
             {description}
           </ResponsiveDialogDescription>

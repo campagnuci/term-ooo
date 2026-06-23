@@ -31,14 +31,13 @@ import { useState, useCallback, useMemo } from 'react'
 /**
  * Tipos possíveis de dialogs na aplicação
  */
-export type DialogType = 
-  | 'help' 
-  | 'stats' 
-  | 'settings' 
-  | 'dev' 
-  | 'about' 
+export type DialogType =
+  | 'help'
+  | 'stats'
+  | 'settings'
+  | 'dev'
+  | 'about'
   | 'archive'
-  | 'chat'
   | null
 
 /**
@@ -72,7 +71,6 @@ interface DialogManager {
     dev: DialogHelper
     about: DialogHelper
     archive: DialogHelper
-    chat: DialogHelper
   }
 }
 
@@ -130,11 +128,6 @@ export function useDialogManager(initialDialog: DialogType = null): DialogManage
     archive: {
       open: isOpen('archive'),
       onOpen: () => openDialog('archive'),
-      onClose: closeDialog,
-    },
-    chat: {
-      open: isOpen('chat'),
-      onOpen: () => openDialog('chat'),
       onClose: closeDialog,
     },
   }), [isOpen, openDialog, closeDialog])

@@ -12,13 +12,22 @@ export const Z_INDEX = {
   /** Elementos do jogo */
   GAME_BOARD: 1,
   KEYBOARD: 10,
-  
+
+  /** Controles de fim de rodada da sala (acima do tabuleiro/teclado) */
+  ROOM_END_CONTROLS: 15,
+
   /** Header e navegação */
   HEADER: 20,
   TOP_TABS: 25,
-  
+
+  /** Sala multiplayer */
+  ROOM_SIDEBAR: 30,
+
   /** Botões flutuantes */
   CHAT_BUTTON: 40,
+
+  /** Banner de promoção a host (sala) */
+  ROOM_HOST_BANNER: 45,
   
   /** Overlays de dialogs */
   DIALOG_OVERLAY: 50,

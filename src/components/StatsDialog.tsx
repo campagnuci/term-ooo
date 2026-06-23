@@ -93,8 +93,8 @@ export function StatsDialog({ open, onOpenChange, stats, gameState, onShare }: S
       onOpenChange={onOpenChange}
       title="Estatísticas"
       description="Estatísticas do jogo, distribuição de tentativas e próxima palavra"
-      borderColor="border-yellow-600"
-      titleGradientClassName="bg-gradient-to-r from-yellow-400 to-orange-500"
+      borderColor="border-eucalyptus"
+      titleGradientClassName="bg-gradient-to-r from-pistachio to-eucalyptus"
     >
       <ResponsiveScrollArea
         desktopClassName="max-h-[calc(85vh-80px)] px-6"
@@ -124,7 +124,7 @@ export function StatsDialog({ open, onOpenChange, stats, gameState, onShare }: S
                 </motion.div>
               )}
               {gameState.isGameOver && (
-                <motion.div variants={itemVariants} className="text-center py-3 bg-gray-800 rounded-lg">
+                <motion.div variants={itemVariants} className="text-center py-3 bg-night-800 rounded-lg">
                   <p className="text-lg font-semibold">{getResultMessage(gameState)}</p>
                 </motion.div>
               )}
@@ -132,19 +132,19 @@ export function StatsDialog({ open, onOpenChange, stats, gameState, onShare }: S
               <motion.div variants={itemVariants} className="grid grid-cols-4 gap-2 text-center">
                 <div>
                   <div className="text-2xl font-bold">{safeStats.gamesPlayed}</div>
-                  <div className="text-xs text-gray-400">Jogadas</div>
+                  <div className="text-xs text-muted-foreground">Jogadas</div>
                 </div>
                 <div>
                   <div className="text-2xl font-bold">{winPercentage}</div>
-                  <div className="text-xs text-gray-400">% Vitórias</div>
+                  <div className="text-xs text-muted-foreground">% Vitórias</div>
                 </div>
                 <div>
                   <div className="text-2xl font-bold">{safeStats.currentStreak}</div>
-                  <div className="text-xs text-gray-400">Sequência</div>
+                  <div className="text-xs text-muted-foreground">Sequência</div>
                 </div>
                 <div>
                   <div className="text-2xl font-bold">{safeStats.maxStreak}</div>
-                  <div className="text-xs text-gray-400">Melhor</div>
+                  <div className="text-xs text-muted-foreground">Melhor</div>
                 </div>
               </motion.div>
 
@@ -177,9 +177,9 @@ export function StatsDialog({ open, onOpenChange, stats, gameState, onShare }: S
                     return (
                       <div key={index} className="flex items-center gap-2 text-sm">
                         <div className="w-7 text-center text-base">{getLabel(index)}</div>
-                        <div className="flex-1 bg-gray-800 h-6 rounded overflow-hidden">
+                        <div className="flex-1 bg-night-800 h-6 rounded overflow-hidden">
                           <div
-                            className={`h-full flex items-center justify-end px-2 transition-all ${isCurrentAttempt ? 'bg-green-600' : 'bg-gray-600'
+                            className={`h-full flex items-center justify-end px-2 transition-all ${isCurrentAttempt ? 'bg-green-600' : 'bg-night-700'
                               }`}
                             style={{ width: `${Math.max(percentage, count > 0 ? 8 : 0)}%` }}
                           >
@@ -193,12 +193,12 @@ export function StatsDialog({ open, onOpenChange, stats, gameState, onShare }: S
               </motion.div>
 
               {gameState.isGameOver && (
-                <motion.div variants={itemVariants} className="border-t border-gray-700 pt-4 space-y-3">
+                <motion.div variants={itemVariants} className="border-t border-night-600 pt-4 space-y-3">
                   {/* Mensagem motivacional */}
                   {gameState.isWin && (
                     <motion.p 
                       variants={itemVariants}
-                      className="text-center text-sm text-gray-400 px-2"
+                      className="text-center text-sm text-muted-foreground px-2"
                     >
                       🎉 Curtiu? Compartilha!
                     </motion.p>
@@ -206,7 +206,7 @@ export function StatsDialog({ open, onOpenChange, stats, gameState, onShare }: S
                   
                   <div className="flex justify-between items-center">
                     <div>
-                      <div className="text-xs text-gray-400">Próxima Palavra</div>
+                      <div className="text-xs text-muted-foreground">Próxima Palavra</div>
                       <Countdown date={getNextMidnightTimestamp()} renderer={countdownRenderer} />
                     </div>
                     <ShareDropdown

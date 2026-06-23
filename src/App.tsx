@@ -14,16 +14,14 @@ import { SettingsDialog } from './components/SettingsDialog'
 import { DevModeDialog } from './components/DevModeDialog'
 import { AboutDialog } from './components/AboutDialog'
 import { ArchiveDialog } from './components/ArchiveDialog'
-import { ChatButton } from './components/Chat/ChatButton'
-import { ChatPanel } from './components/Chat/ChatPanel'
+import { RoomLobby } from './components/Room/RoomLobby'
+import { RoomScreen } from './components/Room/RoomScreen'
 import { useDialogManager } from './hooks/useDialogManager'
 import { useGameAnimations } from './hooks/useGameAnimations'
 import { useKeyboardInput } from './hooks/useKeyboardInput'
 import { useGameMode } from './hooks/useGameMode'
 import { usePersistentGameState } from './hooks/usePersistentGameState'
 import { useStatsTracker } from './hooks/useStatsTracker'
-import { useChatWebSocket } from './hooks/useChatWebSocket'
-import { CHAT_CONFIG } from './lib/chat-config'
 import { StarsBackground } from './components/animate-ui/components/backgrounds/stars'
 import { APP_VERSION } from './lib/version'
 import { useSoundEffects } from './lib/sounds/useSoundEffects'
@@ -48,23 +46,8 @@ function Game() {
   // Sistema de efeitos sonoros
   const { play: playSound } = useSoundEffects({ settings })
 
-  // Gerenciamento unificado de dialogs (incluindo chat)
+  // Gerenciamento unificado de dialogs
   const dialogManager = useDialogManager()
-
-  // WebSocket Chat (apenas se habilitado)
-  const chat = useChatWebSocket({
-    autoConnect: CHAT_CONFIG.ENABLED,
-  })
-
-  // Estado do chat integrado ao dialogManager
-  const chatOpen = dialogManager.isOpen('chat')
-
-  // Marcar mensagens como lidas quando abrir o chat
-  useEffect(() => {
-    if (chatOpen) {
-      chat.markAsRead()
-    }
-  }, [chatOpen, chat])
 
   // Gerenciamento unificado de animações
   const {
@@ -99,8 +82,8 @@ function Game() {
     // Criar chave única para este gameState
     const stateKey = `${mode}-${gameState.dateKey}`
 
-    // Só mostrar se: modo não iniciado E ainda não mostramos para este gameState
-    if (gameState.currentRow === 0 && helpDialogShownRef.current !== stateKey) {
+    // Só mostrar se: tutorial habilitado E modo não iniciado E ainda não mostrado
+    if (settings.showHelpOnStart && gameState.currentRow === 0 && helpDialogShownRef.current !== stateKey) {
       const timer = setTimeout(() => {
         dialogManager.openDialog('help')
         // Marcar como já mostrado para este gameState
@@ -109,7 +92,7 @@ function Game() {
 
       return () => clearTimeout(timer)
     }
-  }, [gameState, mode, dialogManager])
+  }, [gameState, mode, dialogManager, settings.showHelpOnStart])
 
   // Som de "waiting" após primeiro chute (15 segundos de inatividade)
   useEffect(() => {
@@ -324,8 +307,8 @@ function Game() {
 
   if (!gameState) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center">
-        <div className="text-white text-xl">Carregando...</div>
+      <div className="min-h-screen bg-gradient-to-b from-night via-[#0a201a] to-night flex items-center justify-center">
+        <div className="text-foreground text-xl">Carregando...</div>
       </div>
     )
   }
@@ -333,7 +316,7 @@ function Game() {
   const modeTitle = mode === 'termo' ? 'TERMO' : mode === 'dueto' ? 'DUETO' : 'QUARTETO'
 
   return (
-    <div className="h-dvh bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 flex flex-col overflow-hidden">
+    <div className="h-dvh bg-gradient-to-b from-night via-[#0a201a] to-night flex flex-col overflow-hidden">
       <Header
         title={modeTitle}
         onHelp={dialogManager.dialogs.help.onOpen}
@@ -380,7 +363,7 @@ function Game() {
 
         {/* Version Badge */}
         <div className="fixed bottom-2 right-2 md:left-2 z-[5] pointer-events-none">
-          <span className="text-[8px] md:text-xs text-slate-500/50 font-mono">
+          <span className="text-[8px] md:text-xs text-muted-foreground/50 font-mono">
             v{APP_VERSION}
           </span>
         </div>
@@ -436,34 +419,6 @@ function Game() {
         currentMode={mode}
       />
 
-      {/* Chat WebSocket (apenas se habilitado) */}
-      {CHAT_CONFIG.ENABLED && (
-        <>
-          <ChatButton
-            onClick={dialogManager.dialogs.chat.onOpen}
-            onlineCount={chat.onlineCount}
-            hasNewMessages={chat.unreadCount > 0}
-            connected={chat.connected}
-          />
-
-          <ChatPanel
-            open={chatOpen}
-            onClose={dialogManager.dialogs.chat.onClose}
-            connected={chat.connected}
-            authenticated={chat.authenticated}
-            userId={chat.userId}
-            nickname={chat.nickname}
-            messages={chat.messages}
-            onlineCount={chat.onlineCount}
-            error={chat.error}
-            latency={chat.latency}
-            isConnecting={chat.isConnecting}
-            onSetNickname={chat.setNickname}
-            onSendMessage={chat.sendMessage}
-          />
-        </>
-      )}
-
     </div>
   )
 }
@@ -486,6 +441,8 @@ function App() {
         <Route path="/dueto" element={<Game />} />
         <Route path="/4" element={<Game />} />
         <Route path="/quarteto" element={<Game />} />
+        <Route path="/sala" element={<RoomLobby />} />
+        <Route path="/sala/:code" element={<RoomScreen />} />
       </Routes>
     </BrowserRouter>
   )

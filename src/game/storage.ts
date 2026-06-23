@@ -10,6 +10,7 @@ export const storage = {
       highContrast: false,
       hardMode: false,
       soundEnabled: true,
+      showHelpOnStart: true,
     }
 
     try {

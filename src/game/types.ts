@@ -38,6 +38,8 @@ export interface Settings {
   highContrast: boolean
   hardMode: boolean
   soundEnabled: boolean
+  /** Abrir "Como jogar" automaticamente ao iniciar o jogo. */
+  showHelpOnStart: boolean
 }
 
 export interface Stats {

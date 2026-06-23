@@ -59,21 +59,21 @@ export function DevModeDialog({
                 className="space-y-3 py-4 pr-4"
               >
                 {/* Mostrar Soluções */}
-                <motion.div variants={itemVariants} className="p-4 bg-gray-800 rounded-lg border border-gray-700">
+                <motion.div variants={itemVariants} className="p-4 bg-night-800 rounded-lg border border-night-600">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <Eye className="w-5 h-5 text-blue-400" />
+                      <Eye className="w-5 h-5 text-pistachio" />
                       <span className="font-semibold">Soluções</span>
                     </div>
                   </div>
-                  <div className="text-sm text-gray-400 mb-3">
+                  <div className="text-sm text-muted-foreground mb-3">
                     Palavras de hoje:
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {gameState.boards.map((board, index) => (
                       <span
                         key={index}
-                        className="px-3 py-1 bg-blue-600 rounded text-white font-bold uppercase"
+                        className="px-3 py-1 bg-eucalyptus rounded text-[#eafbe0] font-bold uppercase"
                       >
                         {board.solution}
                       </span>
@@ -121,7 +121,7 @@ export function DevModeDialog({
                   </Button>
                 </motion.div>
 
-                <motion.p variants={itemVariants} className="text-xs text-center text-gray-500 pt-2">
+                <motion.p variants={itemVariants} className="text-xs text-center text-muted-foreground pt-2">
                   Use com cuidado! Essas ações podem afetar seu progresso.
                 </motion.p>
               </motion.div>
