@@ -17,6 +17,8 @@ interface RoundEndControlsProps {
   isWin: boolean
   resultMessage: string
   currentMode: GameMode
+  /** Soluções da rodada, reveladas a todos os membros ao fim. */
+  solutions: string[]
   onNewWord: () => void
   onChangeMode: (mode: GameMode) => void
 }
@@ -26,9 +28,13 @@ export function RoundEndControls({
   isWin,
   resultMessage,
   currentMode,
+  solutions,
   onNewWord,
   onChangeMode,
 }: RoundEndControlsProps) {
+  const revealWords = solutions.filter(Boolean)
+  const plural = revealWords.length > 1
+
   return (
     <div
       className="relative w-full max-w-xl mx-auto mt-2 rounded-xl border border-night-600 bg-night-800/80 p-3 sm:p-4 text-center space-y-3"
@@ -37,6 +43,25 @@ export function RoundEndControls({
       <div className={`text-lg font-bold ${isWin ? 'text-green-400' : 'text-red-400'}`}>
         {resultMessage}
       </div>
+
+      {/* Palavra(s) revelada(s) para todos — host e espectadores */}
+      {revealWords.length > 0 && (
+        <div className="rounded-lg bg-night-900/60 px-3 py-2">
+          <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
+            {isWin ? (plural ? 'Palavras' : 'Palavra') : plural ? 'Eram' : 'Era'}
+          </div>
+          <div className="flex flex-wrap justify-center gap-x-3 gap-y-1">
+            {revealWords.map((word, i) => (
+              <span
+                key={i}
+                className="text-foreground font-bold text-base sm:text-lg uppercase tracking-wider"
+              >
+                {word}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       {isHost ? (
         <div className="space-y-3">

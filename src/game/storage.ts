@@ -35,23 +35,28 @@ export const storage = {
   },
 
   getStats(mode: GameMode): Stats {
-    try {
-      const data = localStorage.getItem(`${STORAGE_PREFIX}:stats:${mode}`)
-      if (data) {
-        return JSON.parse(data)
-      }
-    } catch (e) {
-      console.error('Error reading stats:', e)
-    }
     // Usar função centralizada do mode-config
     const maxAttempts = getMaxAttempts(mode)
-    return {
+    const defaults: Stats = {
       gamesPlayed: 0,
       gamesWon: 0,
       currentStreak: 0,
       maxStreak: 0,
       guessDistribution: Array(maxAttempts + 1).fill(0),
+      totalSolveTimeMs: 0,
+      solveCount: 0,
     }
+
+    try {
+      const data = localStorage.getItem(`${STORAGE_PREFIX}:stats:${mode}`)
+      if (data) {
+        // Merge: campos salvos sobrescrevem, mas novos campos pegam o default
+        return { ...defaults, ...JSON.parse(data) }
+      }
+    } catch (e) {
+      console.error('Error reading stats:', e)
+    }
+    return defaults
   },
 
   saveStats(mode: GameMode, stats: Stats): void {

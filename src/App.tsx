@@ -1,12 +1,14 @@
 // src/App.tsx
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom'
-import { GameMode, Settings } from './game/types'
+import { RotateCcw } from 'lucide-react'
+import { Settings } from './game/types'
 import { processGuess } from './game/engine'
 import { storage } from './game/storage'
 import { Header } from './components/Header'
-import { TopTabs } from './components/TopTabs'
+import { TopTabs, TabValue } from './components/TopTabs'
 import { GameLayout } from './components/GameLayout'
+import { GameTimer } from './components/GameTimer'
 import { Keyboard } from './components/Keyboard'
 import { HelpDialog } from './components/HelpDialog'
 import { StatsDialog } from './components/StatsDialog'
@@ -14,6 +16,7 @@ import { SettingsDialog } from './components/SettingsDialog'
 import { DevModeDialog } from './components/DevModeDialog'
 import { AboutDialog } from './components/AboutDialog'
 import { ArchiveDialog } from './components/ArchiveDialog'
+import { TrainingResultDialog, TrainingSession } from './components/TrainingResultDialog'
 import { RoomLobby } from './components/Room/RoomLobby'
 import { RoomScreen } from './components/Room/RoomScreen'
 import { useDialogManager } from './hooks/useDialogManager'
@@ -34,6 +37,14 @@ function Game() {
   const [error, setError] = useState<string>('')
   const [tabsVisible, setTabsVisible] = useState(false)
 
+  // Estatísticas da sessão de Treino (em memória, não persistidas)
+  const [trainingSession, setTrainingSession] = useState<TrainingSession>({
+    played: 0,
+    won: 0,
+    currentStreak: 0,
+    bestStreak: 0,
+  })
+
   // Controlar se já mostramos HelpDialog para este gameState
   const helpDialogShownRef = useRef<string>('')
 
@@ -41,7 +52,7 @@ function Game() {
   const waitingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const waitingSoundPlayedRef = useRef<string>('') // Guarda modo+dateKey para tocar apenas uma vez
 
-  const { mode, customDayNumber } = useGameMode({ location, navigate })
+  const { mode, customDayNumber, isTraining } = useGameMode({ location, navigate })
 
   // Sistema de efeitos sonoros
   const { play: playSound } = useSoundEffects({ settings })
@@ -60,9 +71,10 @@ function Game() {
     actions: animActions
   } = useGameAnimations()
 
-  const { gameState, setGameState, stats, setStats } = usePersistentGameState({
+  const { gameState, setGameState, stats, setStats, startNewTrainingGame } = usePersistentGameState({
     mode,
     customDayNumber,
+    isTraining,
     animActions,
     onCompletedGameLoad: useCallback(() => {
       setTabsVisible(true)
@@ -73,7 +85,7 @@ function Game() {
     }, [dialogManager])
   })
 
-  useStatsTracker({ gameState, mode, customDayNumber, setStats })
+  useStatsTracker({ gameState, mode, customDayNumber, isTraining, setStats })
 
   // Abrir HelpDialog automaticamente quando modo não foi iniciado
   useEffect(() => {
@@ -139,8 +151,10 @@ function Game() {
   }, [settings])
 
 
-  const handleModeChange = (newMode: GameMode) => {
-    if (newMode === 'termo') {
+  const handleModeChange = (newMode: TabValue) => {
+    if (newMode === 'treino') {
+      navigate('/treino')
+    } else if (newMode === 'termo') {
       navigate('/')
     } else if (newMode === 'dueto') {
       navigate('/2')
@@ -148,6 +162,13 @@ function Game() {
       navigate('/4')
     }
   }
+
+  // Inicia uma nova partida de treino (botão "Jogar de novo")
+  const handlePlayAgain = useCallback(() => {
+    dialogManager.closeDialog()
+    animActions.resetAnimations()
+    startNewTrainingGame()
+  }, [dialogManager, animActions, startNewTrainingGame])
 
   // Dev Mode handlers
   const handleResetLocalStorage = () => {
@@ -195,9 +216,14 @@ function Game() {
     setGameState(prevState => {
       if (!prevState) return prevState
 
+      // Inicia o cronômetro na primeira letra digitada da partida
+      const hasLetters = newGuess.some(c => c !== '')
+      const startTime = prevState.startTime ?? (hasLetters && !prevState.isGameOver ? Date.now() : null)
+
       return {
         ...prevState,
         currentGuess: newGuess,
+        startTime,
       }
     })
   }, [setGameState])
@@ -250,6 +276,20 @@ function Game() {
 
       // Sons de vitória/derrota
       if (result.newState.isGameOver) {
+        // Atualizar estatísticas da sessão de treino (em memória)
+        if (isTraining) {
+          setTrainingSession(prev => {
+            const won = result.newState.isWin
+            const currentStreak = won ? prev.currentStreak + 1 : 0
+            return {
+              played: prev.played + 1,
+              won: prev.won + (won ? 1 : 0),
+              currentStreak,
+              bestStreak: Math.max(prev.bestStreak, currentStreak),
+            }
+          })
+        }
+
         setTimeout(() => {
           if (result.newState.isWin) {
             // Ganhou na primeira tentativa?
@@ -264,10 +304,13 @@ function Game() {
           }
         }, 1200)
 
-        setTimeout(() => dialogManager.dialogs.stats.onOpen(), newlyCompletedBoardIndices.length > 0 ? 2200 : 1200)
+        const openResult = isTraining
+          ? () => dialogManager.openDialog('trainingResult')
+          : () => dialogManager.dialogs.stats.onOpen()
+        setTimeout(openResult, newlyCompletedBoardIndices.length > 0 ? 2200 : 1200)
       }
     }
-  }, [gameState, settings, animActions, playSound, mode, setGameState, dialogManager.dialogs.stats])
+  }, [gameState, settings, animActions, playSound, mode, isTraining, setGameState, dialogManager])
 
   // Hook de keyboard input
   const { handleKey } = useKeyboardInput({
@@ -313,7 +356,9 @@ function Game() {
     )
   }
 
-  const modeTitle = mode === 'termo' ? 'TERMO' : mode === 'dueto' ? 'DUETO' : 'QUARTETO'
+  const modeTitle = isTraining
+    ? 'TREINO'
+    : mode === 'termo' ? 'TERMO' : mode === 'dueto' ? 'DUETO' : 'QUARTETO'
 
   return (
     <div className="h-dvh bg-gradient-to-b from-night via-[#0a201a] to-night flex flex-col overflow-hidden">
@@ -326,9 +371,10 @@ function Game() {
         onToggleTabs={() => setTabsVisible(!tabsVisible)}
         isArchive={customDayNumber !== null}
         archiveDayNumber={customDayNumber || undefined}
+        isTraining={isTraining}
       />
 
-      <TopTabs currentMode={mode} onModeChange={handleModeChange} isVisible={tabsVisible} />
+      <TopTabs currentMode={mode} isTraining={isTraining} onModeChange={handleModeChange} isVisible={tabsVisible} />
 
       <main className="flex-1 flex flex-col items-center justify-between px-2 py-2 sm:px-4 sm:py-4 md:py-6 max-w-7xl mx-auto w-full overflow-hidden">
         {error && (
@@ -336,6 +382,15 @@ function Game() {
             {error}
           </div>
         )}
+
+        {/* Cronômetro discreto em tempo real (todos os modos) */}
+        <div className="flex-shrink-0 z-10 flex justify-center">
+          <GameTimer
+            startTime={gameState.startTime}
+            endTime={gameState.endTime}
+            isGameOver={gameState.isGameOver}
+          />
+        </div>
 
         <GameLayout
           gameState={gameState}
@@ -348,6 +403,19 @@ function Game() {
           happyRow={happyRow}
           happyBoards={happyBoards}
         />
+
+        {/* Treino: botão "Jogar de novo" sempre acessível após o fim da partida */}
+        {isTraining && gameState.isGameOver && (
+          <div className="w-full max-w-2xl mx-auto flex-shrink-0 z-10 flex justify-center mt-2">
+            <button
+              onClick={handlePlayAgain}
+              className="flex items-center gap-2 bg-eucalyptus text-[#eafbe0] hover:bg-eucalyptus/90 px-6 py-2 rounded-md font-semibold shadow-lg transition-colors"
+            >
+              <RotateCcw className="w-4 h-4" />
+              Jogar de novo
+            </button>
+          </div>
+        )}
 
         <div className="w-full mt-2 sm:mt-4 md:mt-6 max-w-2xl mx-auto flex-shrink-0 z-10">
           <Keyboard
@@ -418,6 +486,19 @@ function Game() {
         currentMode={mode}
       />
 
+      <TrainingResultDialog
+        open={dialogManager.dialogs.trainingResult.open}
+        onOpenChange={(open) => {
+          if (!open) {
+            dialogManager.closeDialog()
+            setTabsVisible(true)
+          }
+        }}
+        gameState={gameState}
+        session={trainingSession}
+        onPlayAgain={handlePlayAgain}
+      />
+
     </div>
   )
 }
@@ -440,6 +521,7 @@ function App() {
         <Route path="/dueto" element={<Game />} />
         <Route path="/4" element={<Game />} />
         <Route path="/quarteto" element={<Game />} />
+        <Route path="/treino" element={<Game />} />
         <Route path="/sala" element={<RoomLobby />} />
         <Route path="/sala/:code" element={<RoomScreen />} />
       </Routes>

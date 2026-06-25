@@ -112,9 +112,9 @@ export function HelpDialog({ open, onOpenChange }: HelpDialogProps) {
 
                 {/* Agradecimentos */}
                 <motion.div variants={itemVariants} className="space-y-3">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
                     <motion.div variants={iconVariants}>
-                      <Heart className="w-6 h-6 text-red-400" />
+                      <Heart className="w-4 h-4 text-red-400" />
                     </motion.div>
                     <h3 className="text-l font-bold text-red-400">Agradecimentos</h3>
                   </div>

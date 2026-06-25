@@ -7,6 +7,20 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Added
+- ⏱️ **Modo Time Trial (multiplayer):** terceiro tipo de sala competitivo com tempo fixo no relógio (host escolhe presets 1/2/3/5 min ou valor personalizado de 30s–15min). Cronômetro regressivo compartilhado; pontuação por tempo restante + tentativas não usadas; pódio/ranking por pontos. Encerramento autoritativo via *alarm* do Durable Object (ou quando todos terminam). Não altera os modos Cooperativo e Competição
+- ⏱️ Cronômetro de resolução em tempo real (discreto) em todos os modos single player (Termo, Dueto, Quarteto, Treino) — inicia na primeira letra digitada e congela ao fim da partida
+- Tempo médio por solução na tabela de Estatísticas (média das vitórias cronometradas) e tempo da partida no diálogo de resultado (incl. Treino)
+- Cronômetro **compartilhado e sincronizado** nas salas multiplayer (Cooperativo e Competição): autoridade do servidor, contagem local em cada cliente (sem broadcasts por segundo), com re-sincronização em reconexão/troca de host
+- Tempo de resolução por jogador no ranking e no pódio da Competição
+- Campos `startTime`/`endTime` em `GameState` e `totalSolveTimeMs`/`solveCount` em `Stats`
+- Componentes `GameTimer` (single + salas) e `Room/RoomTimer`
+- Backend (`ws-cloudflare`): `roundStartedAt`/`roundEndedAt` no estado da sala, bloco `timer` nas mensagens de rodada, nova mensagem `round-timing` e `solveMs` por finalista
+
+### Changed
+- `storage.getStats` faz merge de defaults (compatibilidade com estatísticas antigas, sem os novos campos de tempo)
+- Backend: `handleGameState` persiste `room` + `gameState` atomicamente (evita estado inconsistente em caso de hibernação/eviction do Durable Object)
+
 ---
 
 ## [0.4.1] - 2024-12-02

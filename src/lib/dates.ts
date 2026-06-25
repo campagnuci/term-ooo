@@ -115,3 +115,22 @@ export function formatTimeUntilMidnight(hours: number, minutes: number, seconds:
   return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
 }
 
+/**
+ * Formata uma duração (em milissegundos) como cronômetro.
+ * Mostra M:SS para durações abaixo de 1h e H:MM:SS acima disso.
+ * @param ms - Duração em milissegundos
+ * @returns String formatada (ex.: "0:45", "12:05", "1:03:09")
+ */
+export function formatDuration(ms: number): string {
+  const safeMs = Number.isFinite(ms) && ms > 0 ? ms : 0
+  const totalSeconds = Math.floor(safeMs / 1000)
+  const hours = Math.floor(totalSeconds / 3600)
+  const minutes = Math.floor((totalSeconds % 3600) / 60)
+  const seconds = totalSeconds % 60
+
+  if (hours > 0) {
+    return `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+  }
+  return `${minutes}:${String(seconds).padStart(2, '0')}`
+}
+

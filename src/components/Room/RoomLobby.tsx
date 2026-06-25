@@ -3,8 +3,9 @@
 
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, Plus, LogIn } from 'lucide-react'
+import { ArrowLeft, Plus, LogIn, Users, Trophy, Timer } from 'lucide-react'
 import { GameMode } from '@/game/types'
+import { RoomGameType } from '@/game/room-types'
 import { sanitizeNickname, isValidNickname, loadNickname, saveNickname } from '@/lib/chat-utils'
 import { CHAT_CONFIG } from '@/lib/chat-config'
 import { generateRoomCode, normalizeRoomCode } from '@/lib/room-config'
@@ -15,10 +16,17 @@ const MODES: { value: GameMode; label: string }[] = [
   { value: 'quarteto', label: 'Quarteto' },
 ]
 
+const GAME_TYPES: { value: RoomGameType; label: string; icon: typeof Users; hint: string }[] = [
+  { value: 'coop', label: 'Cooperativo', icon: Users, hint: 'O anfitrião joga e todos sugerem no chat.' },
+  { value: 'competition', label: 'Competição', icon: Trophy, hint: 'Todos competem para resolver a palavra mais rápido.' },
+  { value: 'timetrial', label: 'Time Trial', icon: Timer, hint: 'Tempo fixo no relógio; pontos por velocidade e tentativas.' },
+]
+
 export function RoomLobby() {
   const navigate = useNavigate()
   const [nickname, setNickname] = useState(loadNickname() || '')
   const [createMode, setCreateMode] = useState<GameMode>('termo')
+  const [createGameType, setCreateGameType] = useState<RoomGameType>('coop')
   const [joinCode, setJoinCode] = useState('')
   const [error, setError] = useState<string | null>(null)
 
@@ -37,7 +45,7 @@ export function RoomLobby() {
   const handleCreate = () => {
     if (!ensureNickname()) return
     const code = generateRoomCode()
-    navigate(`/sala/${code}`, { state: { intent: 'create', createMode } })
+    navigate(`/sala/${code}`, { state: { intent: 'create', createMode, createGameType } })
   }
 
   const handleJoin = (e: React.FormEvent) => {
@@ -69,7 +77,10 @@ export function RoomLobby() {
       <main className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-md space-y-6">
           <p className="text-center text-muted-foreground text-sm">
-            Joguem a mesma palavra juntos: o anfitrião arrisca os palpites e todos sugerem no chat.
+            Joguem a mesma palavra juntos — no <strong>Cooperativo</strong> o anfitrião arrisca os
+            palpites e todos sugerem no chat; na <strong>Competição</strong> cada um joga seu
+            tabuleiro e disputa quem resolve mais rápido; no <strong>Time Trial</strong> há um tempo
+            fixo no relógio e a pontuação premia rapidez e menos tentativas.
           </p>
 
           {/* Apelido */}
@@ -101,6 +112,42 @@ export function RoomLobby() {
             <h2 className="text-foreground font-semibold flex items-center gap-2">
               <Plus className="w-4 h-4" /> Criar nova sala
             </h2>
+
+            {/* Tipo de sala: cooperativo x competição */}
+            <div>
+              <div className="text-xs text-muted-foreground mb-1">Tipo de sala</div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                {GAME_TYPES.map((t) => {
+                  const Icon = t.icon
+                  const active = t.value === createGameType
+                  return (
+                    <button
+                      key={t.value}
+                      type="button"
+                      onClick={() => setCreateGameType(t.value)}
+                      aria-pressed={active}
+                      className={`flex flex-col items-start gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-left ${
+                        active
+                          ? 'bg-eucalyptus text-[#eafbe0]'
+                          : 'bg-night-800 hover:bg-night-700 text-foreground'
+                      }`}
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <Icon className="w-4 h-4" /> {t.label}
+                      </span>
+                      <span
+                        className={`text-[11px] font-normal leading-tight ${
+                          active ? 'text-[#eafbe0]/90' : 'text-muted-foreground'
+                        }`}
+                      >
+                        {t.hint}
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+
             <div>
               <div className="text-xs text-muted-foreground mb-1">Modo</div>
               <div className="flex gap-2">

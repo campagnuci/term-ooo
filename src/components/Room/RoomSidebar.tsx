@@ -5,7 +5,7 @@
 import { useState } from 'react'
 import { X } from 'lucide-react'
 import { ChatMessage } from '@/game/chat-types'
-import { RoomMember } from '@/game/room-types'
+import { RoomMember, RoomGameType, MatchStatus, CompetitorResult } from '@/game/room-types'
 import { ChatButton } from '@/components/Chat/ChatButton'
 import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 import { useEscapeKey } from '@/hooks/useEscapeKey'
@@ -23,6 +23,9 @@ interface RoomSidebarProps {
   unreadCount: number
   onSendChat: (text: string) => void
   onOpenChat: () => void
+  gameType: RoomGameType
+  matchStatus: MatchStatus
+  standings: CompetitorResult[]
 }
 
 function PanelContent(props: Omit<RoomSidebarProps, 'unreadCount' | 'onOpenChat'>) {
@@ -33,6 +36,9 @@ function PanelContent(props: Omit<RoomSidebarProps, 'unreadCount' | 'onOpenChat'
         members={props.members}
         hostUserId={props.hostUserId}
         currentUserId={props.currentUserId}
+        gameType={props.gameType}
+        matchStatus={props.matchStatus}
+        standings={props.standings}
       />
       <RoomChatPanel
         messages={props.messages}

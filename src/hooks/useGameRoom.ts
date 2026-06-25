@@ -16,7 +16,16 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { GameMode, GameState } from '@/game/types'
 import { createInitialGameState, getDailyWords } from '@/game/engine'
 import { ChatMessage } from '@/game/chat-types'
-import { RoomServerMessage, RoomState, JoinIntent } from '@/game/room-types'
+import {
+  RoomServerMessage,
+  RoomState,
+  JoinIntent,
+  RoomGameType,
+  MatchStatus,
+  CompetitorResult,
+  RoundTimerInfo,
+  RoundTiming,
+} from '@/game/room-types'
 import { ROOM_CONFIG, buildRoomUrl } from '@/lib/room-config'
 import { generateUserId, loadUserId, saveUserId } from '@/lib/chat-utils'
 import { useChatConnection } from './useChatConnection'
@@ -27,6 +36,8 @@ interface UseGameRoomOptions {
   intent: JoinIntent
   /** Modo escolhido ao criar a sala (intent === 'create'). */
   createMode?: GameMode
+  /** Tipo de sala escolhido ao criar (intent === 'create'). */
+  createGameType?: RoomGameType
   /** Só conecta quando true (ex.: depois que o nickname foi informado). */
   autoConnect?: boolean
 }
@@ -45,6 +56,14 @@ export interface UseGameRoomReturn {
   roundId: string | null
   error: string | null
 
+  // Competição
+  gameType: RoomGameType
+  matchStatus: MatchStatus
+  standings: CompetitorResult[]
+
+  /** Cronômetro da rodada, sincronizado pelo servidor e ancorado no relógio local. */
+  roundTiming: RoundTiming
+
   // Jogo
   gameState: GameState | null
   setGameState: React.Dispatch<React.SetStateAction<GameState | null>>
@@ -61,10 +80,70 @@ export interface UseGameRoomReturn {
   broadcastLiveInput: (currentGuess: string[], typedIndex: number) => void
   sendChat: (text: string) => boolean
   requestNewRound: (mode?: GameMode) => void
+  /** Competição/Time Trial: anfitrião inicia uma partida (timeLimitMs só no Time Trial). */
+  startMatch: (mode?: GameMode, timeLimitMs?: number) => void
+  /** Competição: reporta o fim do jogo local (acertou/esgotou). */
+  reportFinished: (solved: boolean, attempts: number) => void
 
   // Promoção a host
   justBecameHost: boolean
   clearJustBecameHost: () => void
+}
+
+const EMPTY_TIMING: RoundTiming = { roundId: null, startLocal: null, durationMs: null, limitMs: null }
+
+/**
+ * Reduz o bloco `timer` do servidor para o cronômetro ancorado no relógio LOCAL.
+ *
+ * - Ancora o início UMA vez por rodada (startLocal = now - elapsedMs); mensagens
+ *   subsequentes da mesma rodada não re-ancoram, evitando "tremor" por jitter.
+ * - Quando há `durationMs`, congela no valor final (idêntico para todos).
+ * - Sem `elapsedMs` (rodada ainda não iniciada, ex.: coop antes do host digitar),
+ *   mantém zerado para a rodada atual.
+ */
+function deriveTiming(
+  prev: RoundTiming,
+  rid: string,
+  timer: RoundTimerInfo | undefined,
+  now: number
+): RoundTiming {
+  // Ignora mensagens sem cronômetro ou com roundId indefinido (não ancora em '').
+  if (!timer || !rid) return prev
+  const isNewRound = prev.roundId !== rid
+  // Limite de tempo (Time Trial). Constante na rodada; vem em toda mensagem.
+  const limitMs = typeof timer.limitMs === 'number' ? timer.limitMs : null
+
+  // Rodada terminada → congela na duração final (idêntica para todos).
+  if (typeof timer.durationMs === 'number') {
+    // Finalização de OUTRA rodada enquanto já há uma rodada EM ANDAMENTO
+    // ancorada → mensagem atrasada de rodada antiga; ignora para não congelar
+    // a rodada atual. (Late-join a uma rodada já encerrada cai fora deste guard
+    // porque ali não há âncora em andamento: prev.startLocal é null.)
+    if (isNewRound && prev.startLocal != null && prev.durationMs == null) return prev
+    // Anchor-once: se já há âncora desta rodada, preserva-a (evita salto no
+    // congelamento por jitter de rede). Caso contrário deriva uma — sempre
+    // garantindo startLocal != null para exibir o tempo final (nunca 0:00).
+    const startLocal =
+      !isNewRound && prev.startLocal != null
+        ? prev.startLocal
+        : typeof timer.elapsedMs === 'number'
+          ? now - timer.elapsedMs
+          : now - timer.durationMs
+    return { roundId: rid, startLocal, durationMs: timer.durationMs, limitMs }
+  }
+
+  // Rodada em andamento com início conhecido.
+  if (typeof timer.elapsedMs === 'number') {
+    if (isNewRound || prev.startLocal == null) {
+      return { roundId: rid, startLocal: now - timer.elapsedMs, durationMs: null, limitMs }
+    }
+    // Já ancorado nesta rodada → preserva o início (evita tremor por jitter).
+    return { roundId: rid, startLocal: prev.startLocal, durationMs: null, limitMs }
+  }
+
+  // Rodada ainda não começou (elapsedMs nulo).
+  if (isNewRound) return { roundId: rid, startLocal: null, durationMs: null, limitMs }
+  return prev
 }
 
 function stripSolutions(state: GameState): GameState {
@@ -98,11 +177,20 @@ const MODE_NAMES: Record<GameMode, string> = {
   quarteto: 'Quarteto',
 }
 
+/** Emoji de medalha para a posição entre os que acertaram (1=ouro). */
+function medalFor(solveRank: number | null): string {
+  if (solveRank === 1) return '🥇'
+  if (solveRank === 2) return '🥈'
+  if (solveRank === 3) return '🥉'
+  return ''
+}
+
 export function useGameRoom({
   code,
   nickname,
   intent,
   createMode,
+  createGameType = 'coop',
   autoConnect = false,
 }: UseGameRoomOptions): UseGameRoomReturn {
   const userId = useMemo(() => {
@@ -121,6 +209,9 @@ export function useGameRoom({
   const [roundId, setRoundId] = useState<string | null>(null)
   const [liveTypedIndex, setLiveTypedIndex] = useState(-1)
   const [justBecameHost, setJustBecameHost] = useState(false)
+  const [matchStatus, setMatchStatus] = useState<MatchStatus>('idle')
+  const [standings, setStandings] = useState<CompetitorResult[]>([])
+  const [roundTiming, setRoundTiming] = useState<RoundTiming>(EMPTY_TIMING)
 
   // Refs espelham o estado para o handler de mensagens ser estável.
   // Sincronizados em um efeito — não escrevemos ref.current durante o render.
@@ -129,11 +220,13 @@ export function useGameRoom({
   const nicknameRef = useRef(nickname)
   const intentRef = useRef(intent)
   const createModeRef = useRef(createMode)
+  const createGameTypeRef = useRef(createGameType)
   const hasJoinedRef = useRef(false)
   const sendRef = useRef<(data: unknown) => boolean>(() => false)
   const liveTypedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const isHost = !!room && room.hostUserId === userId
+  const gameType: RoomGameType = room?.gameType ?? 'coop'
   const hostNickname = useMemo(() => {
     if (!room) return null
     return room.members.find((m) => m.userId === room.hostUserId)?.nickname ?? null
@@ -158,18 +251,22 @@ export function useGameRoom({
   const handleMessage = useCallback(
     (raw: unknown) => {
       const msg = raw as RoomServerMessage
+      // Instante do recebimento (relógio local) usado para ancorar o cronômetro.
+      const receiveNow = Date.now()
+      const applyTiming = (rid: string) =>
+        setRoundTiming((prev) => deriveTiming(prev, rid, msg.timer, receiveNow))
 
       switch (msg.type) {
         case 'request-auth': {
           const firstJoin = !hasJoinedRef.current
+          const creating = firstJoin && intentRef.current === 'create'
           sendRef.current({
             type: 'join',
             userId,
             nickname: nicknameRef.current,
             intent: firstJoin ? intentRef.current : ('join' as JoinIntent),
-            ...(firstJoin && intentRef.current === 'create' && createModeRef.current
-              ? { mode: createModeRef.current }
-              : {}),
+            ...(creating && createModeRef.current ? { mode: createModeRef.current } : {}),
+            ...(creating ? { gameType: createGameTypeRef.current } : {}),
           })
           break
         }
@@ -177,6 +274,12 @@ export function useGameRoom({
         case 'room-state': {
           hasJoinedRef.current = true
           setError(null)
+          const gt: RoomGameType =
+            msg.gameType === 'competition'
+              ? 'competition'
+              : msg.gameType === 'timetrial'
+                ? 'timetrial'
+                : 'coop'
           const newRoom: RoomState = {
             code: msg.code ?? code,
             hostUserId: msg.hostUserId ?? '',
@@ -185,13 +288,25 @@ export function useGameRoom({
             roundId: msg.roundId ?? '',
             members: msg.members ?? [],
             memberCount: msg.memberCount ?? (msg.members ? msg.members.length : 0),
+            gameType: gt,
           }
           setRoom(newRoom)
           setRoundId(newRoom.roundId)
+          setMatchStatus(msg.matchStatus ?? 'idle')
+          setStandings(msg.standings ?? [])
+          applyTiming(newRoom.roundId)
+          // Competição/Time Trial: todos jogam o próprio tabuleiro (com soluções).
+          // Coop: o host tem soluções; espectadores recebem stripado.
+          const competitive = gt === 'competition' || gt === 'timetrial'
           const asHost = newRoom.hostUserId === userId
-          // Estado base do round (um game-state subsequente sobrescreve, se houver).
           setGameState(
-            buildInitialState(newRoom.mode, newRoom.seed, newRoom.code, newRoom.roundId, asHost)
+            buildInitialState(
+              newRoom.mode,
+              newRoom.seed,
+              newRoom.code,
+              newRoom.roundId,
+              competitive ? true : asHost
+            )
           )
           break
         }
@@ -199,6 +314,9 @@ export function useGameRoom({
         case 'game-state': {
           if (!msg.gameState) break
           const r = roomRef.current
+          // Competição e Time Trial não usam o tabuleiro compartilhado.
+          if (r && (r.gameType === 'competition' || r.gameType === 'timetrial')) break
+          applyTiming(msg.roundId ?? r?.roundId ?? '')
           const asHost = !!r && r.hostUserId === userId
           // Espectador renderiza como recebido; host (reconexão) re-injeta soluções.
           const incoming = asHost && r ? withSolutions(msg.gameState, r.mode, r.seed) : msg.gameState
@@ -206,9 +324,52 @@ export function useGameRoom({
           break
         }
 
-        case 'live-input': {
-          // Digitação ao vivo do host. O servidor não reenvia ao próprio host.
+        case 'match-start': {
+          const mode = (msg.mode ?? 'termo') as GameMode
+          const seed = Number(msg.seed ?? 0)
+          const rid = msg.roundId ?? ''
+          setRoundId(rid)
+          setRoom((prev) => (prev ? { ...prev, mode, seed, roundId: rid } : prev))
+          setMatchStatus('active')
+          setStandings([])
+          applyTiming(rid)
           const r = roomRef.current
+          const roomCode = r?.code ?? code
+          // Todos jogam: tabuleiro próprio COM soluções (asHost = true).
+          setGameState(buildInitialState(mode, seed, roomCode, rid, true))
+          addSystem(
+            r?.gameType === 'timetrial'
+              ? 'Corrida contra o tempo! ⏱️ Boa sorte!'
+              : 'A partida começou! Boa sorte! 🏁'
+          )
+          break
+        }
+
+        case 'competitor-finished': {
+          if (msg.standings) setStandings(msg.standings)
+          applyTiming(msg.roundId ?? roomRef.current?.roundId ?? '')
+          if (msg.userId && msg.userId !== userId && msg.nickname) {
+            addSystem(
+              msg.solved
+                ? `${msg.nickname} resolveu! ${medalFor(msg.solveRank ?? null)}`.trim()
+                : `${msg.nickname} não conseguiu desta vez`
+            )
+          }
+          break
+        }
+
+        case 'match-end': {
+          if (msg.standings) setStandings(msg.standings)
+          setMatchStatus('ended')
+          applyTiming(msg.roundId ?? roomRef.current?.roundId ?? '')
+          addSystem('Partida encerrada! A palavra foi revelada. 🎉')
+          break
+        }
+
+        case 'live-input': {
+          // Digitação ao vivo do host (somente coop). O servidor não reenvia ao próprio host.
+          const r = roomRef.current
+          if (r && (r.gameType === 'competition' || r.gameType === 'timetrial')) break
           if (r && r.hostUserId === userId) break
           if (msg.currentGuess) {
             const cg = msg.currentGuess
@@ -228,6 +389,10 @@ export function useGameRoom({
           const rid = msg.roundId ?? ''
           setRoundId(rid)
           setRoom((prev) => (prev ? { ...prev, mode, seed, roundId: rid } : prev))
+          applyTiming(rid)
+          // Nova rodada zera qualquer estado de competição encerrada (defensivo).
+          setMatchStatus('idle')
+          setStandings([])
           const r = roomRef.current
           const asHost = !!r && r.hostUserId === userId
           const roomCode = r?.code ?? code
@@ -237,6 +402,12 @@ export function useGameRoom({
               ? `Novo modo: ${MODE_NAMES[mode]} — nova palavra!`
               : 'Nova palavra iniciada!'
           )
+          break
+        }
+
+        case 'round-timing': {
+          // Sincronização dedicada do cronômetro (início/fim no coop).
+          applyTiming(msg.roundId ?? roomRef.current?.roundId ?? '')
           break
         }
 
@@ -339,6 +510,7 @@ export function useGameRoom({
     nicknameRef.current = nickname
     intentRef.current = intent
     createModeRef.current = createMode
+    createGameTypeRef.current = createGameType
     sendRef.current = connection.send
   })
 
@@ -346,7 +518,10 @@ export function useGameRoom({
     (state: GameState) => {
       const rid = roomRef.current?.roundId
       if (!rid) return
-      connection.send({ type: 'game-state', roundId: rid, gameState: stripSolutions(state) })
+      // Durante a rodada as soluções ficam ocultas (anti-trapaça para os espectadores).
+      // Quando a rodada termina, revelamos a palavra para TODOS os membros da sala.
+      const payload = state.isGameOver ? state : stripSolutions(state)
+      connection.send({ type: 'game-state', roundId: rid, gameState: payload })
     },
     [connection]
   )
@@ -368,6 +543,25 @@ export function useGameRoom({
   const requestNewRound = useCallback(
     (mode?: GameMode) => {
       connection.send(mode ? { type: 'new-round', mode } : { type: 'new-round' })
+    },
+    [connection]
+  )
+
+  const startMatch = useCallback(
+    (mode?: GameMode, timeLimitMs?: number) => {
+      const msg: { type: 'start-match'; mode?: GameMode; timeLimitMs?: number } = { type: 'start-match' }
+      if (mode) msg.mode = mode
+      if (typeof timeLimitMs === 'number') msg.timeLimitMs = timeLimitMs
+      connection.send(msg)
+    },
+    [connection]
+  )
+
+  const reportFinished = useCallback(
+    (solved: boolean, attempts: number) => {
+      const rid = roomRef.current?.roundId
+      if (!rid) return
+      connection.send({ type: 'competitor-finished', roundId: rid, solved, attempts })
     },
     [connection]
   )
@@ -400,6 +594,10 @@ export function useGameRoom({
     hostNickname,
     roundId,
     error,
+    gameType,
+    matchStatus,
+    standings,
+    roundTiming,
     gameState,
     setGameState,
     liveTypedIndex,
@@ -410,6 +608,8 @@ export function useGameRoom({
     broadcastLiveInput,
     sendChat,
     requestNewRound,
+    startMatch,
+    reportFinished,
     justBecameHost,
     clearJustBecameHost,
   }

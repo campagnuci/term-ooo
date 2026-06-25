@@ -7,7 +7,8 @@ import { getResultMessage, generateShareText, getMinAttempts } from '@/game/engi
 import { useDialogAnimations } from '@/hooks/useDialogAnimations'
 import { useTemporaryState } from '@/hooks/useTemporaryState'
 import { useShareImage } from '@/hooks/useShareImage'
-import { getNextMidnightTimestamp } from '@/lib/dates'
+import { getNextMidnightTimestamp, formatDuration } from '@/lib/dates'
+import { Timer } from 'lucide-react'
 import { DialogShell } from './DialogShell'
 import { ResponsiveScrollArea } from './ui/responsive-scroll-area'
 import { ShareDropdown } from './ShareDropdown'
@@ -42,11 +43,21 @@ export function StatsDialog({ open, onOpenChange, stats, gameState, onShare }: S
     currentStreak: 0,
     maxStreak: 0,
     guessDistribution: Array(gameState.maxAttempts + 1).fill(0),
+    totalSolveTimeMs: 0,
+    solveCount: 0,
   }
 
   const winPercentage = safeStats.gamesPlayed > 0
     ? Math.round((safeStats.gamesWon / safeStats.gamesPlayed) * 100)
     : 0
+
+  // Tempo médio por solução (apenas vitórias cronometradas)
+  const hasAverageTime = safeStats.solveCount > 0
+  const averageSolveMs = hasAverageTime ? safeStats.totalSolveTimeMs / safeStats.solveCount : 0
+
+  // Tempo desta partida (quando há cronometragem)
+  const hasCurrentTime = gameState.startTime != null && gameState.endTime != null
+  const currentSolveMs = hasCurrentTime ? Math.max(0, gameState.endTime! - gameState.startTime!) : 0
 
   const handleShareText = async () => {
     // Detectar se é arquivo pelo dateKey
@@ -69,6 +80,7 @@ export function StatsDialog({ open, onOpenChange, stats, gameState, onShare }: S
 
     await shareAsImage(shareCardRef, {
       fileName,
+      backgroundColor: SHARE_CONFIG.IMAGE_BG_COLOR,
       title: `Meu resultado no ${gameState.mode.charAt(0).toUpperCase() + gameState.mode.slice(1)}`,
       text: `Consegui ${gameState.isWin ? 'completar' : 'jogar'} o ${gameState.mode} do dia ${gameState.dayNumber}!`,
       onSuccess: () => {
@@ -124,8 +136,15 @@ export function StatsDialog({ open, onOpenChange, stats, gameState, onShare }: S
                 </motion.div>
               )}
               {gameState.isGameOver && (
-                <motion.div variants={itemVariants} className="text-center py-3 bg-night-800 rounded-lg">
+                <motion.div variants={itemVariants} className="text-center py-3 bg-night-800 rounded-lg space-y-1">
                   <p className="text-lg font-semibold">{getResultMessage(gameState)}</p>
+                  {gameState.isWin && hasCurrentTime && (
+                    <p className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground">
+                      <Timer className="w-3.5 h-3.5 text-pistachio" aria-hidden="true" />
+                      Resolvido em
+                      <span className="font-semibold text-foreground tabular-nums">{formatDuration(currentSolveMs)}</span>
+                    </p>
+                  )}
                 </motion.div>
               )}
 
@@ -147,6 +166,17 @@ export function StatsDialog({ open, onOpenChange, stats, gameState, onShare }: S
                   <div className="text-xs text-muted-foreground">Melhor</div>
                 </div>
               </motion.div>
+
+              {hasAverageTime && (
+                <motion.div
+                  variants={itemVariants}
+                  className="flex items-center justify-center gap-2 text-sm text-muted-foreground bg-night-800 rounded-lg py-2"
+                >
+                  <Timer className="w-4 h-4 text-pistachio" aria-hidden="true" />
+                  <span>Tempo médio por solução:</span>
+                  <span className="font-bold text-foreground tabular-nums">{formatDuration(averageSolveMs)}</span>
+                </motion.div>
+              )}
 
               <motion.div variants={itemVariants}>
                 <h3 className="text-base font-semibold mb-3">Distribuição de Tentativas</h3>

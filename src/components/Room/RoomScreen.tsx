@@ -17,17 +17,21 @@ import { StarsBackground } from '@/components/animate-ui/components/backgrounds/
 import { useGameAnimations } from '@/hooks/useGameAnimations'
 import { useKeyboardInput } from '@/hooks/useKeyboardInput'
 import { useGameRoom } from '@/hooks/useGameRoom'
-import { JoinIntent } from '@/game/room-types'
+import { JoinIntent, RoomGameType } from '@/game/room-types'
 import { ROOM_CONFIG, normalizeRoomCode } from '@/lib/room-config'
 import { loadNickname, saveNickname } from '@/lib/chat-utils'
 import { Z_INDEX } from '@/lib/z-index'
 import { RoomHeader } from './RoomHeader'
 import { RoomSidebar } from './RoomSidebar'
 import { RoundEndControls } from './RoundEndControls'
+import { CompetitionPanel } from './CompetitionPanel'
+import { TimeTrialPanel } from './TimeTrialPanel'
+import { RoomTimer } from './RoomTimer'
 
 interface LocationState {
   intent?: JoinIntent
   createMode?: GameMode
+  createGameType?: RoomGameType
 }
 
 export function RoomScreen() {
@@ -39,6 +43,14 @@ export function RoomScreen() {
   const navState = (location.state || {}) as LocationState
   const intent: JoinIntent = navState.intent === 'create' ? 'create' : 'join'
   const createMode = navState.createMode
+  // Preserva os três tipos válidos (coop/competition/timetrial); cai em 'coop'
+  // apenas se ausente/desconhecido. NÃO colapsar 'timetrial' para 'coop'.
+  const createGameType: RoomGameType =
+    navState.createGameType === 'competition'
+      ? 'competition'
+      : navState.createGameType === 'timetrial'
+        ? 'timetrial'
+        : 'coop'
 
   const [settings] = useState<Settings>(storage.getSettings())
   const [nickname, setNickname] = useState<string | null>(loadNickname())
@@ -60,19 +72,33 @@ export function RoomScreen() {
     nickname,
     intent,
     createMode,
+    createGameType,
     autoConnect: !!nickname && !!code && ROOM_CONFIG.ENABLED,
   })
 
-  const { isHost, gameState, roundId } = gameRoom
+  const { isHost, gameState, roundId, gameType, matchStatus } = gameRoom
+  const isCompetition = gameType === 'competition'
+  const isTimeTrial = gameType === 'timetrial'
+  // Tipos "competitivos": cada jogador joga o próprio tabuleiro (Competição e Time Trial).
+  const isCompetitive = isCompetition || isTimeTrial
 
-  // ----- Handlers de host -----
+  // Quem pode digitar/submeter neste instante.
+  // Coop: apenas o host. Competitivo: qualquer jogador enquanto a partida está
+  // ativa e seu próprio jogo não terminou.
+  const playableNow = isCompetitive
+    ? matchStatus === 'active' && !!gameState && !gameState.isGameOver
+    : isHost
+
+  // ----- Handlers de jogo -----
+  // Coop: somente o host joga e transmite o estado. Competição: cada jogador
+  // joga seu próprio tabuleiro localmente (sem transmitir o board).
   const handleGuessChange = useCallback(
     (newGuess: string[]) => {
       const prevGuess = gameRoom.gameState?.currentGuess
       gameRoom.setGameState((prev) => (prev ? { ...prev, currentGuess: newGuess } : prev))
 
-      if (isHost) {
-        // Descobre a posição que acabou de receber uma letra (para o "pop").
+      // Apenas o coop transmite a digitação ao vivo do host aos espectadores.
+      if (!isCompetitive && isHost) {
         let typedIndex = -1
         if (prevGuess) {
           for (let i = 0; i < 5; i++) {
@@ -85,12 +111,12 @@ export function RoomScreen() {
         gameRoom.broadcastLiveInput(newGuess, typedIndex)
       }
     },
-    [gameRoom, isHost]
+    [gameRoom, isHost, isCompetitive]
   )
 
   const handleSubmitGuess = useCallback(() => {
     const gs = gameRoom.gameState
-    if (!gs || !isHost || gs.isGameOver) return
+    if (!gs || gs.isGameOver || !playableNow) return
 
     const result = processGuess(gs, settings)
     if (result.error) {
@@ -109,20 +135,25 @@ export function RoomScreen() {
     })
 
     gameRoom.setGameState(result.newState)
-    gameRoom.broadcastState(result.newState)
+    if (!isCompetitive) gameRoom.broadcastState(result.newState)
     animActions.setCursorPosition(0)
 
     if (newlyCompleted.length > 0) {
       setTimeout(() => animActions.triggerHappy(submittedRow, newlyCompleted), 1000)
     }
-  }, [gameRoom, isHost, settings, animActions])
+
+    // Competitivo: ao terminar (acertou tudo ou esgotou), reporta ao servidor.
+    if (isCompetitive && result.newState.isGameOver) {
+      gameRoom.reportFinished(result.newState.isWin, result.newState.currentRow)
+    }
+  }, [gameRoom, playableNow, isCompetitive, settings, animActions])
 
   const handleTileClick = useCallback(
     (position: number) => {
-      if (!isHost || !gameState || gameState.isGameOver) return
+      if (!playableNow) return
       animActions.setCursorPosition(position)
     },
-    [isHost, gameState, animActions]
+    [playableNow, animActions]
   )
 
   const { handleKey } = useKeyboardInput({
@@ -132,7 +163,7 @@ export function RoomScreen() {
     onCursorMove: animActions.setCursorPosition,
     onTyping: animActions.triggerTyping,
     cursorPosition,
-    disabled: !isHost || !nickname,
+    disabled: !nickname || !playableNow,
   })
 
   // ----- Efeitos -----
@@ -144,15 +175,16 @@ export function RoomScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roundId])
 
-  // Espectador: anima o flip da linha recém-revelada.
+  // Espectador (somente coop): anima o flip da linha recém-revelada do host.
   const prevRowRef = useRef(0)
   useEffect(() => {
+    if (isCompetitive) return
     if (!gameState) return
     if (!isHost && gameState.currentRow > prevRowRef.current) {
       animActions.triggerFlip(gameState.currentRow - 1)
     }
     prevRowRef.current = gameState.currentRow
-  }, [gameState, isHost, animActions])
+  }, [gameState, isHost, isCompetitive, animActions])
 
   // Banner de promoção a host some sozinho após alguns segundos.
   useEffect(() => {
@@ -223,6 +255,7 @@ export function RoomScreen() {
         connected={gameRoom.connected}
         latency={gameRoom.latency}
         isHost={isHost}
+        gameType={gameType}
         onLeave={() => navigate('/sala')}
       />
 
@@ -254,34 +287,71 @@ export function RoomScreen() {
             </div>
           )}
 
+          {/* Cronômetro compartilhado (sincronizado pelo servidor) — coop e competição */}
+          <RoomTimer timing={gameRoom.roundTiming} className="flex-shrink-0 z-10 mb-1" />
+
           {gameState && (
             <GameLayout
               gameState={gameState}
               highContrast={settings.highContrast}
-              cursorPosition={isHost ? cursorPosition : -1}
-              shouldShake={isHost ? shouldShake : false}
-              onTileClick={isHost ? handleTileClick : undefined}
+              cursorPosition={playableNow ? cursorPosition : -1}
+              shouldShake={playableNow ? shouldShake : false}
+              onTileClick={playableNow ? handleTileClick : undefined}
               revealingRow={revealingRow}
-              lastTypedIndex={isHost ? lastTypedIndex : gameRoom.liveTypedIndex}
+              lastTypedIndex={isCompetitive ? lastTypedIndex : isHost ? lastTypedIndex : gameRoom.liveTypedIndex}
               happyRow={happyRow}
               happyBoards={happyBoards}
             />
           )}
 
-          {/* Fim de rodada */}
-          {gameState?.isGameOver && (
+          {/* ----- Competição ----- */}
+          {isCompetition && (
+            <CompetitionPanel
+              matchStatus={matchStatus}
+              isHost={isHost}
+              gameState={gameState}
+              standings={gameRoom.standings}
+              currentMode={room.mode}
+              memberCount={room.memberCount}
+              currentUserId={gameRoom.userId}
+              onStartMatch={(mode) => gameRoom.startMatch(mode)}
+            />
+          )}
+
+          {/* ----- Time Trial ----- */}
+          {isTimeTrial && (
+            <TimeTrialPanel
+              matchStatus={matchStatus}
+              isHost={isHost}
+              gameState={gameState}
+              standings={gameRoom.standings}
+              currentMode={room.mode}
+              memberCount={room.memberCount}
+              currentUserId={gameRoom.userId}
+              timing={gameRoom.roundTiming}
+              onStartMatch={(mode, timeLimitMs) => gameRoom.startMatch(mode, timeLimitMs)}
+            />
+          )}
+
+          {/* ----- Cooperativo: fim de rodada ----- */}
+          {!isCompetitive && gameState?.isGameOver && (
             <RoundEndControls
               isHost={isHost}
               isWin={gameState.isWin}
-              resultMessage={getResultMessage(gameState)}
+              resultMessage={
+                gameState.isWin
+                  ? getResultMessage(gameState)
+                  : '💀 Não foi dessa vez, tentem novamente!'
+              }
               currentMode={room.mode}
+              solutions={gameState.boards.map((b) => b.solution)}
               onNewWord={() => gameRoom.requestNewRound()}
               onChangeMode={(mode) => gameRoom.requestNewRound(mode)}
             />
           )}
 
-          {/* Indicador de espectador */}
-          {!isHost && !gameState?.isGameOver && (
+          {/* ----- Cooperativo: indicador de espectador ----- */}
+          {!isCompetitive && !isHost && !gameState?.isGameOver && (
             <div className="w-full text-center py-1 text-sm text-muted-foreground italic">
               {gameRoom.hostNickname
                 ? `${gameRoom.hostNickname} está jogando — você está assistindo`
@@ -295,7 +365,7 @@ export function RoomScreen() {
                 keyStates={gameState.keyStates}
                 onKeyPress={handleKey}
                 highContrast={settings.highContrast}
-                disabled={!isHost || gameState.isGameOver}
+                disabled={!playableNow}
               />
             </div>
           )}
@@ -316,6 +386,9 @@ export function RoomScreen() {
           unreadCount={gameRoom.unreadCount}
           onSendChat={gameRoom.sendChat}
           onOpenChat={gameRoom.markAsRead}
+          gameType={gameType}
+          matchStatus={matchStatus}
+          standings={gameRoom.standings}
         />
       </div>
     </div>

@@ -1,12 +1,18 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { GameMode, GameState, Stats } from '@/game/types'
-import { createInitialGameState, getDayNumber } from '@/game/engine'
+import { createInitialGameState, getDayNumber, getRandomDayNumber } from '@/game/engine'
 import { getTodayDateKey } from '@/lib/utils'
 import { storage } from '@/game/storage'
+
+// Chave fixa do localStorage para o Modo Treino (não vinculada ao dia)
+const TRAINING_DATE_KEY = 'treino'
+// Modo Treino é sempre uma variante de Termo (1 tabuleiro)
+const TRAINING_MODE: GameMode = 'termo'
 
 interface UsePersistentGameStateOptions {
   mode: GameMode
   customDayNumber: number | null
+  isTraining: boolean
   animActions: { setCursorPosition: (position: number) => void }
   onCompletedGameLoad?: () => void
 }
@@ -16,11 +22,14 @@ interface UsePersistentGameStateResult {
   setGameState: React.Dispatch<React.SetStateAction<GameState | null>>
   stats: Stats | null
   setStats: React.Dispatch<React.SetStateAction<Stats | null>>
+  /** Inicia uma nova partida de treino com palavra aleatória (botão "Jogar de novo"). */
+  startNewTrainingGame: () => void
 }
 
 export function usePersistentGameState({
   mode,
   customDayNumber,
+  isTraining,
   animActions,
   onCompletedGameLoad
 }: UsePersistentGameStateOptions): UsePersistentGameStateResult {
@@ -32,7 +41,32 @@ export function usePersistentGameState({
     completedGameLoadRef.current = onCompletedGameLoad
   }, [onCompletedGameLoad])
 
+  // Cria e persiste uma nova partida de treino com palavra sorteada
+  const startNewTrainingGame = useCallback(() => {
+    const randomDay = getRandomDayNumber(TRAINING_MODE)
+    const newState = createInitialGameState(TRAINING_MODE, randomDay, TRAINING_DATE_KEY)
+    setGameState(newState)
+    storage.saveGameState(TRAINING_MODE, TRAINING_DATE_KEY, newState)
+    animActions.setCursorPosition(0)
+  }, [animActions])
+
   useEffect(() => {
+    // Modo Treino: palavra aleatória, sem vínculo com o dia.
+    // Retoma uma partida em andamento; caso contrário, sorteia uma nova.
+    if (isTraining) {
+      const savedState = storage.getGameState(TRAINING_MODE, TRAINING_DATE_KEY)
+      if (savedState && savedState.dateKey === TRAINING_DATE_KEY && !savedState.isGameOver) {
+        setGameState(savedState)
+        const firstEmpty = savedState.currentGuess.findIndex((c) => c === '')
+        animActions.setCursorPosition(firstEmpty === -1 ? 5 : firstEmpty)
+      } else {
+        startNewTrainingGame()
+      }
+
+      setStats(storage.getStats(TRAINING_MODE))
+      return
+    }
+
     const actualDayNumber = customDayNumber || getDayNumber()
     const isArchive = customDayNumber !== null
     const dateKey = isArchive ? `archive-${actualDayNumber}` : getTodayDateKey()
@@ -60,7 +94,7 @@ export function usePersistentGameState({
 
     const currentModeStats = storage.getStats(mode)
     setStats(currentModeStats)
-  }, [mode, customDayNumber, animActions])
+  }, [mode, customDayNumber, isTraining, animActions, startNewTrainingGame])
 
-  return { gameState, setGameState, stats, setStats }
+  return { gameState, setGameState, stats, setStats, startNewTrainingGame }
 }

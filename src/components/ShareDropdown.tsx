@@ -93,7 +93,7 @@ export function ShareDropdown({
   const getShareData = useCallback(() => {
     const isArchive = gameState.dateKey.startsWith('archive-')
     const text = generateShareText(gameState, isArchive)
-    return { text, title: 'Meu resultado no Jogo.Work' }
+    return { text, title: 'Meu resultado no Termo' }
   }, [gameState])
 
   // Wrapper para executar ações com loading state

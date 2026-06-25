@@ -38,6 +38,7 @@ export type DialogType =
   | 'dev'
   | 'about'
   | 'archive'
+  | 'trainingResult'
   | null
 
 /**
@@ -71,6 +72,7 @@ interface DialogManager {
     dev: DialogHelper
     about: DialogHelper
     archive: DialogHelper
+    trainingResult: DialogHelper
   }
 }
 
@@ -128,6 +130,11 @@ export function useDialogManager(initialDialog: DialogType = null): DialogManage
     archive: {
       open: isOpen('archive'),
       onOpen: () => openDialog('archive'),
+      onClose: closeDialog,
+    },
+    trainingResult: {
+      open: isOpen('trainingResult'),
+      onOpen: () => openDialog('trainingResult'),
       onClose: closeDialog,
     },
   }), [isOpen, openDialog, closeDialog])

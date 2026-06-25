@@ -6,10 +6,11 @@ interface UseStatsTrackerOptions {
   gameState: GameState | null
   mode: GameMode
   customDayNumber: number | null
+  isTraining: boolean
   setStats: Dispatch<SetStateAction<Stats | null>>
 }
 
-export function useStatsTracker({ gameState, mode, customDayNumber, setStats }: UseStatsTrackerOptions) {
+export function useStatsTracker({ gameState, mode, customDayNumber, isTraining, setStats }: UseStatsTrackerOptions) {
   useEffect(() => {
     if (!gameState || !gameState.isGameOver || gameState.currentRow <= 0) {
       return
@@ -19,7 +20,8 @@ export function useStatsTracker({ gameState, mode, customDayNumber, setStats }: 
       return
     }
 
-    if (customDayNumber !== null) {
+    // Treino e Arquivo não contam para as estatísticas/streak diárias
+    if (isTraining || customDayNumber !== null) {
       return
     }
 
@@ -29,6 +31,11 @@ export function useStatsTracker({ gameState, mode, customDayNumber, setStats }: 
       return
     }
 
+    // Tempo gasto na resolução (apenas vitórias cronometradas entram na média)
+    const hasTiming = gameState.startTime != null && gameState.endTime != null
+    const solveMs = hasTiming ? Math.max(0, gameState.endTime! - gameState.startTime!) : 0
+    const countsForAverage = gameState.isWin && hasTiming
+
     const newStats: Stats = {
       gamesPlayed: currentStats.gamesPlayed + 1,
       gamesWon: currentStats.gamesWon + (gameState.isWin ? 1 : 0),
@@ -37,6 +44,8 @@ export function useStatsTracker({ gameState, mode, customDayNumber, setStats }: 
         ? Math.max(currentStats.currentStreak + 1, currentStats.maxStreak)
         : currentStats.maxStreak,
       guessDistribution: [...currentStats.guessDistribution],
+      totalSolveTimeMs: (currentStats.totalSolveTimeMs ?? 0) + (countsForAverage ? solveMs : 0),
+      solveCount: (currentStats.solveCount ?? 0) + (countsForAverage ? 1 : 0),
       lastGame: {
         won: gameState.isWin,
         attempts: gameState.currentRow,
@@ -49,5 +58,5 @@ export function useStatsTracker({ gameState, mode, customDayNumber, setStats }: 
 
     storage.saveStats(mode, newStats)
     setStats(newStats)
-  }, [customDayNumber, gameState, mode, setStats])
+  }, [customDayNumber, isTraining, gameState, mode, setStats])
 }

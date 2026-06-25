@@ -2,21 +2,28 @@
 import { GameMode } from '@/game/types'
 import { motion, AnimatePresence } from 'framer-motion'
 
+/** Abas disponíveis: os modos diários + o Modo Treino (single player, ilimitado). */
+export type TabValue = GameMode | 'treino'
+
 interface TopTabsProps {
   currentMode: GameMode
-  onModeChange: (mode: GameMode) => void
+  isTraining: boolean
+  onModeChange: (mode: TabValue) => void
   isVisible: boolean
 }
 
-export function TopTabs({ currentMode, onModeChange, isVisible }: TopTabsProps) {
+export function TopTabs({ currentMode, isTraining, onModeChange, isVisible }: TopTabsProps) {
   const modes: {
-    value: GameMode;
+    value: TabValue;
     label: string;
   }[] = [
     { value: 'termo', label: 'Termo' },
     { value: 'dueto', label: 'Dueto' },
     { value: 'quarteto', label: 'Quarteto' },
+    { value: 'treino', label: '🎮 Treino' },
   ];
+
+  const activeTab: TabValue = isTraining ? 'treino' : currentMode
 
   return (
     <AnimatePresence>
@@ -39,7 +46,7 @@ export function TopTabs({ currentMode, onModeChange, isVisible }: TopTabsProps) 
                     px-4 sm:px-6 py-1 rounded-sm transition-all duration-200
                     text-sm sm:text-base
                     ${
-                      currentMode === mode.value
+                      activeTab === mode.value
                         ? "bg-eucalyptus text-[#eafbe0] shadow-lg"
                         : "bg-transparent text-muted-foreground hover:bg-night-700/50"
                     }

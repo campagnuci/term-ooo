@@ -19,6 +19,7 @@ interface HeaderProps {
   onToggleTabs: () => void
   isArchive: boolean
   archiveDayNumber?: number
+  isTraining?: boolean
 }
 
 export function Header({
@@ -29,16 +30,24 @@ export function Header({
   onArchive,
   onToggleTabs,
   isArchive,
-  archiveDayNumber
+  archiveDayNumber,
+  isTraining = false
 }: HeaderProps) {
   const navigate = useNavigate()
   const location = useLocation()
 
+  // Treino: volta para o Termo do dia. Arquivo: volta para o dia atual do mesmo modo.
   const handleBackToToday = () => {
-    // Remover query param e voltar para o dia atual
+    if (isTraining) {
+      navigate('/')
+      return
+    }
     const path = location.pathname
     navigate(path)
   }
+
+  // No Treino o botão "Home" também serve para sair do modo
+  const showHomeButton = isArchive || isTraining
 
   return (
     <header className="border-b border-night-600 bg-night-800/50 backdrop-blur-sm flex-shrink-0 z-10">
@@ -82,6 +91,11 @@ export function Header({
               🕰️ Arquivo - Dia #{archiveDayNumber}
             </div>
           )}
+          {isTraining && (
+            <div className="text-xs bg-eucalyptus text-[#eafbe0] px-3 py-1 rounded-full flex items-center gap-1">
+              🎮 Modo Treino
+            </div>
+          )}
         </div>
 
         {/* Right buttons */}
@@ -96,13 +110,14 @@ export function Header({
           >
             <Users className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
-          {isArchive ? (
+          {showHomeButton ? (
             <Button
               variant="ghost"
               size="icon"
               onClick={handleBackToToday}
-              aria-label="Voltar para Hoje"
-              className="text-pistachio hover:text-foreground hidden md:flex"
+              aria-label={isTraining ? 'Sair do Treino' : 'Voltar para Hoje'}
+              title={isTraining ? 'Sair do Treino' : 'Voltar para Hoje'}
+              className={`text-pistachio hover:text-foreground ${isTraining ? 'flex' : 'hidden md:flex'}`}
             >
               <Home className="w-4 h-4 sm:w-5 sm:h-5" />
             </Button>

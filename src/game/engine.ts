@@ -38,6 +38,21 @@ export function getDailyWords(mode: GameMode, dayNumber: number): string[] {
   return words
 }
 
+/**
+ * Sorteia um "dayNumber" aleatório para o Modo Treino.
+ *
+ * O índice retornado é usado como semente em getDailyWords/createInitialGameState,
+ * resultando em uma palavra (ou conjunto de palavras) aleatória do dicionário,
+ * sem qualquer vínculo com o dia atual.
+ *
+ * @param mode - Modo de jogo
+ * @returns Índice aleatório dentro do dicionário de soluções
+ */
+export function getRandomDayNumber(mode: GameMode): number {
+  const { solutions } = getWordsForMode(mode)
+  return Math.floor(Math.random() * solutions.length)
+}
+
 // Re-exportar funções centralizadas de datas
 export const getDayNumber = getDayNumberFromDates
 export const getDateFromDayNumber = getDateFromDayNumberDates
@@ -196,6 +211,8 @@ export function createInitialGameState(mode: GameMode, dayNumber: number, dateKe
     keyStates: {},
     dateKey,
     dayNumber,
+    startTime: null,
+    endTime: null,
   }
 }
 
@@ -251,6 +268,11 @@ export function processGuess(
   const newRow = currentRow + 1
   const isGameOver = allComplete || newRow >= maxAttempts
 
+  // Cronômetro: garante um início (caso a primeira letra não tenha registrado)
+  // e congela o fim no momento exato em que o jogo termina.
+  const startTime = state.startTime ?? Date.now()
+  const endTime = isGameOver ? (state.endTime ?? Date.now()) : null
+
   const newState: GameState = {
     ...state,
     boards: newBoards,
@@ -259,6 +281,8 @@ export function processGuess(
     isGameOver,
     isWin: allComplete,
     keyStates: updateKeyStates(newBoards),
+    startTime,
+    endTime,
   }
 
   return { newState }
@@ -287,7 +311,7 @@ export function generateShareText(state: GameState, isArchive: boolean = false):
   const result = isWin ? `${currentRow}/${maxAttempts}` : 'X/' + maxAttempts
   const archiveTag = isArchive ? ' (Arquivo)' : ''
 
-  let text = `Jogo.Work - Dia #${dayNumber}${archiveTag}\n\n`
+  let text = `termo.enresshou.dev - Dia #${dayNumber}${archiveTag}\n\n`
   text += `Modo: ${modeText} - Tentativas: ${result}\n\n`
   text += SHARE_LEGEND + '\n\n'
 
@@ -307,7 +331,7 @@ export function generateShareText(state: GameState, isArchive: boolean = false):
   }
 
   // Adicionar URL no final
-  text += '\n\n🎮 Jogue também: https://jogo.work'
+  text += '\n\n🎮 Jogue também: https://termo.enresshou.dev'
 
   return text
 }

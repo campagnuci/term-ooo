@@ -9,19 +9,19 @@
 
 export const SHARE_CONFIG = {
   /** Texto principal da marca d'água */
-  BRANDING_TEXT: 'Jogo.Work',
-  
+  BRANDING_TEXT: 'Termo',
+
   /** Subtítulo da marca d'água */
-  BRANDING_SUBTITLE: 'Jogue em jogo.work',
-  
+  BRANDING_SUBTITLE: 'termo.enresshou.dev',
+
   /** Largura da imagem gerada (px) */
   IMAGE_WIDTH: 600,
-  
+
   /** Altura mínima da imagem gerada (px) */
   IMAGE_MIN_HEIGHT: 800,
-  
-  /** Cor de fundo da imagem (hex) */
-  IMAGE_BG_COLOR: '#0f172a',
+
+  /** Cor de fundo da imagem (hex) — paleta "night" da marca */
+  IMAGE_BG_COLOR: '#061611',
   
   /** Nome do arquivo ao fazer download */
   getFileName: (mode: string, dayNumber: number) => {

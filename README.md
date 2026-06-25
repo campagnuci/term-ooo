@@ -1,20 +1,23 @@
-# Jogo.Work - Term.ooo Clone
+# `termo.enresshou.dev` - Term.ooo Clone
 
-[![Version](https://img.shields.io/badge/version-0.4.1-blue.svg)](https://github.com/arthr/term-ooo/releases/tag/v0.4.1)
+[![Version](https://img.shields.io/badge/version-0.5.1-blue.svg)](https://github.com/arthr/term-ooo/releases/tag/v0.5.1)
 [![License](https://img.shields.io/badge/license-Educational-green.svg)](LICENSE)
 [![Deploy](https://github.com/arthr/term-ooo/actions/workflows/deploy.yml/badge.svg)](https://github.com/arthr/term-ooo/actions)
 
-Jogo.Work é um clone completo e funcional do jogo [Term.ooo](https://term.ooo), desenvolvido com React, TypeScript e Tailwind CSS.
+`termo.enresshou.dev` é um clone completo e funcional do jogo [Term.ooo](https://term.ooo), desenvolvido com React, TypeScript e Tailwind CSS.
 
-🌐 **[Jogue agora no GitHub Pages!](https://arthr.github.io/term-ooo/)** 🎮
+🌐 **[Jogue agora!](https://termo.enresshou.dev/)** 🎮
 
 ---
 
 ## 📋 Índice
 
 - [Sobre o Jogo](#-sobre-o-jogo)
+- [Modos de Jogo](#-modos-de-jogo)
 - [Features Implementadas](#-features-implementadas)
-- [Sistema de Chat em Tempo Real](#-sistema-de-chat-em-tempo-real)
+- [Modo Treino](#-modo-treino)
+- [Multiplayer: Salas](#-multiplayer-salas)
+- [Compartilhamento](#-compartilhamento)
 - [Sistema de Efeitos Sonoros](#-sistema-de-efeitos-sonoros)
 - [Dialogs Responsivos](#-dialogs-responsivos)
 - [Hooks Customizados](#-hooks-customizados)
@@ -29,16 +32,34 @@ Jogo.Work é um clone completo e funcional do jogo [Term.ooo](https://term.ooo),
 
 ## 🎮 Sobre o Jogo
 
-Adivinhe a palavra do dia em português! Três modos disponíveis:
-- **Termo**: 1 palavra em 6 tentativas
-- **Dueto**: 2 palavras em 7 tentativas
-- **Quarteto**: 4 palavras em 9 tentativas
+Adivinhe a palavra do dia em português! Cada palpite revela dicas sobre as letras:
 
-Cada palpite revela dicas sobre as letras:
 - 🟩 **Verde**: Letra correta na posição correta
 - 🟨 **Amarelo**: Letra correta na posição errada
 - ⬛ **Cinza**: Letra não existe na palavra
 - 🔳 **Branco**: Tile não utilizado
+
+---
+
+## 🕹️ Modos de Jogo
+
+### Single player
+
+| Modo | Tabuleiros | Tentativas | Rota |
+|------|-----------|-----------|------|
+| **Termo** | 1 palavra | 6 | `/` |
+| **Dueto** | 2 palavras | 7 | `/2` ou `/dueto` |
+| **Quarteto** | 4 palavras | 9 | `/4` ou `/quarteto` |
+| **🎮 Treino** | 1 palavra (aleatória, ilimitado) | 6 | `/treino` |
+| **🕰️ Arquivo** | qualquer modo, dias anteriores | — | `?dia=N` |
+
+### Multiplayer (Salas)
+
+| Tipo | Como funciona | Rota |
+|------|---------------|------|
+| **🤝 Cooperativo** | O anfitrião joga e todos sugerem no chat | `/sala`, `/sala/:code` |
+| **🏆 Competição** | Cada jogador tem o próprio tabuleiro e disputa quem resolve mais rápido | `/sala`, `/sala/:code` |
+| **⏱️ Time Trial** | Tempo fixo no relógio (escolhido pelo host); pontuação premia rapidez e menos tentativas | `/sala`, `/sala/:code` |
 
 ---
 
@@ -52,7 +73,7 @@ Cada palpite revela dicas sobre as letras:
 - Sistema de validação com dicionário completo
 - Hard Mode: use as dicas reveladas nas próximas tentativas
 - Persistência de estado e estatísticas no localStorage
-- 100% client-side (sem necessidade de backend)
+- Single player 100% client-side (multiplayer usa backend WebSocket dedicado)
 
 ### 🎨 Interface e UX
 - **Navegação avançada com cursor:**
@@ -62,10 +83,10 @@ Cada palpite revela dicas sobre as letras:
   - Edição não-linear (substitui ao invés de inserir)
 
 - **Animações 3D extraídas do código original:**
-  - 🔄 Flip rotateY ao revelar tiles (450ms)
-  - ✨ Pop translateZ ao digitar letra (150ms)
-  - 🎊 Happy jump ao acertar palavra (600ms)
-  - 📳 Shake em tentativas inválidas (500ms)
+  - 🔄 Flip rotateY ao revelar tiles
+  - ✨ Pop ao digitar letra
+  - 🎊 Happy jump ao acertar palavra
+  - 📳 Shake em tentativas inválidas
 
 - **Teclado visual inteligente:**
   - Cores por estado de letra em cada board
@@ -76,25 +97,27 @@ Cada palpite revela dicas sobre as letras:
 - **Estatísticas detalhadas:**
   - Medalhas de ouro, prata, bronze e caveira (🥇🥈🥉💀)
   - Distribuição de tentativas
-  - Porcentagem de vitórias
-  - Streak atual e melhor
-  - Separadas por modo de jogo
+  - Porcentagem de vitórias, streak atual e melhor
+  - ⏱️ Tempo médio por solução (média do tempo das vitórias cronometradas)
+  - Separadas por modo de jogo (Treino e Arquivo não contam para a streak diária)
 
 ### 📱 Recursos Adicionais
-- 💬 **Chat em tempo real** com WebSocket
+- 🎮 **Modo Treino** ilimitado com palavras aleatórias
+- 🏆 **Salas multiplayer** (Cooperativo e Competição) via WebSocket
+- 💬 **Chat em tempo real** dentro das salas
 - 🎵 **Efeitos sonoros e memes** durante o jogo
 - 📱 **Interface 100% responsiva** (Dialog desktop / Sheet mobile)
 - 📅 **Arquivo de Dias Anteriores** (últimos 30 dias)
+- 📤 **Compartilhamento** como texto (grid de emojis) e como **imagem PNG** estilizada
+- ⏱️ **Cronômetro de resolução em tempo real** — discreto, em todos os modos (Termo/Dueto/Quarteto/Treino) e também nas **salas**, sincronizado entre os jogadores
 - ⏱️ Countdown visual para próxima palavra
 - 🎨 Modo de alto contraste (acessibilidade)
-- 📤 Compartilhar resultados (grid de emojis)
-- 💡 Solutions reveladas ao finalizar
+- 💡 Palavras reveladas ao finalizar (para todos os membros, no multiplayer)
 - 🔽 Toggle TopTabs (economiza espaço na tela)
 - ℹ️ AboutDialog com história épica e animações
 - 🐐 Botão Bodão com áudio (Béééééé!)
 - ⭐ Fundo animado com estrelas
 - 🏷️ Versionamento semântico visível na UI
-- 🔔 Notificações de novas mensagens
 
 ### 🎮 Dev Mode (Easter Egg)
 Pressione o Konami Code: `↑ ↑ ↓ ↓ ← → ← → B A`
@@ -109,50 +132,82 @@ Dica: abra as Configurações para lembrar o código! 😉
 
 ---
 
-## 💬 Sistema de Chat em Tempo Real
+## 🎮 Modo Treino
 
-Chat multiplayer integrado ao jogo usando WebSocket!
+Modo single player **ilimitado**, sem vínculo com o dia — ideal para praticar sem esperar 24h.
 
-### Features do Chat
-- 🔌 **WebSocket em tempo real** - Mensagens instantâneas
-- 👤 **Sistema de autenticação** - Escolha seu nickname
-- 👥 **Indicador de usuários online** - Veja quem está jogando
-- 🔔 **Notificações de novas mensagens** - Badge com contador
-- ✨ **Animações de partículas** - IconButton do shadcn.io
-- 💾 **Persistência de nickname** - Salvo no localStorage
-- 📱 **100% responsivo** - Painel flutuante adaptativo
+- 🎲 Palavra **aleatória** do dicionário a cada partida (base do Termo, 5 letras, 6 tentativas)
+- 🔁 Botão **"Jogar de novo"** ao terminar (no diálogo de resultado e como botão flutuante)
+- 📊 **Estatísticas de sessão** (jogos, % de vitórias, sequência, melhor) — mantidas em memória e **não** poluem a streak diária
+- 🔓 Retoma uma partida em andamento ao recarregar; partidas concluídas geram uma palavra nova
+- 🚪 Acesse pela aba **🎮 Treino** ou pela rota `/treino`
 
-### Componentes do Chat
-- `ChatButton` - Botão flutuante com animações e badge
-- `ChatPanel` - Painel principal responsivo
-- `ChatMessageList` - Lista de mensagens com scroll automático
-- `ChatMessageItem` - Item individual de mensagem
-- `ChatMessageInput` - Input de mensagem customizado
-- `ChatNicknameForm` - Formulário de escolha de nickname
+**Arquivos principais:** `useGameMode`, `usePersistentGameState`, `useStatsTracker`, `TrainingResultDialog`, `engine.getRandomDayNumber()`
 
-### Hooks Relacionados
-- `useChatWebSocket` - Hook principal do WebSocket
-- `useChatAuth` - Gerenciamento de autenticação
-- `useChatConnection` - Status e reconexão automática
-- `useChatMessages` - Mensagens e contador de não lidas
+---
 
-**Configuração:** `src/lib/chat-config.ts`
+## 🏆 Multiplayer: Salas
+
+Salas multiplayer em tempo real via WebSocket. O **tipo da sala é escolhido na criação** e fixo durante toda a sua vida.
+
+### 🤝 Cooperativo
+- O **anfitrião** joga e transmite o tabuleiro em tempo real
+- Os demais **assistem** e participam pelo **chat** (sugerindo palpites)
+- Digitação ao vivo do host visível para os espectadores
+- ⏱️ **Cronômetro compartilhado**: inicia na 1ª tecla do host e congela ao terminar — o mesmo valor para todos
+- Ao fim da rodada a palavra é **revelada para todos**
+
+### 🏆 Competição
+- **Todos jogam** o próprio tabuleiro na **mesma palavra** (Termo, Dueto ou Quarteto)
+- O anfitrião **inicia a partida** (mínimo de **2 jogadores**); antes disso, ninguém digita
+- ⏱️ **Cronômetro compartilhado** da partida começa no `match-start` (largada igual para todos)
+- A lista de membros vira um **ranking** com medalhas: 🥇 1º, 🥈 2º, 🥉 3º a resolver; 💀 para quem não acerta; ⏳ para quem ainda joga
+- ⏱️ **Tempo de resolução de cada jogador** exibido no ranking e no pódio
+- **Fim da partida:** termina quando todos terminam, **ou** quando o pódio (1º/2º/3º) está completo e resta apenas 1 jogador. Enquanto houver vaga no pódio, os demais continuam jogando
+- Ao encerrar, a palavra é **revelada para todos**
+
+### ⏱️ Time Trial
+- Variante competitiva **contra o relógio**: o anfitrião escolhe um **tempo fixo** (presets 1/2/3/5 min ou valor personalizado, 30s–15min) e o **modo** na tela de início, e dá a largada
+- Um **cronômetro regressivo compartilhado** começa para todos no `match-start` (e fica em destaque de urgência nos segundos finais)
+- **Pontuação** (só quem resolve pontua): `1000 + tempo restante (até +1000) + 150 × tentativas não usadas`. Mais rápido **e** com menos tentativas ⇒ mais pontos; quem não resolve fica com 0
+- **Fim da partida:** quando o tempo esgota (encerramento autoritativo do servidor via *alarm*) **ou** quando todos terminam — o que vier primeiro
+- Ranking e pódio por **pontos** (desempate pelo menor tempo); tempo e pontos de cada jogador exibidos no ranking
+
+### Autoridade e modelo de rede
+- O **servidor** (Cloudflare Durable Object) é autoridade sobre membros, host, modo, seed e `roundId`
+- Os clientes derivam a palavra de `(modo, seed)` localmente via `getDailyWords`
+- **Coop:** o host roda o engine e transmite o `GameState`; o servidor retransmite/persiste
+- **Competição:** cada cliente roda seu próprio engine e reporta quando termina; o servidor controla o ranking e o fim da partida
+- **Time Trial:** como a competição, mas o servidor define o limite de tempo, **pontua** cada acerto e arma um *alarm* (Durable Object) que encerra a partida no fim do relógio mesmo sem mensagens
+- ⏱️ **Cronômetro autoritativo:** o servidor marca início/fim da rodada (`roundStartedAt`/`roundEndedAt`) e envia um bloco `timer` nas mensagens; cada cliente ancora no próprio relógio e conta localmente (sem broadcasts por segundo), mantendo os jogadores sincronizados com latência mínima
+- Migração de host automática se o anfitrião sai; reconexão com re-sincronização (inclusive do cronômetro)
+
+**Backend:** pacote separado `ws-cloudflare/` (Cloudflare Workers + Durable Objects).
+**Componentes:** `RoomLobby`, `RoomScreen`, `RoomHeader`, `RoomSidebar`, `RoomInfoPanel`, `RoomChatPanel`, `RoundEndControls`, `CompetitionPanel`.
+**Hook orquestrador:** `useGameRoom` (sobre `useChatConnection`).
+
+---
+
+## 📤 Compartilhamento
+
+Compartilhe seu resultado em texto ou imagem — tudo com a paleta da marca (`night` / `eucalyptus` / `pistachio`).
+
+### Como texto
+- Grid de emojis (🟩🟨⬛) + cabeçalho `termo.enresshou.dev - Dia #N`
+- Destinos: WhatsApp, X/Twitter, menu nativo do sistema e "Copiar texto"
+
+### Como imagem (PNG)
+- Card estilizado (`ShareCard`) renderizado para PNG via **html-to-image**
+- Logo, estatísticas e distribuição de tentativas na paleta atual
+- Web Share API no mobile (Instagram/Stories) com fallback de download no desktop
+
+**Arquivos:** `ShareDropdown`, `ShareCard`, `useShareImage`, `lib/share-config.ts`, `engine.generateShareText()`.
 
 ---
 
 ## 🎵 Sistema de Efeitos Sonoros
 
-Sistema de áudio com memes que tocam em momentos específicos do jogo!
-
-### Eventos de Som Implementados
-
-| Evento | Momento | Arquivo | Status |
-|--------|---------|---------|--------|
-| `share` | Ao compartilhar resultado | - | 🔜 |
-| `gameOver` | Ao perder o jogo | - | 🔜 |
-| `firstTryWin` | Vitória na primeira tentativa | - | 🔜 |
-| `win` | Vitória (geral) | - | 🔜 |
-| `wrongWord` | Palavra inválida | - | 🔜 |
+Sistema de áudio com memes que tocam em momentos específicos do jogo (vitória, derrota, primeira tentativa, palavra inválida, compartilhamento e inatividade).
 
 ### Features de Áudio
 - 🎵 **Hook `useSoundEffects`** - Sistema principal
@@ -185,46 +240,38 @@ Sistema unificado de dialogs que se adaptam ao dispositivo!
 - 📜 **Scroll inteligente**: `ResponsiveScrollArea` contextual
 
 ### Componentes Responsivos
-- `ResponsiveDialog` - Container principal
-- `ResponsiveDialogContent` - Conteúdo adaptativo
-- `ResponsiveDialogHeader` - Cabeçalho responsivo
-- `ResponsiveDialogTitle` - Título responsivo
-- `ResponsiveDialogDescription` - Descrição responsiva
+- `ResponsiveDialog` / `ResponsiveDialogContent` / `ResponsiveDialogHeader` / `ResponsiveDialogTitle` / `ResponsiveDialogDescription`
 - `ResponsiveScrollArea` - Área de scroll contextual
 - `DialogShell` - Base reutilizável para todos os dialogs
 
 ### Dialogs Implementados
-Todos os 6 dialogs do jogo usam o sistema responsivo:
 - `HelpDialog` - Como jogar
 - `StatsDialog` - Estatísticas
 - `SettingsDialog` - Configurações
 - `AboutDialog` - História do projeto
 - `DevModeDialog` - Ferramentas de desenvolvedor
 - `ArchiveDialog` - Dias anteriores
+- `TrainingResultDialog` - Resultado do Modo Treino
 
 ### Features
 - ✅ Abertura automática do `HelpDialog` em modos não iniciados
 - ✅ Abertura automática do `StatsDialog` em jogos concluídos
 - ✅ Gerenciamento centralizado com `useDialogManager`
-- ✅ Animações com Framer Motion
-- ✅ Fechamento com tecla ESC
-- ✅ Lock de scroll quando aberto
+- ✅ Animações com Framer Motion, fechamento com ESC e lock de scroll
 
 ---
 
 ## 🎣 Hooks Customizados
 
-15 hooks customizados para arquitetura clean e reutilizável!
+Arquitetura clean baseada em hooks reutilizáveis (`src/hooks/`).
 
-### Hooks de Chat (4)
+### Multiplayer & Chat
 | Hook | Responsabilidade |
 |------|------------------|
-| `useChatWebSocket` | WebSocket principal e orquestração |
-| `useChatAuth` | Autenticação e gestão de nickname |
-| `useChatConnection` | Gerenciamento de conexão e reconexão |
-| `useChatMessages` | Mensagens e contador de não lidas |
+| `useGameRoom` | Estado da sala, jogo, chat, host, competição e cronômetro sincronizado da rodada |
+| `useChatConnection` | Conexão WebSocket genérica, reconexão e heartbeat |
 
-### Hooks de UI (7)
+### UI
 | Hook | Responsabilidade |
 |------|------------------|
 | `useDialogManager` | Gerenciamento centralizado de dialogs |
@@ -233,18 +280,21 @@ Todos os 6 dialogs do jogo usam o sistema responsivo:
 | `useEscapeKey` | Fechar dialogs com tecla ESC |
 | `useMediaQuery` | Detecção de breakpoints (mobile/desktop) |
 | `useTemporaryState` | Estados temporários (ex: "Copiado!") |
-| `useSoundEffects` | Sistema de efeitos sonoros |
 
-### Hooks de Jogo (4)
+### Jogo
 | Hook | Responsabilidade |
 |------|------------------|
-| `useGameMode` | Gerenciamento de modo de jogo (Termo/Dueto/Quarteto) |
-| `useGameAnimations` | Todas as animações do jogo (flip, shake, happy) |
+| `useGameMode` | Modo de jogo e detecção de Treino/Arquivo via rota |
+| `useGameAnimations` | Animações do jogo (flip, shake, happy, pop) |
 | `useKeyboardInput` | Input de teclado físico e virtual |
-| `usePersistentGameState` | Persistência de estado no localStorage |
-| `useStatsTracker` | Rastreamento e atualização de estatísticas |
+| `usePersistentGameState` | Estado persistente + nova partida de Treino |
+| `useStatsTracker` | Rastreamento de estatísticas diárias (inclui tempo médio de solução) |
 
-**Localização:** `src/hooks/`
+### Compartilhamento & Áudio
+| Hook | Responsabilidade |
+|------|------------------|
+| `useShareImage` | Geração de PNG via html-to-image + Web Share API |
+| `useSoundEffects` | Sistema de efeitos sonoros (`src/lib/sounds/`) |
 
 ---
 
@@ -267,11 +317,14 @@ pnpm run preview
 pnpm run lint
 ```
 
+> O backend multiplayer fica no pacote `ws-cloudflare/` (Cloudflare Workers).
+> Configure `VITE_CHAT_WS_URL` e `VITE_CHAT_ENABLED` (veja `.env.example`) para habilitar as salas.
+
 ---
 
 ## 🚀 Deploy Automático (GitHub Actions)
 
-Este projeto usa **GitHub Actions** para deploy automático no **GitHub Pages** a cada push na branch `main`.
+O frontend usa **GitHub Actions** + **GitHub Pages** com domínio customizado **[termo.enresshou.dev](https://termo.enresshou.dev)**, publicando a cada push na branch `main`.
 
 ### 🔄 Como Funciona
 
@@ -279,38 +332,29 @@ Este projeto usa **GitHub Actions** para deploy automático no **GitHub Pages** 
 # .github/workflows/deploy.yml
 on:
   push:
-    branches: [main]  # Dispara a cada push no main
+    branches: [main]
+  workflow_dispatch:
 ```
 
 ### 📋 Pipeline de Deploy
 
-| Etapa | Ação | Tempo Aprox. |
-|-------|------|--------------|
-| 1️⃣ **Checkout** | Clone do repositório | ~5s |
-| 2️⃣ **Setup Node** | Instala Node.js 20 | ~10s |
-| 3️⃣ **Setup pnpm** | Instala pnpm 10 | ~5s |
-| 4️⃣ **Install** | Instala dependências | ~30s |
-| 5️⃣ **Build** | `pnpm build` (Vite) | ~20s |
-| 6️⃣ **Deploy** | Upload para gh-pages | ~10s |
-
-**⏱️ Tempo total:** ~1-2 minutos
+| Etapa | Ação |
+|-------|------|
+| 1️⃣ **Checkout** | Clone do repositório |
+| 2️⃣ **Setup pnpm + Node 20** | Toolchain com cache |
+| 3️⃣ **Install** | `pnpm install --frozen-lockfile` |
+| 4️⃣ **Build** | `pnpm build` (Vite) com `VITE_CHAT_WS_URL` / `VITE_CHAT_ENABLED` |
+| 5️⃣ **Upload + Deploy** | `actions/upload-pages-artifact` → `actions/deploy-pages` |
 
 ### 🔗 URLs
 
-- **Production:** https://arthr.github.io/term-ooo/
+- **Production:** https://termo.enresshou.dev/
 - **Actions Dashboard:** https://github.com/arthr/term-ooo/actions
 - **Workflow File:** [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)
 
 ### ⚙️ Configuração do Vite
 
-O `vite.config.ts` detecta automaticamente o ambiente:
-
-```typescript
-base: command === 'build' ? '/term-ooo/' : '/'
-```
-
-- **Desenvolvimento local:** `base: '/'` (porta 5175)
-- **GitHub Pages:** `base: '/term-ooo/'` (subpath no domínio)
+`vite.config.ts` usa `base: '/'` (domínio customizado na raiz) e serve o dev na porta **5175**.
 
 ---
 
@@ -320,30 +364,28 @@ base: command === 'build' ? '/term-ooo/' : '/'
 - **Vite 5** - Build tool ultrarrápido
 - **React 18** - UI framework
 - **TypeScript 5** - Type safety e IntelliSense
-- **React Router 6** - Navegação SPA
+- **React Router 6** - Navegação SPA (rotas de modo, treino e salas)
 
 ### UI/Styling
-- **Tailwind CSS 3** - Utility-first CSS
+- **Tailwind CSS 3** - Utility-first CSS (paleta `night`/`eucalyptus`/`pistachio`)
 - **shadcn/ui** - Componentes acessíveis (Radix UI)
-- **Framer Motion** - Animações fluidas e interativas
+- **Framer Motion / Motion** - Animações fluidas e interativas
 - **Lucide React** - Ícones SVG modernos
-- **class-variance-authority** - Variantes de componentes
-- **tailwind-merge** - Merge de classes CSS
+- **class-variance-authority** + **tailwind-merge** + **clsx** - Composição de classes
 - **Animate UI** - Componentes animados (StarsBackground)
 
-### Real-time & Audio
-- **Socket.IO Client** - WebSocket para chat em tempo real
+### Real-time, Áudio & Imagem
+- **WebSocket nativo** no cliente, **Cloudflare Workers + Durable Objects** no backend (`ws-cloudflare/`)
 - **HTMLAudioElement API** - Sistema de efeitos sonoros
-
-### Ferramentas Dev
-- **ESLint 9** - Linting (flat config)
-- **TypeScript ESLint** - Rules para TS
-- **PostCSS** - Processamento CSS
+- **html-to-image** - Geração de imagem PNG para compartilhamento
 
 ### Libs Auxiliares
 - **react-countdown** - Countdown visual
 - **react-day-picker** - Calendário do ArchiveDialog
-- **clsx** - Utilitário de classes condicionais
+
+### Ferramentas Dev
+- **ESLint 9** (flat config) + **TypeScript ESLint**
+- **PostCSS** - Processamento CSS
 
 ---
 
@@ -351,108 +393,74 @@ base: command === 'build' ? '/term-ooo/' : '/'
 
 ```
 term-ooo/
-├── public/                      # Assets estáticos
-│   └── assets/
-│       ├── mp3/
-│       └── sounds/             # 🆕 Efeitos sonoros e memes
-├── database/                    # Arquivos de referência
-│   └── term.ooo.js             # Código original (para estudo)
-├── .github/
-│   └── workflows/
-│       └── deploy.yml          # GitHub Actions CI/CD
+├── public/                       # Assets estáticos (sons, og-image, etc.)
+├── database/                     # Código original (referência/estudo)
+├── .github/workflows/deploy.yml  # GitHub Actions CI/CD
 ├── src/
-│   ├── components/             # Componentes React
-│   │   ├── Chat/              # 🆕 Sistema de chat (6 componentes)
+│   ├── components/
+│   │   ├── Chat/                 # Chat das salas
 │   │   │   ├── ChatButton.tsx
-│   │   │   ├── ChatPanel.tsx
 │   │   │   ├── ChatMessageList.tsx
 │   │   │   ├── ChatMessageItem.tsx
 │   │   │   ├── ChatMessageInput.tsx
 │   │   │   └── ChatNicknameForm.tsx
-│   │   ├── animate-ui/        # 🆕 Componentes animados
-│   │   │   └── components/
-│   │   │       └── backgrounds/
-│   │   │           └── stars.tsx
-│   │   ├── ui/                # shadcn/ui base components
-│   │   │   ├── button.tsx
-│   │   │   ├── calendar.tsx
-│   │   │   ├── dialog.tsx
-│   │   │   ├── scroll-area.tsx
-│   │   │   ├── sheet.tsx      # 🆕 Drawer mobile
-│   │   │   ├── switch.tsx
-│   │   │   ├── tabs.tsx
-│   │   │   ├── textarea.tsx
-│   │   │   ├── responsive-dialog.tsx # 🆕 Dialog responsivo
-│   │   │   ├── responsive-scroll-area.tsx
-│   │   │   ├── message-input.tsx
-│   │   │   ├── glowing-effect.tsx
-│   │   │   └── shadcn-io/     # 🆕 IconButton com partículas
-│   │   │       └── icon-button/
+│   │   ├── Room/                 # 🆕 Salas multiplayer
+│   │   │   ├── RoomLobby.tsx
+│   │   │   ├── RoomScreen.tsx
+│   │   │   ├── RoomHeader.tsx
+│   │   │   ├── RoomSidebar.tsx
+│   │   │   ├── RoomInfoPanel.tsx     # lista de membros / ranking
+│   │   │   ├── RoomChatPanel.tsx
+│   │   │   ├── RoundEndControls.tsx  # fim de rodada (coop)
+│   │   │   ├── CompetitionPanel.tsx  # 🆕 fluxo da competição
+│   │   │   ├── TimeTrialPanel.tsx    # 🆕 fluxo do Time Trial (tempo + pontos)
+│   │   │   └── RoomTimer.tsx         # 🆕 cronômetro sincronizado da sala
+│   │   ├── new/                  # Board/Tile atuais (estilo Figma)
+│   │   │   ├── GameBoard.tsx
+│   │   │   └── Tile.tsx
+│   │   ├── animate-ui/           # Componentes animados (stars)
+│   │   ├── ui/                   # shadcn/ui + responsive-dialog, dropdown, etc.
 │   │   ├── AboutDialog.tsx
 │   │   ├── ArchiveDialog.tsx
 │   │   ├── DevModeDialog.tsx
-│   │   ├── DialogShell.tsx    # 🆕 Base reutilizável de dialogs
-│   │   ├── GameBoard.tsx
+│   │   ├── DialogShell.tsx
 │   │   ├── GameLayout.tsx
+│   │   ├── GameTimer.tsx         # 🆕 cronômetro de resolução (single + salas)
 │   │   ├── Header.tsx
 │   │   ├── HelpDialog.tsx
 │   │   ├── Keyboard.tsx
 │   │   ├── SettingsDialog.tsx
+│   │   ├── ShareCard.tsx         # card -> imagem PNG
+│   │   ├── ShareDropdown.tsx     # menu de compartilhamento
 │   │   ├── StatsDialog.tsx
-│   │   ├── Tile.tsx
-│   │   └── TopTabs.tsx
-│   ├── hooks/                 # 🆕 15 hooks customizados
-│   │   ├── useChatWebSocket.ts
-│   │   ├── useChatAuth.ts
-│   │   ├── useChatConnection.ts
-│   │   ├── useChatMessages.ts
-│   │   ├── useDialogManager.ts
-│   │   ├── useDialogAnimations.ts
-│   │   ├── useBodyScrollLock.ts
-│   │   ├── useEscapeKey.ts
-│   │   ├── useMediaQuery.ts
-│   │   ├── useTemporaryState.ts
-│   │   ├── useGameMode.ts
-│   │   ├── useGameAnimations.ts
-│   │   ├── useKeyboardInput.ts
-│   │   ├── usePersistentGameState.ts
-│   │   └── useStatsTracker.ts
-│   ├── game/                  # Lógica do jogo
-│   │   ├── engine.ts          # Motor do jogo (avaliação, validação)
-│   │   ├── storage.ts         # Interface com localStorage
-│   │   ├── types.ts           # TypeScript interfaces e types
-│   │   ├── chat-types.ts      # 🆕 Tipos do chat
-│   │   ├── words-termo.ts     # Dicionário Termo (1 palavra)
-│   │   ├── words-dueto.ts     # Dicionário Dueto (2 palavras)
-│   │   └── words-quarteto.ts  # Dicionário Quarteto (4 palavras)
-│   ├── lib/                   # Utilitários gerais
-│   │   ├── sounds/            # 🆕 Sistema de áudio
-│   │   │   ├── types.ts       # Tipos de eventos de som
-│   │   │   ├── config.ts      # Mapeamento eventos → arquivos
-│   │   │   └── useSoundEffects.ts # Hook principal
-│   │   ├── chat-config.ts     # 🆕 Configuração do chat
-│   │   ├── chat-utils.ts      # 🆕 Utilitários do chat
-│   │   ├── dates.ts           # Módulo central de datas
-│   │   ├── utils.ts           # Funções auxiliares (cn, normalize)
-│   │   ├── version.ts         # 🆕 Controle de versão
-│   │   └── z-index.ts         # 🆕 Gerenciamento de z-index
-│   ├── App.tsx                # Componente principal (state manager)
-│   ├── main.tsx               # Entry point da aplicação
-│   ├── index.css              # Estilos globais + animações
-│   └── vite-env.d.ts          # Types do Vite
-├── CHANGELOG.md               # 🆕 Histórico de mudanças
-├── eslint.config.js           # ESLint 9 (flat config)
-├── tailwind.config.cjs        # Configuração Tailwind
-├── postcss.config.cjs         # Configuração PostCSS
-├── tsconfig.json              # Configuração TypeScript (app)
-├── tsconfig.node.json         # Configuração TypeScript (build)
-├── vite.config.ts             # Configuração Vite (base path condicional)
-├── components.json            # Configuração shadcn/ui
-├── pnpm-workspace.yaml        # Workspace do pnpm
-├── package.json               # Dependências e scripts
-├── PROMPT.md                  # Especificação original do projeto
-├── ROADMAP_FEATURES.md        # Features futuras planejadas
-└── README.md                  # Este arquivo
+│   │   ├── TopTabs.tsx           # abas Termo/Dueto/Quarteto/Treino
+│   │   └── TrainingResultDialog.tsx  # 🆕 resultado do Treino
+│   ├── hooks/                    # Hooks customizados (ver seção acima)
+│   ├── game/
+│   │   ├── engine.ts             # Motor (avaliação, validação, palavra aleatória)
+│   │   ├── mode-config.ts        # Config por modo (tentativas, boards, dicionários)
+│   │   ├── storage.ts            # Interface com localStorage
+│   │   ├── types.ts              # Tipos do jogo
+│   │   ├── room-types.ts         # 🆕 Protocolo das salas (coop + competição)
+│   │   ├── chat-types.ts         # Tipos do chat
+│   │   ├── share-utils.ts        # Render do grid de compartilhamento
+│   │   └── words-{termo,dueto,quarteto}.ts  # Dicionários
+│   ├── lib/
+│   │   ├── sounds/               # Sistema de áudio
+│   │   ├── chat-config.ts / chat-utils.ts
+│   │   ├── room-config.ts        # 🆕 Config das salas (URL WS, limites)
+│   │   ├── share-config.ts       # Branding/cores da imagem de share
+│   │   ├── dates.ts              # Módulo central de datas
+│   │   ├── utils.ts / z-index.ts / version.ts
+│   ├── App.tsx                   # Rotas + state manager do jogo
+│   ├── main.tsx                  # Entry point
+│   └── index.css                 # Estilos globais + animações
+├── ws-cloudflare/                # 🆕 Backend WebSocket (Cloudflare Workers + DO)
+├── changelog.md
+├── ROADMAP_FEATURES.md
+├── vite.config.ts / tailwind.config.cjs / eslint.config.js
+├── package.json
+└── README.md                     # Este arquivo
 ```
 
 ---
@@ -460,87 +468,59 @@ term-ooo/
 ## 🎯 Mecânicas Implementadas
 
 ### Avaliação de Palavras (2-Pass Algorithm)
-```typescript
-// Pass 1: Marca corretas (verdes)
-// Pass 2: Marca presentes (amarelas) considerando frequência
-// Restantes: Marca ausentes (cinzas)
+```
+Pass 1: Marca corretas (verdes)
+Pass 2: Marca presentes (amarelas) considerando frequência
+Restantes: Marca ausentes (cinzas)
 ```
 
 ### Palavra do Dia
 - Algoritmo determinístico baseado em dias desde 01/01/2022
-- Índice da palavra = `dayNumber % totalWords`
-- Garante mesma palavra para todos os jogadores
+- Índice da palavra = `dayNumber % totalWords` — mesma palavra para todos
+- **Treino** usa um índice aleatório; **Arquivo** usa o `dayNumber` de uma data passada
 
 ### Hard Mode
 - Letra correta (verde) deve ser usada na mesma posição
 - Letra presente (amarela) deve ser usada em alguma posição
-- Validação antes de aceitar próximo palpite
 
 ### Cursor Inteligente
-- Edição não-linear: substitui letra ao invés de inserir
-- Navegação livre entre posições
-- Space pula para próxima vazia
-- Cursor visual com borda inferior
-
----
-
-## 🎨 Sistema de Animações
-
-### Animações de Tiles (CSS extraídas do original)
-
-| Animação | Trigger | Duração | Efeito |
-|----------|---------|---------|--------|
-| **Shake** | Palavra inválida | 500ms | translateX horizontal |
-| **Flip** | Revelar tiles | 450ms | rotateY 3D (0° → 90° → -90° → 0°) |
-| **Ontype** | Digitar letra | 150ms | translateZ 3D (pop frontal) |
-| **Happy Jump** | Acertar palavra | 600ms | translateY (pulo com curva suave) |
-
-### Animações de UI (Framer Motion)
-
-| Elemento | Animação | Efeito |
-|----------|----------|--------|
-| **Dialogs** | Stagger children | Elementos aparecem sequencialmente |
-| **TopTabs** | Height + Opacity | Desliza para baixo/cima suavemente |
-| **ChevronDown** | Rotate 180° | Gira ao abrir/fechar TopTabs |
-| **Redes Sociais** | Scale + Rotate | Hover com bounce e rotação |
-| **Ícones** | Spring physics | Entrada com física realista |
-| **Chat Button** | Particles + Glow | Partículas e brilho em novas mensagens |
+- Edição não-linear, navegação livre, Space pula para a próxima vazia
 
 ---
 
 ## 📦 Versionamento
 
-Este projeto segue o [Semantic Versioning](https://semver.org/lang/pt-BR/) (SemVer):
+Este projeto segue o [Semantic Versioning](https://semver.org/lang/pt-BR/) (SemVer).
 
-**Formato:** `MAJOR.MINOR.PATCH` (ex: `0.4.1`)
+### Versão Atual: **v0.5.1**
 
-- **MAJOR**: Mudanças incompatíveis na API
-- **MINOR**: Novas funcionalidades (compatíveis)
-- **PATCH**: Correções de bugs
-
-### Versão Atual: **v0.4.1**
+**Destaques desde a v0.4.x:**
+- 🎮 Modo Treino (jogo ilimitado com palavras aleatórias)
+- 🏆 Salas multiplayer: modo Cooperativo e modo Competição (com ranking)
+- 🖼️ Compartilhamento como imagem (PNG) além do texto
+- 📅 Arquivo de dias anteriores + layout mobile aprimorado
+- 🌐 Rebranding para `termo.enresshou.dev`
 
 **Histórico de Releases:**
-- **v0.4.1** (2024-12-02) - Som de inatividade + Fix settings
+- **v0.5.x** - Treino, salas multiplayer (coop + competição), share como imagem
+- **v0.4.1** (2024-12-02) - Som de inatividade + fix settings
 - **v0.4.0** (2024-12-02) - Sistema de efeitos sonoros
-- **v0.3.0** (2024-12-01) - Dialogs responsivos + Versionamento
 - **v0.2.0** (2024-11-30) - Chat WebSocket + Arquivo
 - **v0.1.0** (2024-11-15) - Implementação inicial
 
-**Documentação completa:** [CHANGELOG.md](CHANGELOG.md)
-
-**Badge de versão:** Visível no canto inferior da aplicação
+**Documentação:** [changelog.md](changelog.md) · **Badge de versão:** visível no canto inferior da aplicação
 
 ---
 
 ## 🗺️ Features Futuras
 
-Veja o [ROADMAP_FEATURES.md](ROADMAP_FEATURES.md) para lista completa de features planejadas.
+Veja o [ROADMAP_FEATURES.md](ROADMAP_FEATURES.md) para a lista completa.
 
-**Próximas implementações:**
-1. 🎮 Modo Treino (jogo ilimitado)
-2. 🖼️ Compartilhamento como imagem
-3. 📊 Estatísticas avançadas com gráficos
+**Próximas ideias:**
+1. 📊 Estatísticas avançadas com gráficos
+2. 🌈 Temas customizáveis
+3. 🎯 Modo de 6 letras
+4. 🏅 Sistema de conquistas
 
 ---
 
@@ -596,9 +576,11 @@ _Quando o sol nasceu, lá estava: um clone funcional com **98% de fidelidade ao 
 
 Após o lançamento inicial, o projeto continuou evoluindo:
 - 💬 **Chat em tempo real** para jogar com amigos
+- 🏆 **Salas multiplayer** com modo **Competição** e ranking ao vivo
+- 🎮 **Modo Treino** ilimitado para praticar sem esperar o dia seguinte
+- 🖼️ **Compartilhamento como imagem** para as redes sociais
 - 🎵 **Sistema de memes sonoros** para momentos épicos
 - 📱 **Interface 100% responsiva** para mobile
-- 🏷️ **Versionamento profissional** com SemVer
 
 ### 🐐 Agradecimentos Especiais
 
@@ -614,8 +596,6 @@ _Red Bull realmente te dá asas... asas para:_
 - 🎨 Replicar animações 3D complexas
 - 🐐 Homenagear o bodão do Termo (Orochinho)
 - 🚀 E criar um clone completo enquanto assiste live
-- 💬 Adicionar chat multiplayer porque dá pra jogar com os amigos
-- 🎵 Colocar memes sonoros porque diversão é importante
 
 **Béééééé! 🐐**
 

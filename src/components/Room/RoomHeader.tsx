@@ -1,8 +1,9 @@
 // src/components/Room/RoomHeader.tsx
 // Cabeçalho enxuto da tela de sala.
 
-import { ArrowLeft, Users, Wifi, WifiOff } from 'lucide-react'
+import { ArrowLeft, Users, Wifi, WifiOff, Trophy, Timer } from 'lucide-react'
 import { GameMode } from '@/game/types'
+import { RoomGameType } from '@/game/room-types'
 import { Button } from '@/components/ui/button'
 import { formatLatency, getLatencyColor } from '@/lib/chat-utils'
 
@@ -19,6 +20,7 @@ interface RoomHeaderProps {
   connected: boolean
   latency: number | null
   isHost: boolean
+  gameType: RoomGameType
   onLeave: () => void
 }
 
@@ -29,6 +31,7 @@ export function RoomHeader({
   connected,
   latency,
   isHost,
+  gameType,
   onLeave,
 }: RoomHeaderProps) {
   return (
@@ -51,6 +54,16 @@ export function RoomHeader({
           <span className="text-[10px] sm:text-xs bg-night-700 text-foreground px-2 py-0.5 rounded-full flex-shrink-0">
             {MODE_LABEL[mode]}
           </span>
+          {gameType === 'competition' && (
+            <span className="text-[10px] sm:text-xs bg-eucalyptus text-[#eafbe0] px-2 py-0.5 rounded-full flex-shrink-0 flex items-center gap-1">
+              <Trophy className="w-3 h-3" /> Competição
+            </span>
+          )}
+          {gameType === 'timetrial' && (
+            <span className="text-[10px] sm:text-xs bg-eucalyptus text-[#eafbe0] px-2 py-0.5 rounded-full flex-shrink-0 flex items-center gap-1">
+              <Timer className="w-3 h-3" /> Time Trial
+            </span>
+          )}
           {isHost && (
             <span className="text-[10px] sm:text-xs bg-amber-600 text-white px-2 py-0.5 rounded-full flex-shrink-0">
               anfitrião

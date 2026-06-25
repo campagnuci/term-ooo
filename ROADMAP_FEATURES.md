@@ -7,7 +7,7 @@ Features bônus sugeridas para expansão do Term.ooo Clone.
 ## 🎯 Prioridade Alta
 
 ### 1. 🎮 Modo Treino/Prática
-**Status:** 📋 Planejado
+**Status:** ✅ Concluído (Jun 2026)
 
 **Descrição:**
 - Modo de jogo **ilimitado** sem vinculação ao dia
@@ -22,10 +22,22 @@ Features bônus sugeridas para expansão do Term.ooo Clone.
 
 **Complexidade:** ⭐⭐ Média
 
-**Arquivos a modificar:**
-- `src/App.tsx` - Adicionar rota `/treino`
-- `src/game/engine.ts` - Função para palavra aleatória
-- `src/components/TopTabs.tsx` - Nova tab "Treino"
+**Implementação final:**
+- Variante single player do Termo (1 tabuleiro, 5 letras, 6 tentativas)
+- ✅ `src/App.tsx` - Rota `/treino`, sessão de treino, botão "Jogar de novo" e wiring dos dialogs
+- ✅ `src/game/engine.ts` - `getRandomDayNumber()` para sortear palavra aleatória
+- ✅ `src/hooks/useGameMode.ts` - Detecta a rota `/treino` (flag `isTraining`, ignora `?dia`)
+- ✅ `src/hooks/usePersistentGameState.ts` - Estado em `treino` (localStorage), retoma partida em andamento e `startNewTrainingGame()`
+- ✅ `src/hooks/useStatsTracker.ts` - Treino NÃO conta para estatísticas/streak diárias
+- ✅ `src/components/TopTabs.tsx` - Nova aba "🎮 Treino"
+- ✅ `src/components/Header.tsx` - Badge "🎮 Modo Treino" + botão Home para sair
+- ✅ `src/components/TrainingResultDialog.tsx` - Resultado com palavra, estatísticas da sessão (não persistidas) e "Jogar de novo"
+
+**Detalhes:**
+- Palavra sorteada do dicionário a cada partida, sem vínculo com o dia
+- "Jogar de novo" disponível no dialog de resultado E como botão flutuante na tela principal
+- Estatísticas de sessão (jogos, % vitórias, sequência, melhor) em memória — resetam ao recarregar
+- Refresh durante uma partida em andamento retoma o jogo; após concluir, sorteia nova palavra
 
 ---
 
@@ -110,6 +122,52 @@ Features bônus sugeridas para expansão do Term.ooo Clone.
 
 ---
 
+### ⏱️ Cronômetro de Resolução & Tempo Médio
+**Status:** ✅ Concluído (Jun 2026)
+
+**Descrição:**
+- Cronômetro **discreto em tempo real** durante a partida, em todos os modos single player (Termo, Dueto, Quarteto, Treino) — começa na primeira letra digitada e congela ao terminar
+- **Tempo médio por solução** na tabela de Estatísticas (média do tempo das vitórias cronometradas) e tempo da partida no diálogo de resultado
+- Nas **salas multiplayer**, cronômetro **compartilhado e sincronizado** entre os jogadores e **tempo de resolução por jogador** no ranking/pódio da Competição
+
+**Benefícios:**
+- Métrica de velocidade/progresso muito pedida pela comunidade
+- Competição mais rica (comparação de tempos entre jogadores)
+
+**Complexidade:** ⭐⭐⭐ Média-Alta (sincronização em tempo real no multiplayer)
+
+**Implementação final:**
+- ✅ `src/game/types.ts` — `startTime`/`endTime` em `GameState`; `totalSolveTimeMs`/`solveCount` em `Stats`
+- ✅ `src/game/engine.ts` + `src/hooks/useStatsTracker.ts` — marca tempos e acumula a média (apenas vitórias)
+- ✅ `src/components/GameTimer.tsx` — cronômetro reutilizável (single player e salas)
+- ✅ `src/components/StatsDialog.tsx` / `TrainingResultDialog.tsx` — tempo médio + tempo da partida
+- ✅ `ws-cloudflare/game-room.js` — `roundStartedAt`/`roundEndedAt`, bloco `timer`, mensagem `round-timing` e `solveMs` por finalista (autoridade do servidor)
+- ✅ `src/hooks/useGameRoom.ts` — estado `roundTiming` ancorado no relógio local (sincronização sem broadcasts por segundo)
+- ✅ `src/components/Room/RoomTimer.tsx`, `CompetitionPanel.tsx`, `RoomInfoPanel.tsx` — exibição na sala
+
+---
+
+### ⏱️ Modo Time Trial (Multiplayer)
+**Status:** ✅ Concluído (Jun 2026)
+
+**Descrição:**
+- Terceiro tipo de sala **competitivo** (além de Cooperativo e Competição), sem afetá-los
+- O anfitrião escolhe um **tempo fixo** (presets 1/2/3/5 min ou personalizado, 30s–15min) e o modo, e dá a largada
+- **Cronômetro regressivo compartilhado** para todos; **pontuação** premia rapidez e menos tentativas (`1000 + tempo restante até +1000 + 150 × tentativas não usadas`); não-solvers ficam com 0
+- **Fim:** tempo esgotado (alarm autoritativo do Durable Object) **ou** todos terminam; ranking/pódio por pontos
+
+**Complexidade:** ⭐⭐⭐⭐ Alta (estado competitivo + alarm + pontuação sincronizada)
+
+**Implementação final:**
+- ✅ `ws-cloudflare/game-room.js` — `gameType: 'timetrial'`, `timeLimitMs`, `setAlarm`/`alarm()` de término, `computePoints`, `isMatchOver` (ramo Time Trial), `points`/`limitMs` nas mensagens
+- ✅ `src/game/room-types.ts` — `timetrial`, `points`, `limitMs`, `timeLimitMs`
+- ✅ `src/hooks/useGameRoom.ts` — trata Time Trial como competitivo; `startMatch(mode, timeLimitMs)`; `limitMs` no cronômetro
+- ✅ `src/components/GameTimer.tsx` — modo contagem regressiva (`countdownFromMs`) com urgência
+- ✅ `src/components/Room/TimeTrialPanel.tsx` — seleção de tempo + modo, pódio por pontos
+- ✅ `src/components/Room/{RoomScreen,RoomInfoPanel,RoomLobby,RoomHeader,RoomTimer}.tsx`
+
+---
+
 ### 4. 🖼️ Compartilhamento Rico (Imagem)
 **Status:** 📋 Planejado
 
@@ -144,7 +202,7 @@ Features bônus sugeridas para expansão do Term.ooo Clone.
 **Descrição:**
 - Gráfico de linha com histórico de 30 dias
 - Calendário heatmap (dias jogados)
-- Tempo médio por partida
+- ✅ Tempo médio por partida (implementado — ver "Cronômetro de Resolução & Tempo Médio")
 - Melhor streak com visualização
 - Exportar dados em JSON
 
@@ -263,5 +321,5 @@ Contribuições são bem-vindas! Veja as issues para features específicas.
 
 ---
 
-**Última atualização:** Novembro 2025
+**Última atualização:** Junho 2026
 

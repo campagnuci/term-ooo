@@ -34,6 +34,8 @@ interface ShareImageOptions {
   title?: string
   /** Texto para compartilhamento */
   text?: string
+  /** Cor de fundo aplicada na captura (default: paleta "night" da marca). */
+  backgroundColor?: string
 }
 
 interface UseShareImageReturn {
@@ -72,6 +74,7 @@ export function useShareImage(): UseShareImageReturn {
         onError,
         title = 'Meu resultado no Termo',
         text = 'Veja como me saí no Termo!',
+        backgroundColor = '#061611',
       } = options
 
       // Validar ref
@@ -91,8 +94,8 @@ export function useShareImage(): UseShareImageReturn {
           cacheBust: true,
           pixelRatio: 2, // Melhor qualidade para telas retina
           style: {
-            // Garantir que o fundo seja renderizado
-            backgroundColor: '#0f172a',
+            // Garantir que o fundo seja renderizado (paleta da marca)
+            backgroundColor,
           },
         })
 

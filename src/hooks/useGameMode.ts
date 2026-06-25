@@ -11,16 +11,24 @@ interface UseGameModeOptions {
 interface UseGameModeResult {
   mode: GameMode
   customDayNumber: number | null
+  isTraining: boolean
 }
 
 export function useGameMode({ location, navigate }: UseGameModeOptions): UseGameModeResult {
   const [mode, setMode] = useState<GameMode>('termo')
   const [customDayNumber, setCustomDayNumber] = useState<number | null>(null)
+  const [isTraining, setIsTraining] = useState<boolean>(false)
 
   useEffect(() => {
     const path = location.pathname
     const searchParams = new URLSearchParams(location.search)
     const diaParam = searchParams.get('dia')
+
+    // Modo Treino: variante ilimitada de Termo (1 tabuleiro), sem vínculo com o dia
+    const training = path === '/treino'
+    if (training !== isTraining) {
+      setIsTraining(training)
+    }
 
     let newMode: GameMode = 'termo'
 
@@ -32,6 +40,14 @@ export function useGameMode({ location, navigate }: UseGameModeOptions): UseGame
 
     if (newMode !== mode) {
       setMode(newMode)
+    }
+
+    // No Treino as palavras são aleatórias; o parâmetro ?dia (arquivo) não se aplica
+    if (training) {
+      if (customDayNumber !== null) {
+        setCustomDayNumber(null)
+      }
+      return
     }
 
     if (diaParam) {
@@ -52,7 +68,7 @@ export function useGameMode({ location, navigate }: UseGameModeOptions): UseGame
     } else {
       setCustomDayNumber(null)
     }
-  }, [location.pathname, location.search, navigate, mode])
+  }, [location.pathname, location.search, navigate, mode, isTraining, customDayNumber])
 
-  return { mode, customDayNumber }
+  return { mode, customDayNumber, isTraining }
 }

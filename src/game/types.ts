@@ -32,6 +32,10 @@ export interface GameState {
   keyStates: Record<string, KeyState[]> // Array de estados, um por board
   dateKey: string
   dayNumber: number
+  /** Timestamp (ms) de quando o jogador começou a resolver (primeira letra digitada). */
+  startTime?: number | null
+  /** Timestamp (ms) de quando o jogo terminou (vitória ou derrota). */
+  endTime?: number | null
 }
 
 export interface Settings {
@@ -48,6 +52,10 @@ export interface Stats {
   currentStreak: number
   maxStreak: number
   guessDistribution: number[]
+  /** Soma da duração (ms) das partidas vencidas e cronometradas. */
+  totalSolveTimeMs: number
+  /** Quantidade de partidas que entraram na média de tempo. */
+  solveCount: number
   lastGame?: {
     won: boolean
     attempts: number
