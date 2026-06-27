@@ -168,6 +168,15 @@ export function RoomInfoPanel({
                     {formatDuration(result.solveMs)}
                   </span>
                 )}
+                {/* Tentativas usadas por quem acertou (ex.: "(3)" = resolveu em 3 tentativas). */}
+                {result?.solved && (
+                  <span
+                    className="flex-shrink-0 text-[11px] text-muted-foreground tabular-nums"
+                    title={`Resolveu em ${result.attempts} tentativa${result.attempts > 1 ? 's' : ''}`}
+                  >
+                    ({result.attempts})
+                  </span>
+                )}
                 {badge && (
                   <span className="flex-shrink-0 text-base leading-none" title="Posição na partida">
                     {badge}

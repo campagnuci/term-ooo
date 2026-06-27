@@ -328,7 +328,7 @@ export function RoomScreen() {
             >
               {/* Fundo escurecido (verde do tema, não preto) — cobre apenas <main> */}
               <div
-                className="absolute inset-0 bg-night/20"
+                className="absolute inset-0 bg-night/5"
                 aria-hidden="true"
               />
 
