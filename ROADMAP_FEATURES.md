@@ -296,13 +296,33 @@ Features bônus sugeridas para expansão do Term.ooo Clone.
 ---
 
 ### 10. 👥 Modo Multiplayer/Competitivo
-**Status:** 💭 Ideia
+**Status:** ✅ Concluído (Jun 2026)
 
 **Descrição:**
-- Competir com amigos na mesma palavra
-- Ranking por tempo
+- Salas multiplayer em tempo real (criar/entrar por código) com chat integrado
+- **Competir com amigos na mesma palavra** (modo Competição) — todos jogam a mesma seed
+- **Ranking por tempo** — pódio com posição (ouro/prata/bronze) e tempo de resolução por jogador
+- Três tipos de sala: **Cooperativo**, **Competição** e **Time Trial** (ver item correspondente)
 
-**Complexidade:** ⭐⭐⭐⭐⭐ Muito Alta (precisa backend)
+**Benefícios:**
+- Engajamento social e rejogabilidade
+- Competição direta entre amigos com ranking e tempos comparáveis
+
+**Implementação final:**
+- ✅ `src/App.tsx` — Rotas `/sala` (lobby) e `/sala/:code` (sala)
+- ✅ `src/game/room-types.ts` — Protocolo WebSocket: `RoomGameType` (`coop`/`competition`/`timetrial`), `CompetitorResult` (ranking, `solveRank`, `solveMs`), mensagens cliente↔servidor
+- ✅ `src/hooks/useGameRoom.ts` — Estado da sala, jogo, papel de host e migração; autoridade do servidor sobre membros/seed/roundId
+- ✅ `src/hooks/useChatConnection.ts` + `src/lib/chat-utils.ts` + `src/game/chat-types.ts` — Conexão genérica e identidade persistida
+- ✅ `src/lib/room-config.ts` — `ROOM_CONFIG` e `buildRoomUrl`
+- ✅ `src/components/Room/` — `RoomLobby`, `RoomScreen`, `RoomHeader`, `RoomInfoPanel`, `RoomSidebar`, `RoomChatPanel`, `CompetitionPanel`, `TimeTrialPanel`, `RoomTimer`, `RoundEndControls`
+- ✅ `ws-cloudflare/game-room.js` — Backend em Durable Object (Cloudflare): autoridade de sala, ranking competitivo, cronômetro sincronizado e `solveMs` por finalista
+
+**Detalhes:**
+- Modo Competição: mesma palavra para todos; vence quem resolver mais rápido (ranking por `solveMs`/`solveRank`)
+- Modo Cooperativo: anfitrião joga e os demais assistem/sugerem via chat
+- Cronômetro compartilhado e sincronizado entre jogadores (autoridade do servidor, sem broadcasts por segundo)
+- Migração de host automática quando o anfitrião sai
+- Inclui também o **Modo Time Trial** competitivo (ver seção dedicada acima)
 
 ---
 

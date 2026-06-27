@@ -3,13 +3,24 @@
 /**
  * Script para extrair palavras do código ofuscado do Term.ooo
  * e gerar arquivos TypeScript corretos para nosso clone
- * 
+ *
+ * Quando re-executar: sempre que `database/term.ooo.js` for atualizado.
+ * Como executar: `npm run extract` (ou `node extract-words.js`).
+ *
  * Extrai:
  * - Rf: Set de palavras válidas para palpites (~10.000)
  * - Yf: Mapa de acentuação (sem_acento -> com_acento)
  * - Pf: Array de palavras de solução (~2.500)
  * - WB: Índices para Dueto
  * - $B: Índices para Quarteto
+ *
+ * Gera (src/game/):
+ * - words-shared.ts : sharedAllowed + sharedAllowedSet (lista de palpites válidos,
+ *                     ÚNICA e compartilhada pelos três modos — antes era triplicada)
+ * - accent-map.ts   : accentMap (mapa global de acentuação do PT-BR)
+ * - words-termo.ts  : termoSolutions (apenas as soluções do modo)
+ * - words-dueto.ts  : duetoSolutions
+ * - words-quarteto.ts : quartetoSolutions
  */
 
 import fs from 'fs';
@@ -185,47 +196,80 @@ ${lines.join('\n')}
 }
 
 // ============================================================================
-// GERAR words-termo.ts
+// GERAR words-shared.ts (lista de palpites válidos — ÚNICA, compartilhada)
 // ============================================================================
-const termoContent = `// src/game/words-termo.ts
-// Palavras extraídas do Term.ooo original
+const sharedContent = `// src/game/words-shared.ts
+// Lista de palavras válidas como palpite, compartilhada por TODOS os modos.
 // Gerado automaticamente por extract-words.js
+//
+// Antes esta lista era duplicada em words-termo/dueto/quarteto.ts (idêntica nos
+// três). Agora vive aqui uma única vez. O Set evita a busca O(n) de Array.includes.
 
-${formatArrayTS('termoSolutions', pfWords, `Palavras que podem ser resposta no modo Termo - COM ACENTOS (${pfWords.length} palavras)`)}
+${formatArrayTS('sharedAllowed', rfFinal, `Palavras válidas como palpite - NORMALIZADAS/sem acentos (${rfFinal.length} palavras = Rf + Pf)`)}
 
-${formatArrayTS('termoAllowed', rfFinal, `Palavras válidas como palpite - NORMALIZADAS/sem acentos (${rfFinal.length} palavras = Rf + Pf)`)}
+// Set para validação O(1) de palpites (em vez de Array.includes O(n)).
+export const sharedAllowedSet: Set<string> = new Set(sharedAllowed);
+`;
+
+fs.writeFileSync(path.join(OUTPUT_DIR, 'words-shared.ts'), sharedContent);
+console.log(`✅ words-shared.ts criado (${rfFinal.length} palavras válidas, compartilhadas)`);
+
+// ============================================================================
+// GERAR accent-map.ts (mapa global de acentuação do PT-BR)
+// ============================================================================
+const accentContent = `// src/game/accent-map.ts
+// Mapa global de acentuação do PT-BR (normalizada → com acento).
+// Gerado automaticamente por extract-words.js
+//
+// Estrutura do idioma, não específica de um modo — usada na validação de
+// palpites e na exibição da palavra com acento em todos os modos.
 
 ${formatObjectTS('accentMap', accentMap, `Mapa: palavra_normalizada → palavra_com_acento (${Object.keys(accentMap).length} mapeamentos)`)}
 `;
 
-fs.writeFileSync(path.join(OUTPUT_DIR, 'words-termo.ts'), termoContent);
-console.log(`✅ words-termo.ts criado (${pfWords.length} soluções, ${rfFinal.length} palavras válidas)`);
+fs.writeFileSync(path.join(OUTPUT_DIR, 'accent-map.ts'), accentContent);
+console.log(`✅ accent-map.ts criado (${Object.keys(accentMap).length} mapeamentos)`);
 
 // ============================================================================
-// GERAR words-dueto.ts
+// GERAR words-termo.ts (apenas soluções do modo)
+// ============================================================================
+const termoContent = `// src/game/words-termo.ts
+// Palavras extraídas do Term.ooo original
+// Gerado automaticamente por extract-words.js
+//
+// Palpites válidos: ver words-shared.ts. Acentuação: ver accent-map.ts.
+
+${formatArrayTS('termoSolutions', pfWords, `Palavras que podem ser resposta no modo Termo - COM ACENTOS (${pfWords.length} palavras)`)}
+`;
+
+fs.writeFileSync(path.join(OUTPUT_DIR, 'words-termo.ts'), termoContent);
+console.log(`✅ words-termo.ts criado (${pfWords.length} soluções)`);
+
+// ============================================================================
+// GERAR words-dueto.ts (apenas soluções do modo)
 // ============================================================================
 const duetoContent = `// src/game/words-dueto.ts
 // Palavras extraídas do Term.ooo original
 // Gerado automaticamente por extract-words.js
+//
+// Palpites válidos: ver words-shared.ts.
 
 ${formatArrayTS('duetoSolutions', duetoSolutions, `Palavras que podem ser resposta no modo Dueto - COM ACENTOS (${duetoSolutions.length} palavras)`)}
-
-${formatArrayTS('duetoAllowed', rfFinal, `Palavras válidas como palpite - NORMALIZADAS/sem acentos (${rfFinal.length} palavras = Rf + Pf)`)}
 `;
 
 fs.writeFileSync(path.join(OUTPUT_DIR, 'words-dueto.ts'), duetoContent);
 console.log(`✅ words-dueto.ts criado (${duetoSolutions.length} soluções)`);
 
 // ============================================================================
-// GERAR words-quarteto.ts
+// GERAR words-quarteto.ts (apenas soluções do modo)
 // ============================================================================
 const quartetoContent = `// src/game/words-quarteto.ts
 // Palavras extraídas do Term.ooo original
 // Gerado automaticamente por extract-words.js
+//
+// Palpites válidos: ver words-shared.ts.
 
 ${formatArrayTS('quartetoSolutions', quartetoSolutions, `Palavras que podem ser resposta no modo Quarteto - COM ACENTOS (${quartetoSolutions.length} palavras)`)}
-
-${formatArrayTS('quartetoAllowed', rfFinal, `Palavras válidas como palpite - NORMALIZADAS/sem acentos (${rfFinal.length} palavras = Rf + Pf)`)}
 `;
 
 fs.writeFileSync(path.join(OUTPUT_DIR, 'words-quarteto.ts'), quartetoContent);
@@ -244,6 +288,8 @@ console.log(`   • Soluções Quarteto ($B): ${quartetoSolutions.length.toLocal
 
 console.log('\n✨ Extração concluída com sucesso!\n');
 console.log('📁 Arquivos gerados:');
+console.log(`   • ${path.join(OUTPUT_DIR, 'words-shared.ts')}`);
+console.log(`   • ${path.join(OUTPUT_DIR, 'accent-map.ts')}`);
 console.log(`   • ${path.join(OUTPUT_DIR, 'words-termo.ts')}`);
 console.log(`   • ${path.join(OUTPUT_DIR, 'words-dueto.ts')}`);
 console.log(`   • ${path.join(OUTPUT_DIR, 'words-quarteto.ts')}`);

@@ -7,7 +7,7 @@ import {
   getDayNumberFromDate as getDayNumberFromDateDates
 } from '@/lib/dates'
 import { GameMode, GameState, Board, Guess, Tile, KeyState, Settings } from './types'
-import { accentMap } from './words-termo'
+import { accentMap } from './accent-map'
 import {
   getWordsForMode,
   getMaxAttempts,
@@ -64,12 +64,12 @@ export function getAccentedWord(normalized: string): string | undefined {
 }
 
 export function isValidWord(word: string, mode: GameMode): boolean {
-  const { allowed } = getWordsForMode(mode)
+  const { allowedSet } = getWordsForMode(mode)
   const normalized = normalizeString(word)
 
-  // Como 'allowed' já contém palavras NORMALIZADAS, fazemos comparação direta O(n)
-  // Isso segue exatamente a lógica original: !Rf.has(a) && void 0 === Yf[a]
-  const isInDictionary = allowed.includes(normalized)
+  // 'allowedSet' já contém palavras NORMALIZADAS → lookup O(1).
+  // Segue a lógica original: !Rf.has(a) && void 0 === Yf[a]
+  const isInDictionary = allowedSet.has(normalized)
 
   // Também aceita se tem mapeamento de acento (como o original faz - linha 19305)
   const hasAccentMapping = normalized in accentMap

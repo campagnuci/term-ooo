@@ -20,9 +20,10 @@
  */
 
 import { GameMode } from './types'
-import { termoSolutions, termoAllowed } from './words-termo'
-import { duetoSolutions, duetoAllowed } from './words-dueto'
-import { quartetoSolutions, quartetoAllowed } from './words-quarteto'
+import { termoSolutions } from './words-termo'
+import { duetoSolutions } from './words-dueto'
+import { quartetoSolutions } from './words-quarteto'
+import { sharedAllowed, sharedAllowedSet } from './words-shared'
 
 /**
  * Interface para configuração de tentativas mínimas por posição (medalhas)
@@ -50,8 +51,10 @@ export interface ModeConfig {
   displayName: string
   /** Lista de soluções do modo */
   solutions: string[]
-  /** Lista de palavras permitidas do modo */
+  /** Lista de palavras permitidas (compartilhada entre todos os modos) */
   allowed: string[]
+  /** Set das palavras permitidas, para validação O(1) (mesmo conteúdo de `allowed`) */
+  allowedSet: Set<string>
 }
 
 /**
@@ -67,7 +70,8 @@ export const MODE_CONFIG: Record<GameMode, ModeConfig> = {
     minAttempts: { first: 1, second: 2, third: 3 },
     displayName: 'Termo',
     solutions: termoSolutions,
-    allowed: termoAllowed,
+    allowed: sharedAllowed,
+    allowedSet: sharedAllowedSet,
   },
   dueto: {
     maxAttempts: 7,
@@ -75,7 +79,8 @@ export const MODE_CONFIG: Record<GameMode, ModeConfig> = {
     minAttempts: { first: 2, second: 3, third: 4 },
     displayName: 'Dueto',
     solutions: duetoSolutions,
-    allowed: duetoAllowed,
+    allowed: sharedAllowed,
+    allowedSet: sharedAllowedSet,
   },
   quarteto: {
     maxAttempts: 9,
@@ -83,7 +88,8 @@ export const MODE_CONFIG: Record<GameMode, ModeConfig> = {
     minAttempts: { first: 4, second: 5, third: 6 },
     displayName: 'Quarteto',
     solutions: quartetoSolutions,
-    allowed: quartetoAllowed,
+    allowed: sharedAllowed,
+    allowedSet: sharedAllowedSet,
   },
 } as const
 
@@ -139,15 +145,16 @@ export function getModeDisplayName(mode: GameMode): string {
 
 /**
  * Obtém as listas de palavras (soluções e permitidas) de um modo
- * 
+ *
  * @param mode - Modo de jogo
- * @returns Objeto com solutions e allowed
+ * @returns Objeto com solutions, allowed e allowedSet
  */
-export function getWordsForMode(mode: GameMode): { solutions: string[]; allowed: string[] } {
+export function getWordsForMode(mode: GameMode): { solutions: string[]; allowed: string[]; allowedSet: Set<string> } {
   const config = MODE_CONFIG[mode]
   return {
     solutions: config.solutions,
     allowed: config.allowed,
+    allowedSet: config.allowedSet,
   }
 }
 
