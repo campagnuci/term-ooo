@@ -1,11 +1,14 @@
 // src/components/Room/TimeTrialPanel.tsx
-// Painel inferior do modo Time Trial (competição contra o relógio).
-//  - idle:   anfitrião escolhe o tempo + o modo e inicia; demais aguardam.
-//  - active: enquanto joga não mostra nada; ao terminar, mostra seus pontos e aguarda.
-//  - ended:  revela a(s) palavra(s) + pódio por PONTOS; anfitrião pode iniciar nova partida.
+// Painel inferior do modo Time Trial (competição contra o relógio), agora com
+// partidas de N rodadas e pontuação ACUMULADA.
+//  - idle:   anfitrião escolhe tempo + rodadas + modo e inicia; demais aguardam.
+//  - active: enquanto joga não mostra nada; ao terminar a rodada, mostra seus
+//            pontos da rodada + a classificação acumulada e aguarda.
+//  - ended:  revela a(s) palavra(s) + pódio final por PONTOS acumulados; o
+//            anfitrião pode iniciar nova partida.
 //
 // Pontuação (servidor): só quem resolve pontua; mais tempo restante + menos
-// tentativas usadas ⇒ mais pontos. Aqui apenas exibimos os pontos do servidor.
+// tentativas usadas ⇒ mais pontos. Os pontos somam a cada rodada.
 
 import { useState } from 'react'
 import { Play, RefreshCw, Timer, Star } from 'lucide-react'
@@ -13,6 +16,8 @@ import { GameMode, GameState } from '@/game/types'
 import { CompetitorResult, MatchStatus, RoundTiming } from '@/game/room-types'
 import { formatDuration } from '@/lib/dates'
 import { Z_INDEX } from '@/lib/z-index'
+import { RoundsSelector, CumulativeStandings } from './MatchScore'
+import { DEFAULT_ROUNDS, MIN_ROUNDS, MAX_ROUNDS } from '@/game/standings'
 
 const MODES: { value: GameMode; label: string }[] = [
   { value: 'termo', label: 'Termo' },
@@ -35,23 +40,21 @@ const TIME_PRESETS: { ms: number; label: string }[] = [
   { ms: 300_000, label: '5 min' },
 ]
 
-function medal(index: number): string {
-  if (index === 0) return '🥇'
-  if (index === 1) return '🥈'
-  if (index === 2) return '🥉'
-  return ''
-}
-
 interface TimeTrialPanelProps {
   matchStatus: MatchStatus
   isHost: boolean
   gameState: GameState | null
+  /** Ranking ACUMULADO da partida. */
   standings: CompetitorResult[]
+  /** Resultado da rodada CORRENTE (para mostrar os pontos da rodada do jogador). */
+  roundFinishers: CompetitorResult[]
+  currentRound: number
+  totalRounds: number
   currentMode: GameMode
   memberCount: number
   currentUserId: string
   timing: RoundTiming
-  onStartMatch: (mode?: GameMode, timeLimitMs?: number) => void
+  onStartMatch: (mode?: GameMode, timeLimitMs?: number, rounds?: number) => void
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
@@ -65,24 +68,16 @@ function Shell({ children }: { children: React.ReactNode }) {
   )
 }
 
-/** Ordena por pontos (desc), desempate por tempo de resolução (asc). */
-function rankByPoints(standings: CompetitorResult[]): CompetitorResult[] {
-  return [...standings].sort((a, b) => {
-    const pa = a.points ?? -1
-    const pb = b.points ?? -1
-    if (pb !== pa) return pb - pa
-    const sa = a.solveMs ?? Number.POSITIVE_INFINITY
-    const sb = b.solveMs ?? Number.POSITIVE_INFINITY
-    return sa - sb
-  })
-}
-
 function HostStarter({
   currentMode,
   selectedMs,
   setSelectedMs,
   customStr,
   setCustomStr,
+  rounds,
+  setRounds,
+  roundsCustomStr,
+  setRoundsCustomStr,
   onStartMatch,
   label,
   icon,
@@ -93,7 +88,11 @@ function HostStarter({
   setSelectedMs: (ms: number) => void
   customStr: string
   setCustomStr: (s: string) => void
-  onStartMatch: (mode?: GameMode, timeLimitMs?: number) => void
+  rounds: number
+  setRounds: (n: number) => void
+  roundsCustomStr: string
+  setRoundsCustomStr: (s: string) => void
+  onStartMatch: (mode?: GameMode, timeLimitMs?: number, rounds?: number) => void
   label: string
   icon: React.ReactNode
   canStart: boolean
@@ -104,8 +103,17 @@ function HostStarter({
     if (Number.isFinite(sec)) {
       setSelectedMs(Math.min(TT_MAX_MS, Math.max(TT_MIN_MS, sec * 1000)))
     } else {
-      // Campo vazio/ inválido: volta ao padrão para não enviar um valor obsoleto.
       setSelectedMs(TT_DEFAULT_MS)
+    }
+  }
+
+  const handleRoundsCustom = (value: string) => {
+    setRoundsCustomStr(value)
+    const n = parseInt(value, 10)
+    if (Number.isFinite(n)) {
+      setRounds(Math.min(MAX_ROUNDS, Math.max(MIN_ROUNDS, n)))
+    } else {
+      setRounds(DEFAULT_ROUNDS)
     }
   }
 
@@ -149,9 +157,20 @@ function HostStarter({
           />
         </div>
         <div className="text-[11px] text-muted-foreground mt-1">
-          Personalizado em segundos (30–900). O relógio começa ao iniciar.
+          Personalizado em segundos (30–900). O relógio começa após a contagem.
         </div>
       </div>
+
+      {/* Rodadas */}
+      <RoundsSelector
+        rounds={rounds}
+        customStr={roundsCustomStr}
+        onPreset={(n) => {
+          setRounds(n)
+          setRoundsCustomStr('')
+        }}
+        onCustom={handleRoundsCustom}
+      />
 
       {/* Modo */}
       <div>
@@ -160,14 +179,14 @@ function HostStarter({
           {MODES.map((m) => (
             <button
               key={m.value}
-              onClick={() => onStartMatch(m.value, selectedMs)}
+              onClick={() => onStartMatch(m.value, selectedMs, rounds)}
               disabled={!canStart}
               className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                 m.value === currentMode
                   ? 'bg-night-700 text-foreground ring-2 ring-eucalyptus/60'
                   : 'bg-night-800 hover:bg-night-700 text-foreground'
               }`}
-              title={`Iniciar ${m.label} com ${formatDuration(selectedMs)}`}
+              title={`Iniciar ${m.label} • ${rounds} rodada(s) • ${formatDuration(selectedMs)}`}
             >
               {m.label}
             </button>
@@ -179,12 +198,12 @@ function HostStarter({
       </div>
 
       <button
-        onClick={() => onStartMatch(undefined, selectedMs)}
+        onClick={() => onStartMatch(undefined, selectedMs, rounds)}
         disabled={!canStart}
         className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-eucalyptus hover:bg-eucalyptus-light text-[#eafbe0] font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-eucalyptus"
       >
         {icon}
-        {label} ({formatDuration(selectedMs)})
+        {label} ({rounds}× • {formatDuration(selectedMs)})
       </button>
       {!canStart && (
         <div className="text-xs text-amber-300/90">
@@ -200,6 +219,9 @@ export function TimeTrialPanel({
   isHost,
   gameState,
   standings,
+  roundFinishers,
+  currentRound,
+  totalRounds,
   currentMode,
   memberCount,
   currentUserId,
@@ -208,7 +230,11 @@ export function TimeTrialPanel({
 }: TimeTrialPanelProps) {
   const [selectedMs, setSelectedMs] = useState<number>(TT_DEFAULT_MS)
   const [customStr, setCustomStr] = useState<string>('')
+  const [rounds, setRounds] = useState<number>(DEFAULT_ROUNDS)
+  const [roundsCustomStr, setRoundsCustomStr] = useState<string>('')
   const canStart = memberCount >= MIN_PLAYERS
+
+  const roundLabel = totalRounds > 1 ? `Rodada ${currentRound} de ${totalRounds}` : null
 
   // ----- idle: aguardando o anfitrião iniciar -----
   if (matchStatus === 'idle') {
@@ -224,6 +250,10 @@ export function TimeTrialPanel({
             setSelectedMs={setSelectedMs}
             customStr={customStr}
             setCustomStr={setCustomStr}
+            rounds={rounds}
+            setRounds={setRounds}
+            roundsCustomStr={roundsCustomStr}
+            setRoundsCustomStr={setRoundsCustomStr}
             onStartMatch={onStartMatch}
             label="Iniciar desafio"
             icon={<Play className="w-4 h-4" />}
@@ -238,30 +268,40 @@ export function TimeTrialPanel({
     )
   }
 
-  // ----- active: só aparece quando o jogador local já terminou -----
+  // ----- active: só aparece quando o jogador local já terminou a rodada -----
   if (matchStatus === 'active') {
     if (!gameState?.isGameOver) return null
-    const myResult = standings.find((s) => s.userId === currentUserId)
+    const myRound = roundFinishers.find((s) => s.userId === currentUserId)
     return (
       <Shell>
+        {roundLabel && <div className="text-xs text-muted-foreground">{roundLabel}</div>}
         <div className={`text-lg font-bold ${gameState.isWin ? 'text-green-400' : 'text-red-400'}`}>
           {gameState.isWin
             ? `🎉 Você resolveu em ${gameState.currentRow} tentativa${gameState.currentRow > 1 ? 's' : ''}!`
-            : '💀 Você não acertou desta vez'}
+            : '💀 Você não acertou esta rodada'}
         </div>
-        {gameState.isWin && myResult && (
+        {gameState.isWin && myRound && (
           <div className="flex items-center justify-center gap-3 text-sm">
-            {typeof myResult.points === 'number' && (
+            {typeof myRound.points === 'number' && (
               <span className="flex items-center gap-1 text-pistachio font-semibold tabular-nums">
-                <Star className="w-3.5 h-3.5" aria-hidden="true" /> {myResult.points} pts
+                <Star className="w-3.5 h-3.5" aria-hidden="true" /> +{myRound.points} pts
               </span>
             )}
-            {typeof myResult.solveMs === 'number' && (
+            {typeof myRound.solveMs === 'number' && (
               <span className="flex items-center gap-1 text-muted-foreground tabular-nums">
-                <Timer className="w-3.5 h-3.5" aria-hidden="true" /> {formatDuration(myResult.solveMs)}
+                <Timer className="w-3.5 h-3.5" aria-hidden="true" /> {formatDuration(myRound.solveMs)}
               </span>
             )}
           </div>
+        )}
+        {standings.length > 0 && (
+          <CumulativeStandings
+            standings={standings}
+            gameType="timetrial"
+            currentUserId={currentUserId}
+            limit={5}
+            title="Classificação (acumulada)"
+          />
         )}
         <div className="text-sm text-muted-foreground">
           O cronômetro segue correndo… aguardando os outros jogadores.
@@ -270,10 +310,9 @@ export function TimeTrialPanel({
     )
   }
 
-  // ----- ended: revela palavra(s) + pódio por pontos -----
+  // ----- ended: revela palavra(s) + pódio final por pontos acumulados -----
   const revealWords = gameState ? gameState.boards.map((b) => b.solution).filter(Boolean) : []
   const plural = revealWords.length > 1
-  const podium = rankByPoints(standings.filter((s) => s.solved)).slice(0, 3)
   const timedOut = timing.durationMs != null && timing.limitMs != null && timing.durationMs >= timing.limitMs
 
   return (
@@ -281,6 +320,9 @@ export function TimeTrialPanel({
       <div className="text-lg font-bold text-foreground">
         {timedOut ? '⏱️ Tempo esgotado!' : '🏁 Desafio encerrado!'}
       </div>
+      {totalRounds > 1 && (
+        <div className="text-xs text-muted-foreground">Partida de {totalRounds} rodadas</div>
+      )}
 
       {revealWords.length > 0 && (
         <div className="rounded-lg bg-night-900/60 px-3 py-2">
@@ -300,33 +342,15 @@ export function TimeTrialPanel({
         </div>
       )}
 
-      {podium.length > 0 ? (
-        <div className="space-y-1">
-          {podium.map((p, i) => (
-            <div
-              key={p.userId}
-              className="flex items-center justify-center gap-2 text-sm text-foreground"
-            >
-              <span>{medal(i)}</span>
-              <span className="font-medium truncate max-w-[35%]">{p.nickname}</span>
-              {typeof p.points === 'number' && (
-                <span className="flex items-center gap-1 text-pistachio font-semibold tabular-nums">
-                  <Star className="w-3 h-3" aria-hidden="true" /> {p.points}
-                </span>
-              )}
-              {typeof p.solveMs === 'number' && (
-                <span className="flex items-center gap-1 text-muted-foreground tabular-nums">
-                  <Timer className="w-3 h-3" aria-hidden="true" /> {formatDuration(p.solveMs)}
-                </span>
-              )}
-              <span className="text-muted-foreground">
-                {p.attempts} tent.
-              </span>
-            </div>
-          ))}
-        </div>
+      {standings.length > 0 ? (
+        <CumulativeStandings
+          standings={standings}
+          gameType="timetrial"
+          currentUserId={currentUserId}
+          title="Classificação final"
+        />
       ) : (
-        <div className="text-sm text-muted-foreground">Ninguém resolveu a tempo.</div>
+        <div className="text-sm text-muted-foreground">Ninguém pontuou.</div>
       )}
 
       {isHost ? (
@@ -336,6 +360,10 @@ export function TimeTrialPanel({
           setSelectedMs={setSelectedMs}
           customStr={customStr}
           setCustomStr={setCustomStr}
+          rounds={rounds}
+          setRounds={setRounds}
+          roundsCustomStr={roundsCustomStr}
+          setRoundsCustomStr={setRoundsCustomStr}
           onStartMatch={onStartMatch}
           label="Novo desafio"
           icon={<RefreshCw className="w-4 h-4" />}

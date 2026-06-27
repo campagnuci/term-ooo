@@ -166,6 +166,33 @@ Features bônus sugeridas para expansão do Term.ooo Clone.
 - ✅ `src/components/Room/TimeTrialPanel.tsx` — seleção de tempo + modo, pódio por pontos
 - ✅ `src/components/Room/{RoomScreen,RoomInfoPanel,RoomLobby,RoomHeader,RoomTimer}.tsx`
 
+> 🔁 Agora também **multi-rodada** com largada por contagem regressiva — ver a seção abaixo.
+
+---
+
+### 🔁 Partidas Multi-Rodada + Contagem Regressiva (Multiplayer)
+**Status:** ✅ Concluído (Jun 2026)
+
+**Descrição:**
+- Competição e Time Trial viram **partidas de N rodadas** (presets 3/5/10 ou 1–20), com **pontuação acumulada** — nº de rodadas escolhido pelo host na largada (modo e tempo do Time Trial ficam fixos na partida)
+- **Competição** vira uma **corrida de tempo**: soma o tempo de resolução de cada rodada, **menor total vence**; quem não resolve recebe `(tempo do solver mais lento da rodada) + 1 min`; rodada **anulada** (todos +0) se ninguém resolve
+- **Time Trial** soma os **pontos** entre rodadas (maior total vence; desempate pelo menor tempo total)
+- **Avanço automático** entre rodadas (o servidor pré-arma a próxima) e **contagem regressiva 5→1 "Vai!"** antes de cada rodada, mostrada a todos: animada (Framer Motion + onda de energia), com **bipes via Web Audio** e a classificação acumulada entre rodadas
+- **Largada autoritativa:** `roundStartedAt` ancorado no futuro (`agora + 5s`) — o relógio do Time Trial e a medição de tempo só contam após o "Vai!"; `competitor-finished` é rejeitado durante a contagem
+- Conjunto de competidores fixado na largada (quem entra depois assiste e joga na próxima; quem sai congela o placar)
+
+**Complexidade:** ⭐⭐⭐⭐ Alta (máquina de estados de rodadas no Durable Object + sincronização da largada)
+
+**Implementação final:**
+- ✅ `ws-cloudflare/game-room.js` — `room.competition` multi-rodada (`currentRound`/`totalRounds`/`cumulative`/`competitors`), helpers `scoreRound`, `endCurrentRound`, `isRoundOver`, `activeCompetitors`, `broadcastRoundOutcome`; `alarm()` agora encerra a **rodada**; largada via `roundStartedAt = now + COUNTDOWN_MS`
+- ✅ `src/game/room-types.ts` — mensagem `round-advanced`; campos `round`, `totalRounds`, `startsAt`, `competitorIds`, `roundFinishers`, `rounds`; totais acumulados em `CompetitorResult`
+- ✅ `src/game/standings.ts` — ordenação e medalhas do ranking acumulado
+- ✅ `src/hooks/useGameRoom.ts` — trata `round-advanced`, ancora largada/contagem (`countingDown`, `roundStartsAt`, `amCompetitor`) e acumula o placar
+- ✅ `src/components/Room/RoundCountdown.tsx` — contagem 5→1 "Vai!" (Framer Motion + Web Audio)
+- ✅ `src/components/Room/MatchScore.tsx` — seletor de rodadas + ranking acumulado
+- ✅ `src/components/Room/{CompetitionPanel,TimeTrialPanel,RoomInfoPanel,RoomScreen}.tsx` — seletor de rodadas, ranking acumulado, status da rodada (✅/💀/⏳), bloqueio de digitação durante a contagem
+- ✅ `src/components/GameTimer.tsx` — clamp para não exibir tempo negativo durante a contagem
+
 ---
 
 ### 4. 🖼️ Compartilhamento Rico (Imagem)
@@ -318,11 +345,11 @@ Features bônus sugeridas para expansão do Term.ooo Clone.
 - ✅ `ws-cloudflare/game-room.js` — Backend em Durable Object (Cloudflare): autoridade de sala, ranking competitivo, cronômetro sincronizado e `solveMs` por finalista
 
 **Detalhes:**
-- Modo Competição: mesma palavra para todos; vence quem resolver mais rápido (ranking por `solveMs`/`solveRank`)
+- Modo Competição: **multi-rodada** — mesma palavra por rodada; soma o tempo de resolução e vence o **menor tempo total** (ver "Partidas Multi-Rodada")
 - Modo Cooperativo: anfitrião joga e os demais assistem/sugerem via chat
 - Cronômetro compartilhado e sincronizado entre jogadores (autoridade do servidor, sem broadcasts por segundo)
 - Migração de host automática quando o anfitrião sai
-- Inclui também o **Modo Time Trial** competitivo (ver seção dedicada acima)
+- Inclui também o **Modo Time Trial** competitivo e **partidas multi-rodada com contagem regressiva "Vai!"** (ver seções dedicadas acima)
 
 ---
 

@@ -27,6 +27,7 @@ import { RoundEndControls } from './RoundEndControls'
 import { CompetitionPanel } from './CompetitionPanel'
 import { TimeTrialPanel } from './TimeTrialPanel'
 import { RoomTimer } from './RoomTimer'
+import { RoundCountdown } from './RoundCountdown'
 
 interface LocationState {
   intent?: JoinIntent
@@ -56,6 +57,9 @@ export function RoomScreen() {
   const [nickname, setNickname] = useState<string | null>(loadNickname())
   const [localError, setLocalError] = useState<string>('')
   const [joinError, setJoinError] = useState<string | null>(null)
+  // Início (epoch LOCAL) da contagem regressiva pré-rodada exibida; null = nenhuma.
+  const [countdownAt, setCountdownAt] = useState<number | null>(null)
+  const handleCountdownComplete = useCallback(() => setCountdownAt(null), [])
 
   const {
     cursorPosition,
@@ -83,10 +87,15 @@ export function RoomScreen() {
   const isCompetitive = isCompetition || isTimeTrial
 
   // Quem pode digitar/submeter neste instante.
-  // Coop: apenas o host. Competitivo: qualquer jogador enquanto a partida está
-  // ativa e seu próprio jogo não terminou.
+  // Coop: apenas o host. Competitivo: jogador que é competidor da partida (não um
+  // espectador que entrou depois), enquanto a partida está ativa, a contagem
+  // regressiva acabou e seu próprio jogo não terminou.
   const playableNow = isCompetitive
-    ? matchStatus === 'active' && !!gameState && !gameState.isGameOver
+    ? matchStatus === 'active' &&
+      !!gameState &&
+      !gameState.isGameOver &&
+      !gameRoom.countingDown &&
+      gameRoom.amCompetitor
     : isHost
 
   // O painel de resultado/fim aparece como overlay (não no fluxo), então o
@@ -185,6 +194,14 @@ export function RoomScreen() {
     animActions.setCursorPosition(0)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roundId])
+
+  // Dispara a contagem regressiva quando o servidor anuncia um início FUTURO
+  // (match-start / round-advanced). Reconexão no meio da rodada (startsAt no
+  // passado) não dispara contagem.
+  useEffect(() => {
+    const sa = gameRoom.roundStartsAt
+    if (sa != null && sa > Date.now() + 150) setCountdownAt(sa)
+  }, [gameRoom.roundStartsAt])
 
   // Espectador (somente coop): anima o flip da linha recém-revelada do host.
   const prevRowRef = useRef(0)
@@ -340,10 +357,15 @@ export function RoomScreen() {
                     isHost={isHost}
                     gameState={gameState}
                     standings={gameRoom.standings}
+                    roundFinishers={gameRoom.roundFinishers}
+                    currentRound={gameRoom.currentRound}
+                    totalRounds={gameRoom.totalRounds}
                     currentMode={room.mode}
                     memberCount={room.memberCount}
                     currentUserId={gameRoom.userId}
-                    onStartMatch={(mode) => gameRoom.startMatch(mode)}
+                    onStartMatch={(mode, timeLimitMs, rounds) =>
+                      gameRoom.startMatch(mode, timeLimitMs, rounds)
+                    }
                   />
                 )}
 
@@ -353,11 +375,16 @@ export function RoomScreen() {
                     isHost={isHost}
                     gameState={gameState}
                     standings={gameRoom.standings}
+                    roundFinishers={gameRoom.roundFinishers}
+                    currentRound={gameRoom.currentRound}
+                    totalRounds={gameRoom.totalRounds}
                     currentMode={room.mode}
                     memberCount={room.memberCount}
                     currentUserId={gameRoom.userId}
                     timing={gameRoom.roundTiming}
-                    onStartMatch={(mode, timeLimitMs) => gameRoom.startMatch(mode, timeLimitMs)}
+                    onStartMatch={(mode, timeLimitMs, rounds) =>
+                      gameRoom.startMatch(mode, timeLimitMs, rounds)
+                    }
                   />
                 )}
 
@@ -380,12 +407,34 @@ export function RoomScreen() {
             </div>
           )}
 
+          {/* ----- Contagem regressiva pré-rodada (overlay escopado a <main>) ----- */}
+          {countdownAt != null && (
+            <RoundCountdown
+              key={countdownAt}
+              startsAt={countdownAt}
+              round={gameRoom.currentRound}
+              totalRounds={gameRoom.totalRounds}
+              standings={gameRoom.standings}
+              gameType={gameType}
+              currentUserId={gameRoom.userId}
+              soundEnabled={settings.soundEnabled}
+              onComplete={handleCountdownComplete}
+            />
+          )}
+
           {/* ----- Cooperativo: indicador de espectador ----- */}
           {!isCompetitive && !isHost && !gameState?.isGameOver && (
             <div className="w-full text-center py-1 text-sm text-muted-foreground italic">
               {gameRoom.hostNickname
                 ? `${gameRoom.hostNickname} está jogando — você está assistindo`
                 : 'Você está assistindo'}
+            </div>
+          )}
+
+          {/* ----- Competitivo: entrou no meio da partida → assiste ----- */}
+          {isCompetitive && matchStatus === 'active' && !gameRoom.amCompetitor && (
+            <div className="w-full text-center py-1 text-sm text-muted-foreground italic">
+              Partida em andamento — você entra na próxima. Você está assistindo.
             </div>
           )}
 
@@ -419,6 +468,9 @@ export function RoomScreen() {
           gameType={gameType}
           matchStatus={matchStatus}
           standings={gameRoom.standings}
+          roundFinishers={gameRoom.roundFinishers}
+          currentRound={gameRoom.currentRound}
+          totalRounds={gameRoom.totalRounds}
         />
       </div>
     </div>

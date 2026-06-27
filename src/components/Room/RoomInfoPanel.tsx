@@ -1,11 +1,14 @@
 // src/components/Room/RoomInfoPanel.tsx
 // Código da sala (copiar para convidar) + lista de membros com indicador de host.
-// Em competição, a lista vira um ranking: medalhas para os primeiros a acertar,
-// posição para os demais, 💀 para quem não conseguiu e ⏳ para quem ainda joga.
+// Em partidas competitivas vira um RANKING ACUMULADO: ordena pelo critério do
+// modo (Time Trial = mais pontos; Competição = menor tempo total), com medalhas
+// para o pódio. Cada linha também mostra o status da RODADA corrente
+// (✅ resolveu / 💀 não / ⏳ jogando).
 
 import { useState } from 'react'
-import { Crown, Copy, Check } from 'lucide-react'
+import { Crown, Copy, Check, Star, Timer } from 'lucide-react'
 import { RoomMember, RoomGameType, MatchStatus, CompetitorResult } from '@/game/room-types'
+import { rankStandings, medalForIndex } from '@/game/standings'
 import { formatDuration } from '@/lib/dates'
 
 interface RoomInfoPanelProps {
@@ -15,25 +18,12 @@ interface RoomInfoPanelProps {
   currentUserId: string
   gameType: RoomGameType
   matchStatus: MatchStatus
+  /** Ranking ACUMULADO da partida. */
   standings: CompetitorResult[]
-}
-
-/**
- * Texto/emoji da posição de um competidor (lado direito da linha).
- * `pos` é a colocação a exibir: ordem de acerto na Competição, ou posição por
- * pontos no Time Trial.
- */
-function rankBadge(
-  result: CompetitorResult | undefined,
-  matchActive: boolean,
-  pos: number | null
-): string {
-  if (!result) return matchActive ? '⏳' : ''
-  if (!result.solved) return '💀'
-  if (pos === 1) return '🥇'
-  if (pos === 2) return '🥈'
-  if (pos === 3) return '🥉'
-  return pos ? `${pos}º` : '✅'
+  /** Resultado da rodada CORRENTE (status ao vivo). */
+  roundFinishers: CompetitorResult[]
+  currentRound: number
+  totalRounds: number
 }
 
 export function RoomInfoPanel({
@@ -44,6 +34,9 @@ export function RoomInfoPanel({
   gameType,
   matchStatus,
   standings,
+  roundFinishers,
+  currentRound,
+  totalRounds,
 }: RoomInfoPanelProps) {
   const [copied, setCopied] = useState(false)
 
@@ -61,48 +54,24 @@ export function RoomInfoPanel({
     }
   }
 
-  const isTimeTrial = gameType === 'timetrial'
-  const isCompetitive = gameType === 'competition' || isTimeTrial
+  const tt = gameType === 'timetrial'
+  const isCompetitive = gameType === 'competition' || tt
   const isRanking = isCompetitive && matchStatus !== 'idle'
-  const standingsById = new Map(standings.map((s) => [s.userId, s]))
+  const matchActive = matchStatus === 'active'
 
-  // Time Trial: posição por PONTOS (desc), desempate por tempo de resolução (asc).
-  const pointsRankById = new Map<string, number>()
-  if (isTimeTrial) {
-    standings
-      .filter((s) => s.solved)
-      .sort((a, b) => {
-        const pa = a.points ?? -1
-        const pb = b.points ?? -1
-        if (pb !== pa) return pb - pa
-        return (a.solveMs ?? Number.POSITIVE_INFINITY) - (b.solveMs ?? Number.POSITIVE_INFINITY)
-      })
-      .forEach((s, i) => pointsRankById.set(s.userId, i + 1))
-  }
+  const cumById = new Map(standings.map((s) => [s.userId, s]))
+  const roundById = new Map(roundFinishers.map((f) => [f.userId, f]))
+  const membersById = new Map(members.map((m) => [m.userId, m]))
 
-  // Posição a exibir: pontos (Time Trial) ou ordem de acerto (Competição).
-  const posOf = (r: CompetitorResult | undefined): number | null => {
-    if (!r || !r.solved) return null
-    return isTimeTrial ? pointsRankById.get(r.userId) ?? null : r.solveRank
-  }
-
-  // Ordem de exibição competitiva: quem está melhor colocado no topo, depois
-  // quem não acertou, e por fim quem ainda está jogando.
-  const rankKey = (r: CompetitorResult | undefined): number => {
-    if (!r) return 3_000_000 // ainda jogando
-    if (r.solved) return posOf(r) ?? 1_000_000 // acertou: por colocação
-    return 2_000_000 // não acertou
-  }
-  const orderedMembers = isRanking
-    ? members
-        .map((m, i) => ({ m, i }))
-        .sort((a, b) => {
-          const ka = rankKey(standingsById.get(a.m.userId))
-          const kb = rankKey(standingsById.get(b.m.userId))
-          return ka !== kb ? ka - kb : a.i - b.i
-        })
-        .map((x) => x.m)
-    : members
+  // Ordem do ranking: quem tem pontuação acumulada primeiro (pelo critério do
+  // modo); depois os demais membros (ex.: rodada 1 antes de pontuar, ou quem
+  // entrou no meio) em ordem de entrada. Inclui também competidores que saíram
+  // (placar congelado nas standings, mas não mais em `members`).
+  const ranked = rankStandings(standings, gameType)
+  const rankedIds = new Set(ranked.map((s) => s.userId))
+  const orderedIds = isRanking
+    ? [...ranked.map((s) => s.userId), ...members.filter((m) => !rankedIds.has(m.userId)).map((m) => m.userId)]
+    : members.map((m) => m.userId)
 
   return (
     <div className="p-4 border-b border-night-600 space-y-3">
@@ -128,18 +97,30 @@ export function RoomInfoPanel({
 
       {/* Membros / ranking */}
       <div>
-        <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">
-          {isRanking ? 'Ranking' : 'Jogadores'} ({members.length})
+        <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1 flex items-center justify-between gap-2">
+          <span>
+            {isRanking ? 'Ranking' : 'Jogadores'} ({members.length})
+          </span>
+          {isRanking && totalRounds > 1 && (
+            <span className="text-eucalyptus-light font-semibold normal-case tracking-normal">
+              Rodada {currentRound}/{totalRounds}
+            </span>
+          )}
         </div>
         <ul className="space-y-1">
-          {orderedMembers.map((m) => {
-            const isHost = m.userId === hostUserId
-            const isMe = m.userId === currentUserId
-            const result = standingsById.get(m.userId)
-            const badge = isCompetitive ? rankBadge(result, matchStatus === 'active', posOf(result)) : ''
+          {orderedIds.map((uid, idx) => {
+            const member = membersById.get(uid)
+            const cum = cumById.get(uid)
+            const rnd = roundById.get(uid)
+            const nickname = member?.nickname ?? cum?.nickname ?? '—'
+            const isHost = uid === hostUserId
+            const isMe = uid === currentUserId
+            const inRanking = isRanking && rankedIds.has(uid)
+            const medal = inRanking ? medalForIndex(idx) : ''
+
             return (
               <li
-                key={m.userId}
+                key={uid}
                 className="flex items-center gap-2 px-2 py-1 rounded-md text-sm text-foreground"
               >
                 {isHost ? (
@@ -148,38 +129,49 @@ export function RoomInfoPanel({
                   <span className="w-4 h-4 flex-shrink-0" />
                 )}
                 <span className="truncate flex-1">
-                  {m.nickname}
+                  {nickname}
                   {isMe && <span className="text-muted-foreground"> (você)</span>}
                 </span>
-                {/* Time Trial: pontos. Competição: tempo de resolução. */}
-                {result?.solved && isTimeTrial && typeof result.points === 'number' && (
+
+                {/* Pontuação ACUMULADA (pontos no Time Trial; tempo na Competição). */}
+                {inRanking && cum && (
                   <span
-                    className="flex-shrink-0 text-[11px] text-pistachio font-semibold tabular-nums"
-                    title="Pontos"
+                    className={`flex-shrink-0 flex items-center gap-1 text-[11px] font-semibold tabular-nums ${
+                      tt ? 'text-pistachio' : 'text-muted-foreground'
+                    }`}
+                    title={tt ? 'Pontos acumulados' : 'Tempo total acumulado'}
                   >
-                    {result.points} pts
+                    {tt ? <Star className="w-3 h-3" aria-hidden="true" /> : <Timer className="w-3 h-3" aria-hidden="true" />}
+                    {tt ? cum.totalPoints ?? 0 : formatDuration(cum.totalMs ?? 0)}
                   </span>
                 )}
-                {result?.solved && !isTimeTrial && typeof result.solveMs === 'number' && (
+
+                {/* Direita: no fim da partida, posição final (medalha/lugar);
+                    durante a partida, status da rodada corrente. */}
+                {isRanking && (
                   <span
-                    className="flex-shrink-0 text-[11px] text-muted-foreground tabular-nums"
-                    title="Tempo de resolução"
+                    className="flex-shrink-0 text-base leading-none min-w-[1.5rem] text-center"
+                    title={
+                      matchStatus === 'ended'
+                        ? 'Posição final'
+                        : rnd
+                          ? rnd.solved
+                            ? `Resolveu a rodada em ${rnd.attempts} tentativa${rnd.attempts > 1 ? 's' : ''}`
+                            : 'Não resolveu a rodada'
+                          : matchActive
+                            ? 'Ainda jogando'
+                            : ''
+                    }
                   >
-                    {formatDuration(result.solveMs)}
-                  </span>
-                )}
-                {/* Tentativas usadas por quem acertou (ex.: "(3)" = resolveu em 3 tentativas). */}
-                {result?.solved && (
-                  <span
-                    className="flex-shrink-0 text-[11px] text-muted-foreground tabular-nums"
-                    title={`Resolveu em ${result.attempts} tentativa${result.attempts > 1 ? 's' : ''}`}
-                  >
-                    ({result.attempts})
-                  </span>
-                )}
-                {badge && (
-                  <span className="flex-shrink-0 text-base leading-none" title="Posição na partida">
-                    {badge}
+                    {matchStatus === 'ended'
+                      ? medal || (inRanking ? `${idx + 1}º` : '')
+                      : rnd
+                        ? rnd.solved
+                          ? '✅'
+                          : '💀'
+                        : matchActive
+                          ? '⏳'
+                          : ''}
                   </span>
                 )}
               </li>

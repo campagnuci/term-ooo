@@ -37,7 +37,18 @@ export interface CompetitorResult {
   points?: number | null
   /** true se o jogador foi pego pelo fim do tempo sem terminar (Time Trial). */
   timedOut?: boolean
-  finishedAt: string
+  finishedAt?: string
+
+  // --- Acumulado da partida (multi-rodada) ---------------------------------
+  // Presentes nas `standings` da partida (ranking acumulado); ausentes nos
+  // `roundFinishers` (resultado de uma única rodada).
+  /** Tempo total somado (Competição: critério de vitória, menor vence). */
+  totalMs?: number
+  /** Pontos totais somados (Time Trial: critério de vitória, maior vence). */
+  totalPoints?: number
+  /** Rodadas resolvidas / jogadas até agora. */
+  roundsSolved?: number
+  roundsPlayed?: number
 }
 
 /**
@@ -103,7 +114,8 @@ export type RoomClientMessage =
   | { type: 'new-round'; mode?: GameMode }
   // Competição/Time Trial: anfitrião inicia uma partida (palavra nova, ranking zerado).
   // timeLimitMs só é usado no Time Trial (limite do relógio, em ms).
-  | { type: 'start-match'; mode?: GameMode; timeLimitMs?: number }
+  // rounds: número de rodadas da partida (pontuação acumulada; 1..20).
+  | { type: 'start-match'; mode?: GameMode; timeLimitMs?: number; rounds?: number }
   // Competição: jogador reporta que terminou (acertou ou esgotou tentativas).
   | { type: 'competitor-finished'; roundId: string; solved: boolean; attempts: number }
   | { type: 'get-room-state' }
@@ -121,6 +133,7 @@ export type RoomServerMessageType =
   | 'new-round'
   | 'match-start'
   | 'competitor-finished'
+  | 'round-advanced'
   | 'match-end'
   | 'round-timing'
   | 'chat-message'
@@ -151,7 +164,10 @@ export interface RoomServerMessage {
   // competição
   gameType?: RoomGameType
   matchStatus?: MatchStatus
+  /** Ranking ACUMULADO da partida (rodadas concluídas). */
   standings?: CompetitorResult[]
+  /** Quem já terminou a rodada CORRENTE (status ⏳/✅/💀 ao vivo). */
+  roundFinishers?: CompetitorResult[]
   solved?: boolean
   attempts?: number
   solveRank?: number | null
@@ -159,6 +175,20 @@ export interface RoomServerMessage {
   points?: number | null
   /** Motivo de fim de partida (ex.: 'timeout' no Time Trial). */
   reason?: string
+
+  // multi-rodada
+  /** Rodada corrente (1-based) numa partida multi-rodada. */
+  round?: number
+  /** Total de rodadas da partida. */
+  totalRounds?: number
+  /** Rodada recém-encerrada (em round-advanced/match-end). */
+  finishedRound?: number
+  /** Momento (epoch servidor, ms) em que a rodada começa de fato. Se futuro, há countdown. */
+  startsAt?: number | null
+  /** userIds dos competidores da partida (quem entrou depois apenas assiste). */
+  competitorIds?: string[]
+  /** Número de rodadas (eco do start-match). */
+  rounds?: number
 
   // cronômetro da rodada (autoridade do servidor)
   timer?: RoundTimerInfo

@@ -53,7 +53,11 @@ export function GameTimer({ startTime, endTime, isGameOver, countdownFromMs, cla
     }
   }, [running, startTime, countdownFromMs])
 
-  const elapsedMs = startTime != null ? (endTime ?? now) - startTime : 0
+  // Clampa em 0: durante a contagem regressiva pré-rodada o início (startTime)
+  // fica no FUTURO, então (now - startTime) seria negativo. Sem o clamp, o Time
+  // Trial exibiria mais que o limite (ex.: 2:05) e a contagem para cima, valores
+  // negativos.
+  const elapsedMs = startTime != null ? Math.max(0, (endTime ?? now) - startTime) : 0
 
   const isCountdown = countdownFromMs != null
   const displayMs = isCountdown ? Math.max(0, countdownFromMs - elapsedMs) : elapsedMs

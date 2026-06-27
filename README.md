@@ -58,8 +58,10 @@ Adivinhe a palavra do dia em português! Cada palpite revela dicas sobre as letr
 | Tipo | Como funciona | Rota |
 |------|---------------|------|
 | **🤝 Cooperativo** | O anfitrião joga e todos sugerem no chat | `/sala`, `/sala/:code` |
-| **🏆 Competição** | Cada jogador tem o próprio tabuleiro e disputa quem resolve mais rápido | `/sala`, `/sala/:code` |
-| **⏱️ Time Trial** | Tempo fixo no relógio (escolhido pelo host); pontuação premia rapidez e menos tentativas | `/sala`, `/sala/:code` |
+| **🏆 Competição** | Cada jogador tem o próprio tabuleiro; **partida de N rodadas** somando tempo — vence o **menor tempo total** | `/sala`, `/sala/:code` |
+| **⏱️ Time Trial** | Tempo fixo no relógio (escolhido pelo host); **partida de N rodadas** somando **pontos** (rapidez + menos tentativas) — vence o **maior total** | `/sala`, `/sala/:code` |
+
+> 🔁 Competição e Time Trial são **multi-rodada** (3/5/10 ou personalizado, 1–20): a pontuação **acumula** a cada rodada e cada rodada começa com uma **contagem regressiva 5→1 "Vai!"** (animada e com som), igual para todos.
 
 ---
 
@@ -103,7 +105,9 @@ Adivinhe a palavra do dia em português! Cada palpite revela dicas sobre as letr
 
 ### 📱 Recursos Adicionais
 - 🎮 **Modo Treino** ilimitado com palavras aleatórias
-- 🏆 **Salas multiplayer** (Cooperativo e Competição) via WebSocket
+- 🏆 **Salas multiplayer** (Cooperativo, Competição e Time Trial) via WebSocket
+- 🔁 **Partidas multi-rodada** competitivas com pontuação/tempo **acumulados** entre rodadas (3/5/10 ou personalizado)
+- 🚦 **Contagem regressiva 5→1 "Vai!"** antes de cada rodada — animada (Framer Motion), com som sintetizado e sincronizada entre os jogadores
 - 💬 **Chat em tempo real** dentro das salas
 - 🎵 **Efeitos sonoros e memes** durante o jogo
 - 📱 **Interface 100% responsiva** (Dialog desktop / Sheet mobile)
@@ -157,33 +161,43 @@ Salas multiplayer em tempo real via WebSocket. O **tipo da sala é escolhido na 
 - ⏱️ **Cronômetro compartilhado**: inicia na 1ª tecla do host e congela ao terminar — o mesmo valor para todos
 - Ao fim da rodada a palavra é **revelada para todos**
 
-### 🏆 Competição
-- **Todos jogam** o próprio tabuleiro na **mesma palavra** (Termo, Dueto ou Quarteto)
-- O anfitrião **inicia a partida** (mínimo de **2 jogadores**); antes disso, ninguém digita
-- ⏱️ **Cronômetro compartilhado** da partida começa no `match-start` (largada igual para todos)
-- A lista de membros vira um **ranking** com medalhas: 🥇 1º, 🥈 2º, 🥉 3º a resolver; 💀 para quem não acerta; ⏳ para quem ainda joga
-- ⏱️ **Tempo de resolução de cada jogador** exibido no ranking e no pódio
-- **Fim da partida:** termina quando todos terminam, **ou** quando o pódio (1º/2º/3º) está completo e resta apenas 1 jogador. Enquanto houver vaga no pódio, os demais continuam jogando
-- Ao encerrar, a palavra é **revelada para todos**
+### 🏆 Competição (corrida de tempo, multi-rodada)
+- **Todos jogam** o próprio tabuleiro na **mesma palavra** por rodada (Termo, Dueto ou Quarteto)
+- O anfitrião escolhe o **nº de rodadas** (presets 3/5/10 ou 1–20) e o modo, e **inicia a partida** (mínimo de **2 jogadores**)
+- 🏁 **Pontuação = tempo acumulado:** soma-se o tempo de resolução de cada rodada; **vence quem somar MENOS tempo**
+- Quem **não resolve** uma rodada recebe `(tempo do solver mais lento da rodada) + 1 min`; se **ninguém** resolve, a rodada é **anulada** (todos +0, sem afetar o ranking)
+- A lista de membros vira um **ranking acumulado** (tempo total) com medalhas 🥇🥈🥉 ao final; durante a rodada cada linha mostra ✅ resolveu / 💀 não / ⏳ jogando, além das tentativas usadas
+- **Fim de cada rodada:** quando todos terminam, **ou** quando o pódio (1º/2º/3º) está completo e resta apenas 1 jogador
+- A palavra é **revelada** ao fim de cada rodada; ao fim da última, a classificação final é congelada
 
-### ⏱️ Time Trial
-- Variante competitiva **contra o relógio**: o anfitrião escolhe um **tempo fixo** (presets 1/2/3/5 min ou valor personalizado, 30s–15min) e o **modo** na tela de início, e dá a largada
-- Um **cronômetro regressivo compartilhado** começa para todos no `match-start` (e fica em destaque de urgência nos segundos finais)
-- **Pontuação** (só quem resolve pontua): `1000 + tempo restante (até +1000) + 150 × tentativas não usadas`. Mais rápido **e** com menos tentativas ⇒ mais pontos; quem não resolve fica com 0
-- **Fim da partida:** quando o tempo esgota (encerramento autoritativo do servidor via *alarm*) **ou** quando todos terminam — o que vier primeiro
-- Ranking e pódio por **pontos** (desempate pelo menor tempo); tempo e pontos de cada jogador exibidos no ranking
+### ⏱️ Time Trial (contra o relógio, multi-rodada)
+- Variante competitiva **contra o relógio**: o anfitrião escolhe **tempo fixo** (presets 1/2/3/5 min ou personalizado, 30s–15min), **nº de rodadas** e o **modo**, e dá a largada
+- Um **cronômetro regressivo compartilhado** roda em cada rodada (destaque de urgência nos segundos finais)
+- **Pontuação** (só quem resolve pontua): `1000 + tempo restante (até +1000) + 150 × tentativas não usadas`, **somada entre as rodadas** — vence o **maior total** (desempate pelo menor tempo total); quem não resolve fica com 0 na rodada
+- **Fim de cada rodada:** o tempo esgota (encerramento autoritativo do servidor via *alarm*) **ou** todos terminam
+- Ranking acumulado por **pontos**; pontos/tempo da rodada exibidos ao terminar
+
+### 🚦 Rodadas e largada sincronizada
+- Cada rodada (inclusive a 1ª) abre com uma **contagem regressiva 5→1 "Vai!"** mostrada a **todos** — animada (mola via Framer Motion + onda de energia) e com **bipes sintetizados via Web Audio** (respeitando o ajuste de som). Entre rodadas, a contagem exibe a **classificação acumulada**
+- A largada é **autoritativa do servidor**: `roundStartedAt` é ancorado no **futuro** (`agora + 5s`), então o relógio do Time Trial e a medição de tempo só contam **após** o "Vai!" — ninguém é pego de surpresa
+- As rodadas **avançam automaticamente** (sem ação do host): ao fim de uma, o servidor já prepara a próxima e transmite `round-advanced`
+- Quem **entra no meio** da partida assiste e só joga na próxima; quem **sai** tem o placar congelado
+- O **modo** e o **tempo** (Time Trial) são fixados na largada e valem para todas as rodadas
+- O painel de resultado/fim aparece como **overlay escopado à coluna do jogo** (não cobre o chat) e usa o verde do tema
 
 ### Autoridade e modelo de rede
 - O **servidor** (Cloudflare Durable Object) é autoridade sobre membros, host, modo, seed e `roundId`
 - Os clientes derivam a palavra de `(modo, seed)` localmente via `getDailyWords`
 - **Coop:** o host roda o engine e transmite o `GameState`; o servidor retransmite/persiste
-- **Competição:** cada cliente roda seu próprio engine e reporta quando termina; o servidor controla o ranking e o fim da partida
-- **Time Trial:** como a competição, mas o servidor define o limite de tempo, **pontua** cada acerto e arma um *alarm* (Durable Object) que encerra a partida no fim do relógio mesmo sem mensagens
+- **Competição:** cada cliente roda seu próprio engine e reporta quando termina; o servidor controla o ranking e o fim de cada rodada
+- **Time Trial:** como a competição, mas o servidor define o limite de tempo, **pontua** cada acerto e arma um *alarm* (Durable Object) que encerra a **rodada** no fim do relógio mesmo sem mensagens
+- **Multi-rodada:** o servidor acumula os placares (`room.competition.cumulative`), avança automaticamente entre rodadas e ancora cada largada no futuro (`roundStartedAt = agora + 5s`) para a contagem regressiva. O conjunto de competidores é fixado na largada
 - ⏱️ **Cronômetro autoritativo:** o servidor marca início/fim da rodada (`roundStartedAt`/`roundEndedAt`) e envia um bloco `timer` nas mensagens; cada cliente ancora no próprio relógio e conta localmente (sem broadcasts por segundo), mantendo os jogadores sincronizados com latência mínima
 - Migração de host automática se o anfitrião sai; reconexão com re-sincronização (inclusive do cronômetro)
 
 **Backend:** pacote separado `ws-cloudflare/` (Cloudflare Workers + Durable Objects).
-**Componentes:** `RoomLobby`, `RoomScreen`, `RoomHeader`, `RoomSidebar`, `RoomInfoPanel`, `RoomChatPanel`, `RoundEndControls`, `CompetitionPanel`.
+**Componentes:** `RoomLobby`, `RoomScreen`, `RoomHeader`, `RoomSidebar`, `RoomInfoPanel`, `RoomChatPanel`, `RoundEndControls`, `CompetitionPanel`, `TimeTrialPanel`, `RoomTimer`, `RoundCountdown` (contagem regressiva), `MatchScore` (seletor de rodadas + ranking acumulado).
+**Helpers:** `src/game/standings.ts` (ordenação do ranking acumulado).
 **Hook orquestrador:** `useGameRoom` (sobre `useChatConnection`).
 
 ---
@@ -412,9 +426,11 @@ term-ooo/
 │   │   │   ├── RoomInfoPanel.tsx     # lista de membros / ranking
 │   │   │   ├── RoomChatPanel.tsx
 │   │   │   ├── RoundEndControls.tsx  # fim de rodada (coop)
-│   │   │   ├── CompetitionPanel.tsx  # 🆕 fluxo da competição
-│   │   │   ├── TimeTrialPanel.tsx    # 🆕 fluxo do Time Trial (tempo + pontos)
-│   │   │   └── RoomTimer.tsx         # 🆕 cronômetro sincronizado da sala
+│   │   │   ├── CompetitionPanel.tsx  # 🆕 competição (corrida de tempo, multi-rodada)
+│   │   │   ├── TimeTrialPanel.tsx    # 🆕 Time Trial (pontos, multi-rodada)
+│   │   │   ├── RoomTimer.tsx         # 🆕 cronômetro sincronizado da sala
+│   │   │   ├── RoundCountdown.tsx    # 🆕 contagem regressiva 5→1 "Vai!" (animada + som)
+│   │   │   └── MatchScore.tsx        # 🆕 seletor de rodadas + ranking acumulado
 │   │   ├── new/                  # Board/Tile atuais (estilo Figma)
 │   │   │   ├── GameBoard.tsx
 │   │   │   └── Tile.tsx
@@ -441,7 +457,8 @@ term-ooo/
 │   │   ├── mode-config.ts        # Config por modo (tentativas, boards, dicionários)
 │   │   ├── storage.ts            # Interface com localStorage
 │   │   ├── types.ts              # Tipos do jogo
-│   │   ├── room-types.ts         # 🆕 Protocolo das salas (coop + competição)
+│   │   ├── room-types.ts         # 🆕 Protocolo das salas (coop + competição + Time Trial, multi-rodada)
+│   │   ├── standings.ts          # 🆕 Ordenação/medalhas do ranking acumulado
 │   │   ├── chat-types.ts         # Tipos do chat
 │   │   ├── share-utils.ts        # Render do grid de compartilhamento
 │   │   └── words-{termo,dueto,quarteto}.ts  # Dicionários
@@ -496,13 +513,14 @@ Este projeto segue o [Semantic Versioning](https://semver.org/lang/pt-BR/) (SemV
 
 **Destaques desde a v0.4.x:**
 - 🎮 Modo Treino (jogo ilimitado com palavras aleatórias)
-- 🏆 Salas multiplayer: modo Cooperativo e modo Competição (com ranking)
+- 🏆 Salas multiplayer: Cooperativo, Competição e Time Trial
+- 🔁 Partidas competitivas **multi-rodada** (pontuação/tempo **acumulados**) com **contagem regressiva 5→1 "Vai!"** sincronizada
 - 🖼️ Compartilhamento como imagem (PNG) além do texto
 - 📅 Arquivo de dias anteriores + layout mobile aprimorado
 - 🌐 Rebranding para `termo.enresshou.dev`
 
 **Histórico de Releases:**
-- **v0.5.x** - Treino, salas multiplayer (coop + competição), share como imagem
+- **v0.5.x** - Treino, salas multiplayer (coop + competição + Time Trial), partidas multi-rodada com contagem regressiva, share como imagem
 - **v0.4.1** (2024-12-02) - Som de inatividade + fix settings
 - **v0.4.0** (2024-12-02) - Sistema de efeitos sonoros
 - **v0.2.0** (2024-11-30) - Chat WebSocket + Arquivo

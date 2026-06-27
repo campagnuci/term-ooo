@@ -59,7 +59,19 @@ export interface UseGameRoomReturn {
   // Competição
   gameType: RoomGameType
   matchStatus: MatchStatus
+  /** Ranking ACUMULADO da partida (rodadas concluídas). */
   standings: CompetitorResult[]
+  /** Quem já terminou a rodada CORRENTE — status ao vivo (⏳/✅/💀). */
+  roundFinishers: CompetitorResult[]
+  /** Rodada corrente / total (multi-rodada). 0 quando não há partida. */
+  currentRound: number
+  totalRounds: number
+  /** Epoch LOCAL (ms) do início da rodada; se no futuro, há contagem regressiva. null = sem partida. */
+  roundStartsAt: number | null
+  /** true enquanto a contagem regressiva pré-rodada está em andamento. */
+  countingDown: boolean
+  /** true se o jogador local compete na partida atual (não um espectador que entrou depois). */
+  amCompetitor: boolean
 
   /** Cronômetro da rodada, sincronizado pelo servidor e ancorado no relógio local. */
   roundTiming: RoundTiming
@@ -80,8 +92,8 @@ export interface UseGameRoomReturn {
   broadcastLiveInput: (currentGuess: string[], typedIndex: number) => void
   sendChat: (text: string) => boolean
   requestNewRound: (mode?: GameMode) => void
-  /** Competição/Time Trial: anfitrião inicia uma partida (timeLimitMs só no Time Trial). */
-  startMatch: (mode?: GameMode, timeLimitMs?: number) => void
+  /** Competição/Time Trial: anfitrião inicia uma partida (timeLimitMs só no Time Trial; rounds = nº de rodadas). */
+  startMatch: (mode?: GameMode, timeLimitMs?: number, rounds?: number) => void
   /** Competição: reporta o fim do jogo local (acertou/esgotou). */
   reportFinished: (solved: boolean, attempts: number) => void
 
@@ -144,6 +156,18 @@ function deriveTiming(
   // Rodada ainda não começou (elapsedMs nulo).
   if (isNewRound) return { roundId: rid, startLocal: null, durationMs: null, limitMs }
   return prev
+}
+
+/**
+ * Converte o `startsAt` (epoch do servidor) para o relógio LOCAL, descontando o
+ * skew via `timer.serverNow`. Usado para ancorar a contagem regressiva e o início
+ * da rodada no relógio de cada cliente. null se a mensagem não traz `startsAt`.
+ */
+function anchorStartsAtLocal(msg: RoomServerMessage, receiveNow: number): number | null {
+  if (typeof msg.startsAt !== 'number') return null
+  const serverNow = msg.timer?.serverNow
+  const skew = typeof serverNow === 'number' ? serverNow - receiveNow : 0
+  return msg.startsAt - skew
 }
 
 function stripSolutions(state: GameState): GameState {
@@ -211,6 +235,12 @@ export function useGameRoom({
   const [justBecameHost, setJustBecameHost] = useState(false)
   const [matchStatus, setMatchStatus] = useState<MatchStatus>('idle')
   const [standings, setStandings] = useState<CompetitorResult[]>([])
+  const [roundFinishers, setRoundFinishers] = useState<CompetitorResult[]>([])
+  const [currentRound, setCurrentRound] = useState(0)
+  const [totalRounds, setTotalRounds] = useState(0)
+  const [roundStartsAt, setRoundStartsAt] = useState<number | null>(null)
+  const [countingDown, setCountingDown] = useState(false)
+  const [amCompetitor, setAmCompetitor] = useState(false)
   const [roundTiming, setRoundTiming] = useState<RoundTiming>(EMPTY_TIMING)
 
   // Refs espelham o estado para o handler de mensagens ser estável.
@@ -224,6 +254,7 @@ export function useGameRoom({
   const hasJoinedRef = useRef(false)
   const sendRef = useRef<(data: unknown) => boolean>(() => false)
   const liveTypedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const countdownTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const isHost = !!room && room.hostUserId === userId
   const gameType: RoomGameType = room?.gameType ?? 'coop'
@@ -247,6 +278,32 @@ export function useGameRoom({
     },
     [pushMessage]
   )
+
+  // Inicia (ou limpa) a contagem regressiva pré-rodada. `startLocal` é o epoch
+  // LOCAL em que a rodada começa de fato; enquanto estiver no futuro,
+  // `countingDown` fica true e a tela bloqueia a digitação. Um timeout único
+  // desarma a contagem no instante exato do início.
+  const beginCountdown = useCallback((startLocal: number | null) => {
+    if (countdownTimerRef.current) {
+      clearTimeout(countdownTimerRef.current)
+      countdownTimerRef.current = null
+    }
+    setRoundStartsAt(startLocal)
+    if (startLocal == null) {
+      setCountingDown(false)
+      return
+    }
+    const delay = startLocal - Date.now()
+    if (delay <= 0) {
+      setCountingDown(false)
+      return
+    }
+    setCountingDown(true)
+    countdownTimerRef.current = setTimeout(() => {
+      setCountingDown(false)
+      countdownTimerRef.current = null
+    }, delay)
+  }, [])
 
   const handleMessage = useCallback(
     (raw: unknown) => {
@@ -292,12 +349,31 @@ export function useGameRoom({
           }
           setRoom(newRoom)
           setRoundId(newRoom.roundId)
-          setMatchStatus(msg.matchStatus ?? 'idle')
+          const ms = msg.matchStatus ?? 'idle'
+          setMatchStatus(ms)
           setStandings(msg.standings ?? [])
-          applyTiming(newRoom.roundId)
+          setRoundFinishers(msg.roundFinishers ?? [])
+          setCurrentRound(msg.round ?? 0)
+          setTotalRounds(msg.totalRounds ?? 0)
+          setAmCompetitor((msg.competitorIds ?? []).includes(userId))
           // Competição/Time Trial: todos jogam o próprio tabuleiro (com soluções).
           // Coop: o host tem soluções; espectadores recebem stripado.
           const competitive = gt === 'competition' || gt === 'timetrial'
+          // Partida ativa: ancora o início pelo `startsAt` (pode estar no futuro
+          // durante a contagem). Demais estados usam o cronômetro padrão.
+          if (competitive && ms === 'active') {
+            const startLocal = anchorStartsAtLocal(msg, receiveNow)
+            setRoundTiming({
+              roundId: newRoom.roundId,
+              startLocal,
+              durationMs: null,
+              limitMs: msg.timer?.limitMs ?? null,
+            })
+            beginCountdown(startLocal)
+          } else {
+            applyTiming(newRoom.roundId)
+            beginCountdown(null)
+          }
           const asHost = newRoom.hostUserId === userId
           setGameState(
             buildInitialState(
@@ -331,22 +407,56 @@ export function useGameRoom({
           setRoundId(rid)
           setRoom((prev) => (prev ? { ...prev, mode, seed, roundId: rid } : prev))
           setMatchStatus('active')
-          setStandings([])
-          applyTiming(rid)
+          setStandings(msg.standings ?? [])
+          setRoundFinishers(msg.roundFinishers ?? [])
+          setCurrentRound(msg.round ?? 1)
+          setTotalRounds(msg.totalRounds ?? 1)
+          setAmCompetitor((msg.competitorIds ?? []).includes(userId))
+          // Início ancorado em `startsAt` (futuro durante a contagem regressiva).
+          const startLocal = anchorStartsAtLocal(msg, receiveNow)
+          setRoundTiming({ roundId: rid, startLocal, durationMs: null, limitMs: msg.timer?.limitMs ?? null })
+          beginCountdown(startLocal)
           const r = roomRef.current
           const roomCode = r?.code ?? code
           // Todos jogam: tabuleiro próprio COM soluções (asHost = true).
           setGameState(buildInitialState(mode, seed, roomCode, rid, true))
           addSystem(
             r?.gameType === 'timetrial'
-              ? 'Corrida contra o tempo! ⏱️ Boa sorte!'
-              : 'A partida começou! Boa sorte! 🏁'
+              ? 'Corrida contra o tempo! ⏱️ Preparados…'
+              : 'A partida vai começar! 🏁'
           )
           break
         }
 
-        case 'competitor-finished': {
+        case 'round-advanced': {
+          // Uma rodada terminou e a próxima vem em seguida (após a contagem).
+          // `standings` já reflete o acumulado COM a rodada recém-encerrada.
+          const mode = (msg.mode ?? 'termo') as GameMode
+          const seed = Number(msg.seed ?? 0)
+          const rid = msg.roundId ?? ''
           if (msg.standings) setStandings(msg.standings)
+          setRoundFinishers([])
+          setCurrentRound(msg.round ?? 0)
+          setTotalRounds(msg.totalRounds ?? 0)
+          setAmCompetitor((msg.competitorIds ?? []).includes(userId))
+          setRoundId(rid)
+          setRoom((prev) => (prev ? { ...prev, mode, seed, roundId: rid } : prev))
+          setMatchStatus('active')
+          const startLocal = anchorStartsAtLocal(msg, receiveNow)
+          setRoundTiming({ roundId: rid, startLocal, durationMs: null, limitMs: msg.timer?.limitMs ?? null })
+          beginCountdown(startLocal)
+          const r = roomRef.current
+          const roomCode = r?.code ?? code
+          setGameState(buildInitialState(mode, seed, roomCode, rid, true))
+          addSystem(`Rodada ${msg.finishedRound ?? ''} encerrada! Próxima já vem… 🏁`)
+          break
+        }
+
+        case 'competitor-finished': {
+          // `standings` = acumulado das rodadas concluídas; `roundFinishers` =
+          // progresso da rodada corrente (quem já terminou).
+          if (msg.standings) setStandings(msg.standings)
+          if (msg.roundFinishers) setRoundFinishers(msg.roundFinishers)
           applyTiming(msg.roundId ?? roomRef.current?.roundId ?? '')
           if (msg.userId && msg.userId !== userId && msg.nickname) {
             addSystem(
@@ -360,7 +470,9 @@ export function useGameRoom({
 
         case 'match-end': {
           if (msg.standings) setStandings(msg.standings)
+          if (msg.roundFinishers) setRoundFinishers(msg.roundFinishers)
           setMatchStatus('ended')
+          beginCountdown(null)
           applyTiming(msg.roundId ?? roomRef.current?.roundId ?? '')
           addSystem('Partida encerrada! A palavra foi revelada. 🎉')
           break
@@ -393,6 +505,11 @@ export function useGameRoom({
           // Nova rodada zera qualquer estado de competição encerrada (defensivo).
           setMatchStatus('idle')
           setStandings([])
+          setRoundFinishers([])
+          setCurrentRound(0)
+          setTotalRounds(0)
+          setAmCompetitor(false)
+          beginCountdown(null)
           const r = roomRef.current
           const asHost = !!r && r.hostUserId === userId
           const roomCode = r?.code ?? code
@@ -486,7 +603,7 @@ export function useGameRoom({
         }
       }
     },
-    [userId, code, addSystem, pushMessage]
+    [userId, code, addSystem, pushMessage, beginCountdown]
   )
 
   const url = useMemo(() => buildRoomUrl(code), [code])
@@ -548,10 +665,13 @@ export function useGameRoom({
   )
 
   const startMatch = useCallback(
-    (mode?: GameMode, timeLimitMs?: number) => {
-      const msg: { type: 'start-match'; mode?: GameMode; timeLimitMs?: number } = { type: 'start-match' }
+    (mode?: GameMode, timeLimitMs?: number, rounds?: number) => {
+      const msg: { type: 'start-match'; mode?: GameMode; timeLimitMs?: number; rounds?: number } = {
+        type: 'start-match',
+      }
       if (mode) msg.mode = mode
       if (typeof timeLimitMs === 'number') msg.timeLimitMs = timeLimitMs
+      if (typeof rounds === 'number') msg.rounds = rounds
       connection.send(msg)
     },
     [connection]
@@ -576,10 +696,11 @@ export function useGameRoom({
     return () => clearTimeout(t)
   }, [error])
 
-  // Limpa o timer de digitação ao desmontar.
+  // Limpa timers (digitação ao vivo + contagem regressiva) ao desmontar.
   useEffect(
     () => () => {
       if (liveTypedTimerRef.current) clearTimeout(liveTypedTimerRef.current)
+      if (countdownTimerRef.current) clearTimeout(countdownTimerRef.current)
     },
     []
   )
@@ -597,6 +718,12 @@ export function useGameRoom({
     gameType,
     matchStatus,
     standings,
+    roundFinishers,
+    currentRound,
+    totalRounds,
+    roundStartsAt,
+    countingDown,
+    amCompetitor,
     roundTiming,
     gameState,
     setGameState,

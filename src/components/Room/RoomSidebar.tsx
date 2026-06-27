@@ -26,6 +26,9 @@ interface RoomSidebarProps {
   gameType: RoomGameType
   matchStatus: MatchStatus
   standings: CompetitorResult[]
+  roundFinishers: CompetitorResult[]
+  currentRound: number
+  totalRounds: number
 }
 
 function PanelContent(props: Omit<RoomSidebarProps, 'unreadCount' | 'onOpenChat'>) {
@@ -39,6 +42,9 @@ function PanelContent(props: Omit<RoomSidebarProps, 'unreadCount' | 'onOpenChat'
         gameType={props.gameType}
         matchStatus={props.matchStatus}
         standings={props.standings}
+        roundFinishers={props.roundFinishers}
+        currentRound={props.currentRound}
+        totalRounds={props.totalRounds}
       />
       <RoomChatPanel
         messages={props.messages}
