@@ -144,9 +144,9 @@ function Key({
       disabled={disabled}
       style={getBackgroundStyle()}
       className={`
-        ${wide ? "px-4 sm:px-6 md:px-7" : "px-2 sm:px-3 md:px-4"} 
-        py-2 sm:py-3.5 md:py-4
-        rounded 
+        ${wide ? "px-4 sm:px-6 md:px-7" : "px-2 sm:px-3 md:px-4"}
+        py-2 sm:py-3.5 md:py-4 short:py-3 xshort:py-2
+        rounded
         transition-all duration-200
         flex items-center justify-center
         min-w-[28px] sm:min-w-[36px] md:min-w-[44px]
@@ -221,7 +221,7 @@ export function Keyboard({
   };
 
   return (
-    <div className="flex flex-col gap-1.5 sm:gap-2 md:gap-2.5 z-10">
+    <div className="flex flex-col gap-1.5 sm:gap-2 md:gap-2.5 short:gap-1.5 z-10">
       {KEYBOARD_ROWS.map((row, rowIndex) => (
         <div
           key={rowIndex}

@@ -376,7 +376,7 @@ function Game() {
 
       <TopTabs currentMode={mode} isTraining={isTraining} onModeChange={handleModeChange} isVisible={tabsVisible} />
 
-      <main className="flex-1 flex flex-col items-center justify-between px-2 py-2 sm:px-4 sm:py-4 md:py-6 max-w-7xl mx-auto w-full overflow-hidden">
+      <main className="flex-1 flex flex-col items-center justify-between px-2 py-2 sm:px-4 sm:py-4 md:py-6 short:py-3 xshort:py-1.5 max-w-7xl mx-auto w-full overflow-hidden">
         {error && (
           <div className="fixed top-20 left-1/2 transform -translate-x-1/2 bg-red-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-pulse">
             {error}
@@ -417,7 +417,7 @@ function Game() {
           </div>
         )}
 
-        <div className="w-full mt-2 sm:mt-4 md:mt-6 max-w-2xl mx-auto flex-shrink-0 z-10">
+        <div className="w-full mt-2 sm:mt-4 md:mt-6 short:mt-3 xshort:mt-1.5 max-w-2xl mx-auto flex-shrink-0 z-10">
           <Keyboard
             keyStates={gameState.keyStates}
             onKeyPress={handleKey}

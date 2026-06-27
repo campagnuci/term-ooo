@@ -17,6 +17,14 @@ module.exports = {
       },
     },
     extend: {
+      // Breakpoints baseados em ALTURA (não em largura) para telas "baixas e largas"
+      // (ex.: 1280x720, 1366x768) onde os breakpoints de largura ativam tiles/teclado
+      // grandes mas não há espaço vertical. Cutoff abaixo de 800px para não afetar
+      // resoluções comuns que cabem bem (1280x800, 1440x900).
+      screens: {
+        short: { raw: '(max-height: 780px)' },
+        xshort: { raw: '(max-height: 640px)' },
+      },
       colors: {
         // Paleta da marca (chrome) — não usar nos componentes do jogo.
         pistachio: {

@@ -277,6 +277,7 @@ Features bônus sugeridas para expansão do Term.ooo Clone.
   - "Mestre do Dueto"
 - Coleção de troféus
 - Progresso visual
+- Leaderboard global/local
 
 **Complexidade:** ⭐⭐⭐⭐ Alta
 
@@ -299,7 +300,6 @@ Features bônus sugeridas para expansão do Term.ooo Clone.
 
 **Descrição:**
 - Competir com amigos na mesma palavra
-- Leaderboard global/local
 - Ranking por tempo
 
 **Complexidade:** ⭐⭐⭐⭐⭐ Muito Alta (precisa backend)

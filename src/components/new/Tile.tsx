@@ -32,12 +32,14 @@ export function Tile({
   const getSizeClasses = () => {
     switch (gameMode) {
       case "uno":
-        return "size-12 sm:size-14 md:size-16 lg:size-16";
+        // short/xshort: reduz em telas baixas e largas (ex.: 1280x720) p/ caber na vertical
+        return "size-12 sm:size-14 md:size-16 lg:size-16 short:size-14 xshort:size-12";
       case "duo":
         // Mobile maior (vertical agora), desktop lado a lado
-        return "size-7 sm:size-12 md:size-14 lg:size-16";
+        return "size-7 sm:size-12 md:size-14 lg:size-16 short:size-14 xshort:size-12";
       case "quadra":
-        return "size-5 sm:size-7 md:size-10 lg:size-11";
+        // 9 linhas: precisa encolher mais cedo em telas baixas (ex.: 1280x720)
+        return "size-5 sm:size-7 md:size-10 lg:size-11 short:size-9 xshort:size-8";
       default:
         return "size-12";
     }
