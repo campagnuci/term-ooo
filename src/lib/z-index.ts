@@ -23,6 +23,14 @@ export const Z_INDEX = {
   /** Sala multiplayer */
   ROOM_SIDEBAR: 30,
 
+  /**
+   * Overlay do painel de resultado/fim de partida (sala).
+   * Fica acima do tabuleiro/teclado, mas ABAIXO do botão de chat (40) para que
+   * o chat continue acessível no mobile, e é escopado à coluna do jogo (<main>)
+   * — nunca cobre a coluna lateral do chat no desktop.
+   */
+  ROOM_RESULT_OVERLAY: 35,
+
   /** Botões flutuantes */
   CHAT_BUTTON: 40,
 

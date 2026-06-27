@@ -89,6 +89,17 @@ export function RoomScreen() {
     ? matchStatus === 'active' && !!gameState && !gameState.isGameOver
     : isHost
 
+  // O painel de resultado/fim aparece como overlay (não no fluxo), então o
+  // tabuleiro e o teclado permanecem nas posições de jogo e NÃO são empurrados.
+  // O overlay é mostrado sempre que há um painel para exibir:
+  //  - Competitivo: em tudo, menos enquanto o jogador local ainda está jogando
+  //    (partida ativa e seu jogo não terminou) — espelha o `return null` dos
+  //    painéis de Competição/Time Trial.
+  //  - Coop: apenas quando a rodada termina (RoundEndControls).
+  const showResultOverlay = isCompetitive
+    ? !(matchStatus === 'active' && !gameState?.isGameOver)
+    : !!gameState?.isGameOver
+
   // ----- Handlers de jogo -----
   // Coop: somente o host joga e transmite o estado. Competição: cada jogador
   // joga seu próprio tabuleiro localmente (sem transmitir o board).
@@ -260,7 +271,7 @@ export function RoomScreen() {
       />
 
       <div className="flex-1 flex min-h-0 overflow-hidden">
-        <main className="flex-1 flex flex-col items-center justify-between px-2 py-2 sm:px-4 sm:py-4 max-w-3xl mx-auto w-full overflow-hidden">
+        <main className="relative flex-1 flex flex-col items-center justify-between px-2 py-2 sm:px-4 sm:py-4 max-w-3xl mx-auto w-full overflow-hidden">
           {/* Banner de promoção a host */}
           {gameRoom.justBecameHost && (
             <div
@@ -304,50 +315,69 @@ export function RoomScreen() {
             />
           )}
 
-          {/* ----- Competição ----- */}
-          {isCompetition && (
-            <CompetitionPanel
-              matchStatus={matchStatus}
-              isHost={isHost}
-              gameState={gameState}
-              standings={gameRoom.standings}
-              currentMode={room.mode}
-              memberCount={room.memberCount}
-              currentUserId={gameRoom.userId}
-              onStartMatch={(mode) => gameRoom.startMatch(mode)}
-            />
-          )}
+          {/* ----- Painel de resultado / fim de partida -----
+               Renderizado como overlay ESCOPADO à coluna do jogo (<main> é
+               `relative`, este layer é `absolute inset-0`). Por estar fora do
+               fluxo, o tabuleiro e o teclado não são empurrados. Por estar
+               dentro de <main>, nunca cobre a coluna do chat (desktop); no
+               mobile, fica abaixo do botão de chat (z-index). */}
+          {showResultOverlay && (
+            <div
+              className="absolute inset-0 flex items-center justify-center p-3 sm:p-4"
+              style={{ zIndex: Z_INDEX.ROOM_RESULT_OVERLAY }}
+            >
+              {/* Fundo escurecido (verde do tema, não preto) — cobre apenas <main> */}
+              <div
+                className="absolute inset-0 bg-night/20"
+                aria-hidden="true"
+              />
 
-          {/* ----- Time Trial ----- */}
-          {isTimeTrial && (
-            <TimeTrialPanel
-              matchStatus={matchStatus}
-              isHost={isHost}
-              gameState={gameState}
-              standings={gameRoom.standings}
-              currentMode={room.mode}
-              memberCount={room.memberCount}
-              currentUserId={gameRoom.userId}
-              timing={gameRoom.roundTiming}
-              onStartMatch={(mode, timeLimitMs) => gameRoom.startMatch(mode, timeLimitMs)}
-            />
-          )}
+              {/* Card do resultado (rola internamente se exceder a altura) */}
+              <div className="relative w-full max-w-xl max-h-full overflow-y-auto">
+                {isCompetition && (
+                  <CompetitionPanel
+                    matchStatus={matchStatus}
+                    isHost={isHost}
+                    gameState={gameState}
+                    standings={gameRoom.standings}
+                    currentMode={room.mode}
+                    memberCount={room.memberCount}
+                    currentUserId={gameRoom.userId}
+                    onStartMatch={(mode) => gameRoom.startMatch(mode)}
+                  />
+                )}
 
-          {/* ----- Cooperativo: fim de rodada ----- */}
-          {!isCompetitive && gameState?.isGameOver && (
-            <RoundEndControls
-              isHost={isHost}
-              isWin={gameState.isWin}
-              resultMessage={
-                gameState.isWin
-                  ? getResultMessage(gameState)
-                  : '💀 Não foi dessa vez, tentem novamente!'
-              }
-              currentMode={room.mode}
-              solutions={gameState.boards.map((b) => b.solution)}
-              onNewWord={() => gameRoom.requestNewRound()}
-              onChangeMode={(mode) => gameRoom.requestNewRound(mode)}
-            />
+                {isTimeTrial && (
+                  <TimeTrialPanel
+                    matchStatus={matchStatus}
+                    isHost={isHost}
+                    gameState={gameState}
+                    standings={gameRoom.standings}
+                    currentMode={room.mode}
+                    memberCount={room.memberCount}
+                    currentUserId={gameRoom.userId}
+                    timing={gameRoom.roundTiming}
+                    onStartMatch={(mode, timeLimitMs) => gameRoom.startMatch(mode, timeLimitMs)}
+                  />
+                )}
+
+                {!isCompetitive && gameState?.isGameOver && (
+                  <RoundEndControls
+                    isHost={isHost}
+                    isWin={gameState.isWin}
+                    resultMessage={
+                      gameState.isWin
+                        ? getResultMessage(gameState)
+                        : '💀 Não foi dessa vez, tentem novamente!'
+                    }
+                    currentMode={room.mode}
+                    solutions={gameState.boards.map((b) => b.solution)}
+                    onNewWord={() => gameRoom.requestNewRound()}
+                    onChangeMode={(mode) => gameRoom.requestNewRound(mode)}
+                  />
+                )}
+              </div>
+            </div>
           )}
 
           {/* ----- Cooperativo: indicador de espectador ----- */}
