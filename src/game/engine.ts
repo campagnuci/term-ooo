@@ -14,6 +14,7 @@ import {
   getNumBoards,
   getMinAttempts,
   getModeDisplayName,
+  getWordLength,
 } from './mode-config'
 import {
   SHARE_LEGEND,
@@ -80,7 +81,9 @@ export function isValidWord(word: string, mode: GameMode): boolean {
 export function evaluateGuess(guess: string, target: string): Tile[] {
   const normalizedGuess = normalizeString(guess)
   const normalizedTarget = normalizeString(target)
-  const tiles: Tile[] = Array(5).fill(null).map(() => ({ letter: '', state: 'absent' }))
+  // Comprimento da palavra derivado do alvo (5 nos modos clássicos, 6 no Modo 6).
+  const wordLength = normalizedTarget.length
+  const tiles: Tile[] = Array(wordLength).fill(null).map(() => ({ letter: '', state: 'absent' }))
   const targetLetters = normalizedTarget.split('')
   const available: Record<string, number> = {}
 
@@ -89,7 +92,7 @@ export function evaluateGuess(guess: string, target: string): Tile[] {
   }
 
   // Primeira passagem: marcar verdes
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < wordLength; i++) {
     tiles[i].letter = normalizedGuess[i]
     if (normalizedGuess[i] === normalizedTarget[i]) {
       tiles[i].state = 'correct'
@@ -98,7 +101,7 @@ export function evaluateGuess(guess: string, target: string): Tile[] {
   }
 
   // Segunda passagem: marcar amarelos
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < wordLength; i++) {
     if (tiles[i].state !== 'correct') {
       const letter = normalizedGuess[i]
       if (available[letter] && available[letter] > 0) {
@@ -120,12 +123,13 @@ export function checkHardModeCompliance(
   if (previousGuesses.length === 0) return { valid: true }
 
   const normalizedGuess = normalizeString(guess)
+  const wordLength = normalizedGuess.length
   const correctLetters: Map<number, string> = new Map()
   const presentLetters: Set<string> = new Set()
 
   // Coletar restrições das tentativas anteriores
   for (const prevGuess of previousGuesses) {
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < wordLength; i++) {
       const tile = prevGuess.tiles[i]
       if (tile.state === 'correct') {
         correctLetters.set(i, tile.letter)
@@ -193,6 +197,7 @@ export function updateKeyStates(boards: Board[]): Record<string, KeyState[]> {
 export function createInitialGameState(mode: GameMode, dayNumber: number, dateKey: string): GameState {
   const solutions = getDailyWords(mode, dayNumber)
   const maxAttempts = getMaxAttempts(mode)
+  const wordLength = getWordLength(mode)
 
   const boards: Board[] = solutions.map(solution => ({
     guesses: [],
@@ -203,7 +208,7 @@ export function createInitialGameState(mode: GameMode, dayNumber: number, dateKe
   return {
     mode,
     boards,
-    currentGuess: ['', '', '', '', ''], // Array fixo de 5 posições
+    currentGuess: Array(wordLength).fill(''), // Uma posição por letra do modo
     currentRow: 0,
     maxAttempts,
     isGameOver: false,
@@ -221,11 +226,12 @@ export function processGuess(
   settings: Settings
 ): { newState: GameState; error?: string } {
   const { currentGuess, boards, currentRow, maxAttempts, mode } = state
+  const wordLength = getWordLength(mode)
 
   // Converter array para string (remover posições vazias)
   const guessWord = currentGuess.join('')
 
-  if (guessWord.length !== 5) {
+  if (guessWord.length !== wordLength) {
     return { newState: state, error: 'Palavra incompleta' }
   }
 
@@ -276,7 +282,7 @@ export function processGuess(
   const newState: GameState = {
     ...state,
     boards: newBoards,
-    currentGuess: ['', '', '', '', ''], // Reset para array vazio
+    currentGuess: Array(wordLength).fill(''), // Reset para array vazio do tamanho do modo
     currentRow: newRow,
     isGameOver,
     isWin: allComplete,
@@ -315,19 +321,21 @@ export function generateShareText(state: GameState, isArchive: boolean = false):
   text += `Modo: ${modeText} - Tentativas: ${result}\n\n`
   text += SHARE_LEGEND + '\n\n'
 
-  if (mode === 'termo') {
-    // Uma coluna
-    text += renderSingleBoard(boards[0], maxAttempts)
-  } else if (mode === 'dueto') {
-    // Duas colunas lado a lado
-    text += renderBoardPair(boards, 0, 1, maxAttempts)
+  const wordLength = getWordLength(mode)
+  const numBoards = getNumBoards(mode)
+  if (numBoards === 1) {
+    // Uma coluna (Termo / Modo 6)
+    text += renderSingleBoard(boards[0], maxAttempts, wordLength)
+  } else if (numBoards === 2) {
+    // Duas colunas lado a lado (Dueto)
+    text += renderBoardPair(boards, 0, 1, maxAttempts, wordLength)
   } else {
     // Quarteto: 2x2
     // Linha superior (tabuleiros 0 e 1)
-    text += renderBoardPair(boards, 0, 1, maxAttempts)
+    text += renderBoardPair(boards, 0, 1, maxAttempts, wordLength)
     text += '\n'
     // Linha inferior (tabuleiros 2 e 3)
-    text += renderBoardPair(boards, 2, 3, maxAttempts)
+    text += renderBoardPair(boards, 2, 3, maxAttempts, wordLength)
   }
 
   // Adicionar URL no final

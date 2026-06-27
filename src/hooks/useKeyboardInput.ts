@@ -23,6 +23,7 @@
 
 import { useCallback, useEffect } from 'react'
 import { GameState } from '@/game/types'
+import { getWordLength } from '@/game/mode-config'
 
 /**
  * Opções de configuração do hook
@@ -73,44 +74,52 @@ export function useKeyboardInput({
   const handleKey = useCallback((key: string) => {
     if (!gameState || gameState.isGameOver) return
 
+    // Tamanho da palavra do modo atual (5 nos clássicos, 6 no Modo 6).
+    const wordLength = getWordLength(gameState.mode)
+    // Base normalizada com EXATAMENTE wordLength posições: impede o array de
+    // crescer (bug do backspace além da última coluna) e cura estados salvos.
+    const base = gameState.currentGuess.slice(0, wordLength)
+    while (base.length < wordLength) base.push('')
+
     if (key === 'ENTER') {
       onSubmitGuess()
     } 
     else if (key === 'BACKSPACE') {
-      // Comportamento igual ao original:
-      // Se posição atual tem letra: limpa ela
-      // Se posição atual vazia: move cursor para trás e limpa
-      let targetPos = cursorPosition
-
-      if (gameState.currentGuess[cursorPosition] === '') {
-        // Posição atual vazia, move para trás
+      // Posição-alvo a limpar:
+      //  - cursor além do fim (todas preenchidas): apaga a última coluna;
+      //  - cursor numa célula vazia: recua e apaga a anterior;
+      //  - cursor numa célula preenchida: apaga ela mesma.
+      let targetPos: number
+      if (cursorPosition >= wordLength) {
+        targetPos = wordLength - 1
+        onCursorMove(targetPos)
+      } else if (base[cursorPosition] === '') {
         if (cursorPosition > 0) {
           targetPos = cursorPosition - 1
           onCursorMove(targetPos)
         } else {
           return // Já no início e vazio, nada a fazer
         }
+      } else {
+        targetPos = cursorPosition
       }
 
-      // Limpar a posição alvo
-      const newGuess = [...gameState.currentGuess]
+      const newGuess = [...base]
       newGuess[targetPos] = ''
-      
-      // Notificar mudança
       onGuessChange(newGuess)
-    } 
+    }
     else if (key === 'ARROWLEFT') {
       onCursorMove(Math.max(0, cursorPosition - 1))
     } 
     else if (key === 'ARROWRIGHT') {
-      onCursorMove(Math.min(4, cursorPosition + 1))
-    } 
+      onCursorMove(Math.min(wordLength - 1, cursorPosition + 1))
+    }
     else if (key === ' ') {
       // Buscar próxima posição vazia (space = moveEditToNext)
       let nextEmpty = -1
-      for (let i = 1; i < 5; i++) {
-        const pos = (cursorPosition + i) % 5
-        if (gameState.currentGuess[pos] === '') {
+      for (let i = 1; i < wordLength; i++) {
+        const pos = (cursorPosition + i) % wordLength
+        if (base[pos] === '') {
           nextEmpty = pos
           break
         }
@@ -119,14 +128,14 @@ export function useKeyboardInput({
       if (nextEmpty !== -1) {
         onCursorMove(nextEmpty)
       } else {
-        // Todas posições cheias, move para posição 5 (fora)
-        onCursorMove(5)
+        // Todas posições cheias, move o cursor para fora (uma além da última)
+        onCursorMove(wordLength)
       }
-    } 
+    }
     else if (/^[A-Z]$/.test(key)) {
       // Digitar letra: SUBSTITUI na posição do cursor (não insere!)
-      if (cursorPosition < 5) {
-        const newGuess = [...gameState.currentGuess]
+      if (cursorPosition < wordLength) {
+        const newGuess = [...base]
         newGuess[cursorPosition] = key.toLowerCase()
 
         // Ativar animação de digitação
@@ -137,8 +146,8 @@ export function useKeyboardInput({
 
         // Mover para próxima posição vazia (moveEditToNext)
         let nextEmpty = -1
-        for (let i = 1; i < 5; i++) {
-          const pos = (cursorPosition + i) % 5
+        for (let i = 1; i < wordLength; i++) {
+          const pos = (cursorPosition + i) % wordLength
           if (newGuess[pos] === '') {
             nextEmpty = pos
             break
@@ -148,8 +157,8 @@ export function useKeyboardInput({
         if (nextEmpty !== -1) {
           onCursorMove(nextEmpty)
         } else {
-          // Todas posições cheias, move para posição 5 (fora)
-          onCursorMove(5)
+          // Todas posições cheias, move o cursor para fora (uma além da última)
+          onCursorMove(wordLength)
         }
       }
     }

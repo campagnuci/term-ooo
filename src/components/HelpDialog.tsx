@@ -53,7 +53,7 @@ export function HelpDialog({ open, onOpenChange }: HelpDialogProps) {
                 className="space-y-4 text-sm py-4 pr-4"
               >
                 <motion.p variants={itemVariants}>
-                  Descubra a palavra certa em 6 tentativas (Termo), 7 tentativas (Dueto) ou 9 tentativas (Quarteto).
+                  Descubra a palavra certa em 6 tentativas (Termo), 7 tentativas (Dueto), 9 tentativas (Quarteto) ou 6 tentativas com palavras de 6 letras (Modo 6).
                 </motion.p>
 
                 <motion.p variants={itemVariants}>

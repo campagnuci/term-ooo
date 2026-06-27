@@ -37,9 +37,11 @@ export const SHARE_LEGEND = `🟩 - Letra correta na posição correta
 🔳 - Tile não utilizado`
 
 /**
- * Tiles vazios para uma linha sem guess (5 tiles)
+ * Tiles vazios para uma linha sem guess, no tamanho da palavra (padrão 5).
  */
-export const EMPTY_ROW_EMOJI = '🔳🔳🔳🔳🔳'
+export function emptyRowEmoji(wordLength = 5): string {
+  return TILE_EMOJI.empty.repeat(wordLength)
+}
 
 /**
  * Converte um estado de tile para seu emoji correspondente
@@ -57,8 +59,8 @@ export function tileToEmoji(state: TileState): string {
  * @param guess - Guess a ser renderizada (ou undefined para linha vazia)
  * @returns String de 5 emojis representando a guess
  */
-export function renderGuessEmojis(guess: Guess | undefined): string {
-  if (!guess) return EMPTY_ROW_EMOJI
+export function renderGuessEmojis(guess: Guess | undefined, wordLength = 5): string {
+  if (!guess) return emptyRowEmoji(wordLength)
   return guess.tiles.map(tile => tileToEmoji(tile.state)).join('')
 }
 
@@ -75,20 +77,21 @@ export function renderBoardPair(
   boards: Board[],
   board1Index: number,
   board2Index: number,
-  maxRows: number
+  maxRows: number,
+  wordLength = 5
 ): string {
   let text = ''
-  
+
   for (let i = 0; i < maxRows; i++) {
     const guess1 = boards[board1Index]?.guesses[i]
     const guess2 = boards[board2Index]?.guesses[i]
-    
-    text += renderGuessEmojis(guess1)
+
+    text += renderGuessEmojis(guess1, wordLength)
     text += ' '
-    text += renderGuessEmojis(guess2)
+    text += renderGuessEmojis(guess2, wordLength)
     text += '\n'
   }
-  
+
   return text
 }
 
@@ -99,15 +102,15 @@ export function renderBoardPair(
  * @param maxRows - Número máximo de linhas a renderizar
  * @returns String com as linhas renderizadas
  */
-export function renderSingleBoard(board: Board, maxRows: number): string {
+export function renderSingleBoard(board: Board, maxRows: number, wordLength = 5): string {
   let text = ''
-  
+
   for (let i = 0; i < maxRows; i++) {
     const guess = board.guesses[i]
-    text += renderGuessEmojis(guess)
+    text += renderGuessEmojis(guess, wordLength)
     text += '\n'
   }
-  
+
   return text
 }
 

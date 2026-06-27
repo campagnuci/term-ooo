@@ -8,7 +8,9 @@ interface GameBoardProps {
   currentGuess: string | string[]
   currentRow: number
   maxAttempts: number
-  gameMode: 'uno' | 'duo' | 'quadra'
+  /** Letras por palavra (5 nos modos clássicos, 6 no Modo 6). */
+  wordLength?: number
+  gameMode: 'uno' | 'duo' | 'quadra' | 'seis'
   highContrast?: boolean
   cursorPosition?: number
   shouldShake?: boolean
@@ -24,6 +26,7 @@ export function GameBoard({
   currentGuess,
   currentRow,
   maxAttempts,
+  wordLength = 5,
   gameMode,
   highContrast = false,
   cursorPosition = 0,
@@ -71,7 +74,7 @@ export function GameBoard({
   // 2. Linha atual (se ainda não acabou)
   if (currentRow < maxAttempts && !board.isComplete) {
     const currentTiles = []
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < wordLength; i++) {
       // currentGuess é um array
       const letter = Array.isArray(currentGuess) ? (currentGuess[i] || '') : ''
       currentTiles.push(
@@ -106,7 +109,7 @@ export function GameBoard({
   for (let i = 0; i < remainingRows; i++) {
     rows.push(
       <div key={board.guesses.length + i + 1} className={cn('flex justify-center', getGapClasses())}>
-        {Array(5)
+        {Array(wordLength)
           .fill(0)
           .map((_, j) => (
             <Tile key={j} letter="" state="empty" gameMode={gameMode} isHighContrast={highContrast} />

@@ -36,6 +36,8 @@ export function useGameMode({ location, navigate }: UseGameModeOptions): UseGame
       newMode = 'dueto'
     } else if (path === '/4' || path === '/quarteto') {
       newMode = 'quarteto'
+    } else if (path === '/6' || path === '/seis') {
+      newMode = 'seis'
     }
 
     if (newMode !== mode) {

@@ -45,13 +45,16 @@ Adivinhe a palavra do dia em português! Cada palpite revela dicas sobre as letr
 
 ### Single player
 
-| Modo | Tabuleiros | Tentativas | Rota |
-|------|-----------|-----------|------|
-| **Termo** | 1 palavra | 6 | `/` |
-| **Dueto** | 2 palavras | 7 | `/2` ou `/dueto` |
-| **Quarteto** | 4 palavras | 9 | `/4` ou `/quarteto` |
-| **🎮 Treino** | 1 palavra (aleatória, ilimitado) | 6 | `/treino` |
-| **🕰️ Arquivo** | qualquer modo, dias anteriores | — | `?dia=N` |
+| Modo | Tabuleiros | Letras | Tentativas | Rota |
+|------|-----------|--------|-----------|------|
+| **Termo** | 1 palavra | 5 | 6 | `/` |
+| **Dueto** | 2 palavras | 5 | 7 | `/2` ou `/dueto` |
+| **Quarteto** | 4 palavras | 5 | 9 | `/4` ou `/quarteto` |
+| **🔠 Modo 6** | 1 palavra | **6** | 6 | `/6` ou `/seis` |
+| **🎮 Treino** | 1 palavra (aleatória, ilimitado) | 5 | 6 | `/treino` |
+| **🕰️ Arquivo** | qualquer modo, dias anteriores | — | — | `?dia=N` |
+
+> 🔠 **Modo 6** usa palavras de **6 letras**, com dicionário próprio gerado do `br-utf8.txt` e soluções curadas por frequência (ver [`termooo-builder`](../termooo-builder) e `src/game/words-seis.ts`). O engine é genérico no tamanho da palavra (`wordLength`), então o "5" deixou de ser fixo.
 
 ### Multiplayer (Salas)
 
@@ -104,6 +107,7 @@ Adivinhe a palavra do dia em português! Cada palpite revela dicas sobre as letr
   - Separadas por modo de jogo (Treino e Arquivo não contam para a streak diária)
 
 ### 📱 Recursos Adicionais
+- 🔠 **Modo 6** — palavras de 6 letras (engine genérico no tamanho da palavra; dicionário próprio do `br-utf8.txt`)
 - 🎮 **Modo Treino** ilimitado com palavras aleatórias
 - 🏆 **Salas multiplayer** (Cooperativo, Competição e Time Trial) via WebSocket
 - 🔁 **Partidas multi-rodada** competitivas com pontuação/tempo **acumulados** entre rodadas (3/5/10 ou personalizado)
@@ -113,7 +117,7 @@ Adivinhe a palavra do dia em português! Cada palpite revela dicas sobre as letr
 - 📱 **Interface 100% responsiva** (Dialog desktop / Sheet mobile)
 - 📅 **Arquivo de Dias Anteriores** (últimos 30 dias)
 - 📤 **Compartilhamento** como texto (grid de emojis) e como **imagem PNG** estilizada
-- ⏱️ **Cronômetro de resolução em tempo real** — discreto, em todos os modos (Termo/Dueto/Quarteto/Treino) e também nas **salas**, sincronizado entre os jogadores
+- ⏱️ **Cronômetro de resolução em tempo real** — discreto, em todos os modos (Termo/Dueto/Quarteto/Modo 6/Treino) e também nas **salas**, sincronizado entre os jogadores
 - ⏱️ Countdown visual para próxima palavra
 - 🎨 Modo de alto contraste (acessibilidade)
 - 💡 Palavras reveladas ao finalizar (para todos os membros, no multiplayer)
@@ -449,19 +453,20 @@ term-ooo/
 │   │   ├── ShareCard.tsx         # card -> imagem PNG
 │   │   ├── ShareDropdown.tsx     # menu de compartilhamento
 │   │   ├── StatsDialog.tsx
-│   │   ├── TopTabs.tsx           # abas Termo/Dueto/Quarteto/Treino
+│   │   ├── TopTabs.tsx           # abas Termo/Dueto/Quarteto/Modo 6/Treino
 │   │   └── TrainingResultDialog.tsx  # 🆕 resultado do Treino
 │   ├── hooks/                    # Hooks customizados (ver seção acima)
 │   ├── game/
 │   │   ├── engine.ts             # Motor (avaliação, validação, palavra aleatória)
-│   │   ├── mode-config.ts        # Config por modo (tentativas, boards, dicionários)
+│   │   ├── mode-config.ts        # Config por modo (tentativas, boards, wordLength, dicionários)
 │   │   ├── storage.ts            # Interface com localStorage
 │   │   ├── types.ts              # Tipos do jogo
 │   │   ├── room-types.ts         # 🆕 Protocolo das salas (coop + competição + Time Trial, multi-rodada)
 │   │   ├── standings.ts          # 🆕 Ordenação/medalhas do ranking acumulado
 │   │   ├── chat-types.ts         # Tipos do chat
 │   │   ├── share-utils.ts        # Render do grid de compartilhamento
-│   │   └── words-{termo,dueto,quarteto}.ts  # Dicionários
+│   │   ├── words-{termo,dueto,quarteto}.ts  # Dicionários (5 letras)
+│   │   └── words-seis.ts         # 🆕 Modo 6 (palpites + soluções + acentos, 6 letras)
 │   ├── lib/
 │   │   ├── sounds/               # Sistema de áudio
 │   │   ├── chat-config.ts / chat-utils.ts
@@ -512,6 +517,7 @@ Este projeto segue o [Semantic Versioning](https://semver.org/lang/pt-BR/) (SemV
 ### Versão Atual: **v0.5.1**
 
 **Destaques desde a v0.4.x:**
+- 🔠 **Modo 6** (palavras de 6 letras; engine genérico no `wordLength`)
 - 🎮 Modo Treino (jogo ilimitado com palavras aleatórias)
 - 🏆 Salas multiplayer: Cooperativo, Competição e Time Trial
 - 🔁 Partidas competitivas **multi-rodada** (pontuação/tempo **acumulados**) com **contagem regressiva 5→1 "Vai!"** sincronizada
@@ -520,7 +526,7 @@ Este projeto segue o [Semantic Versioning](https://semver.org/lang/pt-BR/) (SemV
 - 🌐 Rebranding para `termo.enresshou.dev`
 
 **Histórico de Releases:**
-- **v0.5.x** - Treino, salas multiplayer (coop + competição + Time Trial), partidas multi-rodada com contagem regressiva, share como imagem
+- **v0.5.x** - Treino, salas multiplayer (coop + competição + Time Trial), partidas multi-rodada com contagem regressiva, **Modo 6 (6 letras)**, share como imagem
 - **v0.4.1** (2024-12-02) - Som de inatividade + fix settings
 - **v0.4.0** (2024-12-02) - Sistema de efeitos sonoros
 - **v0.2.0** (2024-11-30) - Chat WebSocket + Arquivo
@@ -537,8 +543,8 @@ Veja o [ROADMAP_FEATURES.md](ROADMAP_FEATURES.md) para a lista completa.
 **Próximas ideias:**
 1. 📊 Estatísticas avançadas com gráficos
 2. 🌈 Temas customizáveis
-3. 🎯 Modo de 6 letras
-4. 🏅 Sistema de conquistas
+3. 🏅 Sistema de conquistas
+4. 🌍 Múltiplos idiomas
 
 ---
 

@@ -11,6 +11,7 @@ const MODE_LABEL: Record<GameMode, string> = {
   termo: 'TERMO',
   dueto: 'DUETO',
   quarteto: 'QUARTETO',
+  seis: 'MODO 6',
 }
 
 interface RoomHeaderProps {

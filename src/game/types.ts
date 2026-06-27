@@ -1,5 +1,5 @@
 // src/game/types.ts
-export type GameMode = 'termo' | 'dueto' | 'quarteto'
+export type GameMode = 'termo' | 'dueto' | 'quarteto' | 'seis'
 
 export type TileState = 'empty' | 'filled' | 'correct' | 'present' | 'absent'
 
@@ -24,7 +24,7 @@ export interface Board {
 export interface GameState {
   mode: GameMode
   boards: Board[]
-  currentGuess: string[] // Array fixo de 5 posições (pode ter strings vazias)
+  currentGuess: string[] // Array com `wordLength` posições do modo (pode ter strings vazias)
   currentRow: number
   maxAttempts: number
   isGameOver: boolean

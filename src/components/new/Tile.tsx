@@ -6,7 +6,7 @@ import { GlowingEffect } from "../ui/glowing-effect";
 interface TileProps {
   letter: string;
   state: TileState;
-  gameMode: "uno" | "duo" | "quadra";
+  gameMode: "uno" | "duo" | "quadra" | "seis";
   isHighContrast?: boolean;
   animationDelay?: number;
   isEditing?: boolean;
@@ -34,6 +34,9 @@ export function Tile({
       case "uno":
         // short/xshort: reduz em telas baixas e largas (ex.: 1280x720) p/ caber na vertical
         return "size-12 sm:size-14 md:size-16 lg:size-16 short:size-14 xshort:size-12";
+      case "seis":
+        // 6 colunas: um pouco menor que o "uno" p/ caber 6 tiles na largura
+        return "size-10 sm:size-12 md:size-14 lg:size-14 short:size-12 xshort:size-10";
       case "duo":
         // Mobile maior (vertical agora), desktop lado a lado
         return "size-7 sm:size-12 md:size-14 lg:size-16 short:size-14 xshort:size-12";
@@ -51,6 +54,8 @@ export function Tile({
       case "uno":
         // Tiles grandes: fonte proporcional
         return "text-xl sm:text-2xl md:text-3xl lg:text-3xl";
+      case "seis":
+        return "text-lg sm:text-xl md:text-2xl lg:text-2xl";
       case "duo":
         // Mobile agora tem tiles maiores (vertical)
         return "text-sm sm:text-xl md:text-2xl lg:text-3xl";
@@ -138,6 +143,7 @@ export function Tile({
           className={cn(
             'absolute bottom-0.5 sm:bottom-1 h-0.5 bg-slate-300',
             gameMode === "uno" && "w-6 sm:w-8",
+            gameMode === "seis" && "w-5 sm:w-7",
             gameMode === "duo" && "w-5 sm:w-6 md:w-7",
             gameMode === "quadra" && "w-3 sm:w-4"
           )}

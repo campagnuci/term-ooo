@@ -199,6 +199,7 @@ const MODE_NAMES: Record<GameMode, string> = {
   termo: 'Termo',
   dueto: 'Dueto',
   quarteto: 'Quarteto',
+  seis: 'Modo 6',
 }
 
 /** Emoji de medalha para a posição entre os que acertaram (1=ouro). */

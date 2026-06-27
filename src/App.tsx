@@ -158,8 +158,10 @@ function Game() {
       navigate('/')
     } else if (newMode === 'dueto') {
       navigate('/2')
-    } else {
+    } else if (newMode === 'quarteto') {
       navigate('/4')
+    } else {
+      navigate('/6')
     }
   }
 
@@ -358,7 +360,13 @@ function Game() {
 
   const modeTitle = isTraining
     ? 'TREINO'
-    : mode === 'termo' ? 'TERMO' : mode === 'dueto' ? 'DUETO' : 'QUARTETO'
+    : mode === 'termo'
+      ? 'TERMO'
+      : mode === 'dueto'
+        ? 'DUETO'
+        : mode === 'quarteto'
+          ? 'QUARTETO'
+          : 'MODO 6'
 
   return (
     <div className="h-dvh bg-gradient-to-b from-night via-[#0a201a] to-night flex flex-col overflow-hidden">
@@ -521,6 +529,8 @@ function App() {
         <Route path="/dueto" element={<Game />} />
         <Route path="/4" element={<Game />} />
         <Route path="/quarteto" element={<Game />} />
+        <Route path="/6" element={<Game />} />
+        <Route path="/seis" element={<Game />} />
         <Route path="/treino" element={<Game />} />
         <Route path="/sala" element={<RoomLobby />} />
         <Route path="/sala/:code" element={<RoomScreen />} />

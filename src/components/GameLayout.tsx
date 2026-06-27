@@ -1,5 +1,6 @@
 // src/components/GameLayout.tsx
 import { GameState } from '@/game/types'
+import { getWordLength } from '@/game/mode-config'
 import { GameBoard as NewGameBoard } from './new/GameBoard'
 
 interface GameLayoutProps {
@@ -26,9 +27,16 @@ export function GameLayout({
   happyBoards = []
 }: GameLayoutProps) {
   const { mode, boards, currentGuess, currentRow, maxAttempts } = gameState
-  
-  // Mapear modos para o sistema do Figma
-  const gameMode = mode === 'termo' ? 'uno' : mode === 'dueto' ? 'duo' : 'quadra'
+
+  // Letras por palavra (5 nos clássicos, 6 no Modo 6). Deriva do MODO (estável),
+  // não do currentGuess — assim o tabuleiro nunca ganha/perde colunas por causa
+  // de um array de palpite transitoriamente fora do tamanho.
+  const wordLength = getWordLength(mode)
+
+  // Mapear modos para o sistema do Figma. 'seis' tem chave própria (tiles um
+  // pouco menores p/ caber 6 colunas); Termo e Modo 6 são 1 tabuleiro.
+  const gameMode =
+    mode === 'dueto' ? 'duo' : mode === 'quarteto' ? 'quadra' : mode === 'seis' ? 'seis' : 'uno'
   const boardCount = boards.length
 
   // Determina o layout do grid baseado no modo e número de boards
@@ -85,6 +93,7 @@ export function GameLayout({
               currentGuess={currentGuess}
               currentRow={currentRow}
               maxAttempts={maxAttempts}
+              wordLength={wordLength}
               gameMode={gameMode}
               highContrast={highContrast}
               cursorPosition={cursorPosition}

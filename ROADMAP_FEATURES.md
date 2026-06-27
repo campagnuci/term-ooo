@@ -269,24 +269,34 @@ Features bônus sugeridas para expansão do Term.ooo Clone.
 
 ---
 
-### 7. 🎯 Modo 6 Letras
-**Status:** 📋 Planejado
+### 7. 🔠 Modo 6 Letras ("Modo 6")
+**Status:** ✅ Concluído (Jun 2026)
 
 **Descrição:**
-- Variante com palavras de 6 letras
-- Dicionário específico para 6 letras
-- Mais desafiador para veteranos
+- Variante single player de **1 tabuleiro** com palavras de **6 letras**, **6 tentativas**
+- Aparece na UI junto a Termo/Dueto/Quarteto/Treino; rota `/6` (e `/seis`)
+- Dicionário próprio: gerado do `br-utf8.txt` (~12 mil palavras de 6 letras = palpites) com **soluções curadas por frequência** (1.460, rank ≤ 10.000)
 
 **Benefícios:**
-- Aumenta longevidade do jogo
-- Desafio extra para jogadores experientes
+- Aumenta longevidade do jogo; engine agora é genérico no tamanho da palavra (reaproveitável p/ outros tamanhos)
 
-**Complexidade:** ⭐⭐⭐ Alta (precisa de novo dicionário)
+**Complexidade:** ⭐⭐⭐ Média-Alta (generalizar o "5" fixo do engine/UI + pipeline de dados)
 
-**Arquivos necessários:**
-- `src/game/words-seis.ts` - Novo dicionário
-- Modificar `engine.ts` para suportar tamanho variável
-- Ajustar UI dos tiles (6 ao invés de 5)
+**Nota de design:** mantido em **6 tentativas** (não 7). Por simulação de um solver guloso, o conjunto de 6 letras é até **mais fácil** que o Termo (média ~2,94 vs ~3,47 tentativas; 100% resolvidas em ≤5), então 6 é estatisticamente folgado — uma 7ª tentativa seria só "forgiveness" de UX, não necessidade.
+
+**Implementação final:**
+- ✅ `src/game/words-seis.ts` — `seisSolutions` / `seisAllowed` / `seisAllowedSet` / `seisAccentMap` (gerado pelo pacote `termooo-builder/`)
+- ✅ `src/game/types.ts` — `GameMode` inclui `'seis'`
+- ✅ `src/game/mode-config.ts` — campo `wordLength` em todos os modos + entrada `seis` (`maxAttempts: 6`, `numBoards: 1`, `wordLength: 6`, `displayName: 'Modo 6'`) + helper `getWordLength`
+- ✅ `src/game/engine.ts` — `evaluateGuess`/`checkHardModeCompliance`/`createInitialGameState`/`processGuess`/`generateShareText` deixaram de fixar 5 e usam `wordLength`/`numBoards`
+- ✅ `src/game/share-utils.ts` — emojis de linha vazia no tamanho da palavra
+- ✅ `src/hooks/useKeyboardInput.ts` — input normalizado ao `wordLength` (sem crescer o array; corrige o bug da coluna extra no backspace)
+- ✅ `src/components/GameLayout.tsx` + `new/GameBoard.tsx` + `new/Tile.tsx` — board com `wordLength` colunas e chave de tamanho `'seis'` (tiles menores p/ caber 6)
+- ✅ `src/App.tsx` (rota `/6`, título), `src/hooks/useGameMode.ts` (`/6`,`/seis` → `seis`), `src/components/TopTabs.tsx` (aba "Modo 6"), `RoomHeader.tsx` + `useGameRoom.ts` (`MODE_*` ganharam `seis`)
+- ✅ **Single player apenas**: as listas de criação de sala continuam `[termo, dueto, quarteto]` (o servidor só conhece dicionários de 5 letras)
+
+**Pipeline de dados (`termooo-builder/`):**
+- `extract-by-length.js` (extrai X letras do `br-utf8.txt`) → `curate-solutions.js` (cura por frequência) → `build-termo-words.js` (gera o `.ts`); ou o assistente interativo `criar-modo-termo.js`
 
 ---
 

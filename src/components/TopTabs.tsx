@@ -20,6 +20,7 @@ export function TopTabs({ currentMode, isTraining, onModeChange, isVisible }: To
     { value: 'termo', label: 'Termo' },
     { value: 'dueto', label: 'Dueto' },
     { value: 'quarteto', label: 'Quarteto' },
+    { value: 'seis', label: 'Modo 6' },
     { value: 'treino', label: '🎮 Treino' },
   ];
 

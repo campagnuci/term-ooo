@@ -24,6 +24,7 @@ import { termoSolutions } from './words-termo'
 import { duetoSolutions } from './words-dueto'
 import { quartetoSolutions } from './words-quarteto'
 import { sharedAllowed, sharedAllowedSet } from './words-shared'
+import { seisSolutions, seisAllowed, seisAllowedSet } from './words-seis'
 
 /**
  * Interface para configuração de tentativas mínimas por posição (medalhas)
@@ -45,6 +46,8 @@ export interface ModeConfig {
   maxAttempts: number
   /** Número de tabuleiros simultâneos */
   numBoards: number
+  /** Número de letras da palavra (5 nos modos clássicos, 6 no Modo 6). */
+  wordLength: number
   /** Tentativas mínimas para cada medalha */
   minAttempts: MinAttempts
   /** Nome de exibição do modo */
@@ -67,6 +70,7 @@ export const MODE_CONFIG: Record<GameMode, ModeConfig> = {
   termo: {
     maxAttempts: 6,
     numBoards: 1,
+    wordLength: 5,
     minAttempts: { first: 1, second: 2, third: 3 },
     displayName: 'Termo',
     solutions: termoSolutions,
@@ -76,6 +80,7 @@ export const MODE_CONFIG: Record<GameMode, ModeConfig> = {
   dueto: {
     maxAttempts: 7,
     numBoards: 2,
+    wordLength: 5,
     minAttempts: { first: 2, second: 3, third: 4 },
     displayName: 'Dueto',
     solutions: duetoSolutions,
@@ -85,11 +90,24 @@ export const MODE_CONFIG: Record<GameMode, ModeConfig> = {
   quarteto: {
     maxAttempts: 9,
     numBoards: 4,
+    wordLength: 5,
     minAttempts: { first: 4, second: 5, third: 6 },
     displayName: 'Quarteto',
     solutions: quartetoSolutions,
     allowed: sharedAllowed,
     allowedSet: sharedAllowedSet,
+  },
+  // Modo 6: 1 tabuleiro, palavras de 6 letras. Dicionário próprio (br-utf8),
+  // soluções curadas por frequência. Ver src/game/words-seis.ts.
+  seis: {
+    maxAttempts: 6,
+    numBoards: 1,
+    wordLength: 6,
+    minAttempts: { first: 1, second: 2, third: 3 },
+    displayName: 'Modo 6',
+    solutions: seisSolutions,
+    allowed: seisAllowed,
+    allowedSet: seisAllowedSet,
   },
 } as const
 
@@ -121,6 +139,16 @@ export function getMaxAttempts(mode: GameMode): number {
  */
 export function getNumBoards(mode: GameMode): number {
   return MODE_CONFIG[mode].numBoards
+}
+
+/**
+ * Obtém o número de letras da palavra de um modo (5 nos clássicos, 6 no Modo 6).
+ *
+ * @param mode - Modo de jogo
+ * @returns Quantidade de letras por palavra
+ */
+export function getWordLength(mode: GameMode): number {
+  return MODE_CONFIG[mode].wordLength
 }
 
 /**
