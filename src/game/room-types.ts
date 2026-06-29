@@ -138,6 +138,10 @@ export type RoomServerMessageType =
   | 'round-timing'
   | 'chat-message'
   | 'user-joined'
+  // Queda transitória: o membro continua na sala durante a janela de tolerância.
+  | 'user-disconnected'
+  // Voltou dentro da janela de tolerância (reconexão transparente).
+  | 'user-reconnected'
   | 'user-left'
   | 'new-host'
   | 'you-are-host'

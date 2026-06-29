@@ -28,6 +28,7 @@ import {
 } from '@/game/room-types'
 import { ROOM_CONFIG, buildRoomUrl } from '@/lib/room-config'
 import { generateUserId, loadUserId, saveUserId } from '@/lib/chat-utils'
+import { storage } from '@/game/storage'
 import { useChatConnection } from './useChatConnection'
 
 interface UseGameRoomOptions {
@@ -193,6 +194,27 @@ function buildInitialState(
   const state = createInitialGameState(mode, seed, dateKey)
   // createInitialGameState já preenche as soluções (via getDailyWords).
   return asHost ? state : stripSolutions(state)
+}
+
+/**
+ * Tabuleiro competitivo após (re)conexão. Tenta reidratar os palpites salvos no
+ * localStorage para esta rodada (`room-<code>-<roundId>`); se não houver (rodada
+ * nova ou primeira entrada), começa do zero. Reusa a chave por rodada, então um
+ * estado de rodada antiga nunca é restaurado por engano. Re-injeta as soluções
+ * derivadas de (mode, seed) por garantia.
+ */
+function restoreOrBuild(
+  mode: GameMode,
+  seed: number,
+  code: string,
+  roundId: string
+): GameState {
+  const dateKey = `room-${code}-${roundId}`
+  const saved = storage.getGameState(mode, dateKey)
+  if (saved && saved.dateKey === dateKey) {
+    return withSolutions(saved, mode, seed)
+  }
+  return buildInitialState(mode, seed, code, roundId, true)
 }
 
 const MODE_NAMES: Record<GameMode, string> = {
@@ -376,15 +398,41 @@ export function useGameRoom({
             beginCountdown(null)
           }
           const asHost = newRoom.hostUserId === userId
-          setGameState(
-            buildInitialState(
+          if (competitive) {
+            // Reidrata o tabuleiro desta rodada (palpites salvos), se houver.
+            const restored = restoreOrBuild(
               newRoom.mode,
               newRoom.seed,
               newRoom.code,
-              newRoom.roundId,
-              competitive ? true : asHost
+              newRoom.roundId
             )
-          )
+            setGameState(restored)
+            // Recupera um término perdido pela queda: se o tabuleiro restaurado
+            // já acabou, a partida está ativa e o servidor ainda não me tem como
+            // finalista da rodada corrente, re-reporto (handleCompetitorFinished
+            // é idempotente do lado do servidor).
+            const alreadyFinisher = (msg.roundFinishers ?? []).some(
+              (f) => f.userId === userId
+            )
+            if (ms === 'active' && restored.isGameOver && !alreadyFinisher) {
+              sendRef.current({
+                type: 'competitor-finished',
+                roundId: newRoom.roundId,
+                solved: restored.isWin,
+                attempts: restored.currentRow,
+              })
+            }
+          } else {
+            setGameState(
+              buildInitialState(
+                newRoom.mode,
+                newRoom.seed,
+                newRoom.code,
+                newRoom.roundId,
+                asHost
+              )
+            )
+          }
           break
         }
 
@@ -555,6 +603,36 @@ export function useGameRoom({
               : prev
           )
           addSystem(`${msg.nickname} entrou na sala`)
+          break
+        }
+
+        case 'user-disconnected': {
+          // Queda transitória: o membro permanece na lista (lugar/placar mantidos
+          // durante a janela de tolerância do servidor). Só avisamos no chat.
+          setRoom((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  members: msg.members ?? prev.members,
+                  memberCount: msg.memberCount ?? prev.memberCount,
+                }
+              : prev
+          )
+          addSystem(`${msg.nickname} caiu — reconectando…`)
+          break
+        }
+
+        case 'user-reconnected': {
+          setRoom((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  members: msg.members ?? prev.members,
+                  memberCount: msg.memberCount ?? prev.memberCount,
+                }
+              : prev
+          )
+          addSystem(`${msg.nickname} voltou`)
           break
         }
 

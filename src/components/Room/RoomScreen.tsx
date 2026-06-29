@@ -155,7 +155,14 @@ export function RoomScreen() {
     })
 
     gameRoom.setGameState(result.newState)
-    if (!isCompetitive) gameRoom.broadcastState(result.newState)
+    if (!isCompetitive) {
+      gameRoom.broadcastState(result.newState)
+    } else {
+      // Competição/Time Trial: o tabuleiro vive só no cliente (o servidor nunca
+      // vê os palpites). Persistimos a cada jogada, com chave por rodada
+      // (`room-<code>-<roundId>`), para reidratar após reload/reconexão.
+      storage.saveGameState(result.newState.mode, result.newState.dateKey, result.newState)
+    }
     animActions.setCursorPosition(0)
 
     if (newlyCompleted.length > 0) {

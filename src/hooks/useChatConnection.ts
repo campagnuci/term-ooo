@@ -44,8 +44,8 @@ export function useChatConnection({
   const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const heartbeatIntervalRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const lastPingTimeRef = useRef<number | null>(null)
+  const missedPongsRef = useRef(0)  // Pings consecutivos sem pong (conexão meio-aberta)
   const isIntentionalCloseRef = useRef(false)
-  const hasErrorRef = useRef(false)  // Detectar erro para interromper reconexão
 
   // Limpar timers
   const clearTimers = useCallback(() => {
@@ -64,15 +64,26 @@ export function useChatConnection({
     if (heartbeatIntervalRef.current) {
       clearInterval(heartbeatIntervalRef.current)
     }
+    missedPongsRef.current = 0
 
     heartbeatIntervalRef.current = setInterval(() => {
-      if (wsRef.current?.readyState === WebSocket.OPEN) {
-        lastPingTimeRef.current = Date.now()
-        wsRef.current.send(JSON.stringify({
-          type: 'ping',
-          time: lastPingTimeRef.current
-        }))
+      const ws = wsRef.current
+      if (ws?.readyState !== WebSocket.OPEN) return
+
+      // Detecção de conexão meio-aberta: se o ping anterior ainda não foi
+      // respondido (lastPingTimeRef não foi zerado pelo pong), conta como pong
+      // perdido. Após ~2 intervalos sem resposta, a rede provavelmente caiu sem
+      // fechar o socket — força o fechamento para acionar a reconexão.
+      if (lastPingTimeRef.current !== null) {
+        missedPongsRef.current += 1
+        if (missedPongsRef.current >= 2) {
+          try { ws.close() } catch { /* já fechado */ }
+          return
+        }
       }
+
+      lastPingTimeRef.current = Date.now()
+      ws.send(JSON.stringify({ type: 'ping', time: lastPingTimeRef.current }))
     }, heartbeatInterval)
   }, [heartbeatInterval])
 
@@ -91,7 +102,6 @@ export function useChatConnection({
 
       ws.onopen = () => {
         reconnectAttemptsRef.current = 0
-        hasErrorRef.current = false
         setState(prev => ({ ...prev, connected: true, isConnecting: false, latency: null }))
         startHeartbeat()
         onConnected?.()
@@ -106,6 +116,7 @@ export function useChatConnection({
             const latency = Date.now() - lastPingTimeRef.current
             setState(prev => ({ ...prev, latency }))
             lastPingTimeRef.current = null
+            missedPongsRef.current = 0
           }
 
           onMessage?.(data)
@@ -115,7 +126,9 @@ export function useChatConnection({
       }
 
       ws.onerror = () => {
-        hasErrorRef.current = true
+        // Um erro de socket é quase sempre seguido por onclose, que decide a
+        // reconexão. NÃO bloqueamos a reconexão aqui: blips transitórios devem
+        // tentar novamente, não desistir de vez.
         setState(prev => ({ ...prev, isConnecting: false }))
       }
 
@@ -124,10 +137,9 @@ export function useChatConnection({
         setState(prev => ({ ...prev, connected: false, isConnecting: false, latency: null }))
         onDisconnected?.()
 
-        // Reconectar apenas se não foi intencional, não houve erro e está dentro do limite
+        // Reconectar se não foi intencional e ainda dentro do limite de tentativas.
         const shouldReconnect =
           !isIntentionalCloseRef.current &&
-          !hasErrorRef.current &&
           reconnectAttemptsRef.current < maxReconnectAttempts
 
         if (shouldReconnect) {
@@ -147,7 +159,6 @@ export function useChatConnection({
   // Desconectar
   const disconnect = useCallback(() => {
     isIntentionalCloseRef.current = true
-    hasErrorRef.current = false
     clearTimers()
 
     if (wsRef.current) {
@@ -175,7 +186,6 @@ export function useChatConnection({
   useEffect(() => {
     if (autoConnect) {
       isIntentionalCloseRef.current = false
-      hasErrorRef.current = false
       connect()
     }
 
