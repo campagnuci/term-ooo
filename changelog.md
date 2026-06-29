@@ -16,10 +16,16 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 - Campos `startTime`/`endTime` em `GameState` e `totalSolveTimeMs`/`solveCount` em `Stats`
 - Componentes `GameTimer` (single + salas) e `Room/RoomTimer`
 - Backend (`ws-cloudflare`): `roundStartedAt`/`roundEndedAt` no estado da sala, bloco `timer` nas mensagens de rodada, nova mensagem `round-timing` e `solveMs` por finalista
+- 🔌 **Reconexão resiliente nas salas:** reconexão automática que **tenta novamente após erros transitórios** (antes, qualquer `onerror` cancelava a reconexão) + detecção de conexão meio-aberta (ping sem pong); tabuleiro competitivo persistido no `localStorage` por rodada (`room-<code>-<roundId>`) e **reidratado** ao voltar; novas mensagens de sala `user-disconnected`/`user-reconnected`
+- Backend (`ws-cloudflare`): *soft-disconnect* com janela de tolerância (~20s, `DISCONNECT_GRACE_MS`) — uma queda **não** remove o jogador na hora (mantém lugar, host e placar); `pruneDisconnected()` aplica a saída real só após a janela (dirigido por mensagens/heartbeat, sem usar o `alarm` do Time Trial)
 
 ### Changed
 - `storage.getStats` faz merge de defaults (compatibilidade com estatísticas antigas, sem os novos campos de tempo)
 - Backend: `handleGameState` persiste `room` + `gameState` atomicamente (evita estado inconsistente em caso de hibernação/eviction do Durable Object)
+- Backend: `handleMemberLeave` extraído em `finalizeLeave(room, userId)` (saída em memória reutilizável) para suportar a remoção tardia da janela de tolerância
+
+### Fixed
+- 🐛 **Salas (Competição/Time Trial): perda do tabuleiro ao reconectar/recarregar.** Um blip de rede derrubava o WebSocket; o cliente não reconectava (qualquer `onerror` cancelava a reconexão) e o servidor removia o jogador imediatamente, tratando a volta como entrada nova com tabuleiro **zerado** — além de poder encerrar a rodada cedo e pular a pontuação dele. Agora a reconexão é automática, o tabuleiro é restaurado do `localStorage` e o servidor segura o lugar do jogador por ~20s (eventos `user-disconnected`/`user-reconnected` no lugar de `user-left`/`user-joined`)
 
 ---
 

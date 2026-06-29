@@ -113,6 +113,7 @@ Adivinhe a palavra do dia em português! Cada palpite revela dicas sobre as letr
 - 🔁 **Partidas multi-rodada** competitivas com pontuação/tempo **acumulados** entre rodadas (3/5/10 ou personalizado)
 - 🚦 **Contagem regressiva 5→1 "Vai!"** antes de cada rodada — animada (Framer Motion), com som sintetizado e sincronizada entre os jogadores
 - 💬 **Chat em tempo real** dentro das salas
+- 🔌 **Reconexão resiliente nas salas** — quedas de rede/reload não fazem perder o tabuleiro: reconexão automática + tabuleiro competitivo salvo no `localStorage` e reidratado ao voltar (o servidor preserva lugar/host/placar por ~20s)
 - 🎵 **Efeitos sonoros e memes** durante o jogo
 - 📱 **Interface 100% responsiva** (Dialog desktop / Sheet mobile)
 - 📅 **Arquivo de Dias Anteriores** (últimos 30 dias)
@@ -197,7 +198,16 @@ Salas multiplayer em tempo real via WebSocket. O **tipo da sala é escolhido na 
 - **Time Trial:** como a competição, mas o servidor define o limite de tempo, **pontua** cada acerto e arma um *alarm* (Durable Object) que encerra a **rodada** no fim do relógio mesmo sem mensagens
 - **Multi-rodada:** o servidor acumula os placares (`room.competition.cumulative`), avança automaticamente entre rodadas e ancora cada largada no futuro (`roundStartedAt = agora + 5s`) para a contagem regressiva. O conjunto de competidores é fixado na largada
 - ⏱️ **Cronômetro autoritativo:** o servidor marca início/fim da rodada (`roundStartedAt`/`roundEndedAt`) e envia um bloco `timer` nas mensagens; cada cliente ancora no próprio relógio e conta localmente (sem broadcasts por segundo), mantendo os jogadores sincronizados com latência mínima
-- Migração de host automática se o anfitrião sai; reconexão com re-sincronização (inclusive do cronômetro)
+- Migração de host automática se o anfitrião sai (de fato); reconexão com re-sincronização (inclusive do cronômetro)
+
+### 🔌 Resiliência a quedas (reconexão)
+
+Um blip de rede ou reload no meio da partida **não** faz você perder o tabuleiro nem ser expulso da sala:
+
+- **Reconexão automática robusta:** o `useChatConnection` reconecta com backoff exponencial (1→2→4→8→16s) e **tenta novamente mesmo após erros transitórios** (antes, um `onerror` cancelava a reconexão); detecta também conexões "meio-abertas" (ping sem pong) e força o reconnect.
+- **Tabuleiro competitivo persistido:** em Competição/Time Trial cada palpite é salvo no `localStorage` (chave por rodada `room-<code>-<roundId>`) e **reidratado** ao reconectar — o servidor nunca vê seus palpites, então a recuperação é local. No Cooperativo o tabuleiro do host é recuperado via `game-state` do servidor.
+- **Janela de tolerância no servidor (~20s):** ao cair você fica em *soft-disconnect* (mantém lugar, host e placar); voltar dentro da janela é transparente. Os outros veem **"caiu — reconectando…"** (`user-disconnected`) e **"voltou"** (`user-reconnected`) em vez de "saiu/entrou", e a rodada não termina à toa.
+- **Identidade estável:** o `userId` no `localStorage` permite ao servidor reconhecer a mesma pessoa ao reconectar.
 
 **Backend:** pacote separado `ws-cloudflare/` (Cloudflare Workers + Durable Objects).
 **Componentes:** `RoomLobby`, `RoomScreen`, `RoomHeader`, `RoomSidebar`, `RoomInfoPanel`, `RoomChatPanel`, `RoundEndControls`, `CompetitionPanel`, `TimeTrialPanel`, `RoomTimer`, `RoundCountdown` (contagem regressiva), `MatchScore` (seletor de rodadas + ranking acumulado).
@@ -286,8 +296,8 @@ Arquitetura clean baseada em hooks reutilizáveis (`src/hooks/`).
 ### Multiplayer & Chat
 | Hook | Responsabilidade |
 |------|------------------|
-| `useGameRoom` | Estado da sala, jogo, chat, host, competição e cronômetro sincronizado da rodada |
-| `useChatConnection` | Conexão WebSocket genérica, reconexão e heartbeat |
+| `useGameRoom` | Estado da sala, jogo, chat, host, competição e cronômetro sincronizado da rodada; persiste/reidrata o tabuleiro competitivo no `localStorage` ao (re)conectar |
+| `useChatConnection` | Conexão WebSocket genérica, reconexão robusta (retry em erros transitórios + detecção de conexão meio-aberta) e heartbeat |
 
 ### UI
 | Hook | Responsabilidade |

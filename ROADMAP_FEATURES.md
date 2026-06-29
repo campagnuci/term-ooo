@@ -353,12 +353,14 @@ Features bônus sugeridas para expansão do Term.ooo Clone.
 - ✅ `src/lib/room-config.ts` — `ROOM_CONFIG` e `buildRoomUrl`
 - ✅ `src/components/Room/` — `RoomLobby`, `RoomScreen`, `RoomHeader`, `RoomInfoPanel`, `RoomSidebar`, `RoomChatPanel`, `CompetitionPanel`, `TimeTrialPanel`, `RoomTimer`, `RoundEndControls`
 - ✅ `ws-cloudflare/game-room.js` — Backend em Durable Object (Cloudflare): autoridade de sala, ranking competitivo, cronômetro sincronizado e `solveMs` por finalista
+- ✅ **Resiliência a quedas** — `useChatConnection` (reconexão robusta: retry em erros transitórios + detecção de conexão meio-aberta), `useGameRoom`/`RoomScreen` (tabuleiro competitivo persistido/reidratado no `localStorage`), `ws-cloudflare/game-room.js` (`markDisconnected`/`pruneDisconnected`/`finalizeLeave` + eventos `user-disconnected`/`user-reconnected`)
 
 **Detalhes:**
 - Modo Competição: **multi-rodada** — mesma palavra por rodada; soma o tempo de resolução e vence o **menor tempo total** (ver "Partidas Multi-Rodada")
 - Modo Cooperativo: anfitrião joga e os demais assistem/sugerem via chat
 - Cronômetro compartilhado e sincronizado entre jogadores (autoridade do servidor, sem broadcasts por segundo)
-- Migração de host automática quando o anfitrião sai
+- Migração de host automática quando o anfitrião sai (de fato)
+- 🔌 **Resiliência a quedas:** reconexão automática (retry em erros transitórios + detecção de conexão meio-aberta), *soft-disconnect* no servidor com janela de tolerância (~20s) que preserva lugar/host/placar, e tabuleiro competitivo reidratado do `localStorage` — um blip de rede/reload não zera mais o tabuleiro
 - Inclui também o **Modo Time Trial** competitivo e **partidas multi-rodada com contagem regressiva "Vai!"** (ver seções dedicadas acima)
 
 ---
