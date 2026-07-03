@@ -9,6 +9,7 @@ import {
   Users
 } from "lucide-react";
 import { Button } from './ui/button'
+import { MODE_PATHS } from '@/lib/routes'
 
 interface HeaderProps {
   title: string
@@ -39,7 +40,7 @@ export function Header({
   // Treino: volta para o Termo do dia. Arquivo: volta para o dia atual do mesmo modo.
   const handleBackToToday = () => {
     if (isTraining) {
-      navigate('/')
+      navigate(MODE_PATHS.termo)
       return
     }
     const path = location.pathname
@@ -65,9 +66,15 @@ export function Header({
           </Button>
 
           {/* Logo on mobile */}
-          <h1 className="text-foreground text-base sm:text-lg md:hidden uppercase tracking-wider font-bold">
-            {title}
-          </h1>
+          <button
+            onClick={() => navigate('/')}
+            aria-label="Voltar ao início"
+            className="md:hidden"
+          >
+            <h1 className="text-foreground text-base sm:text-lg uppercase tracking-wider font-bold hover:opacity-80 transition-opacity">
+              {title}
+            </h1>
+          </button>
 
           {/* Help button (visible on all screens) */}
           <Button
@@ -83,9 +90,11 @@ export function Header({
 
         {/* Center logo (desktop only) */}
         <div className="hidden md:flex items-center justify-center flex-col gap-1">
-          <h1 className="text-foreground text-lg md:text-xl lg:text-2xl uppercase tracking-wider font-bold">
-            {title}
-          </h1>
+          <button onClick={() => navigate('/')} aria-label="Voltar ao início">
+            <h1 className="text-foreground text-lg md:text-xl lg:text-2xl uppercase tracking-wider font-bold hover:opacity-80 transition-opacity">
+              {title}
+            </h1>
+          </button>
           {isArchive && archiveDayNumber && (
             <div className="text-xs bg-yellow-600 text-white px-3 py-1 rounded-full flex items-center gap-1 animate-pulse">
               🕰️ Arquivo - Dia #{archiveDayNumber}

@@ -1,6 +1,6 @@
 // src/App.tsx
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
 import { RotateCcw } from 'lucide-react'
 import { Settings } from './game/types'
 import { processGuess } from './game/engine'
@@ -19,6 +19,8 @@ import { ArchiveDialog } from './components/ArchiveDialog'
 import { TrainingResultDialog, TrainingSession } from './components/TrainingResultDialog'
 import { RoomLobby } from './components/Room/RoomLobby'
 import { RoomScreen } from './components/Room/RoomScreen'
+import { LandingPage } from './components/LandingPage'
+import { MODE_PATHS, TRAINING_PATH } from './lib/routes'
 import { useDialogManager } from './hooks/useDialogManager'
 import { useGameAnimations } from './hooks/useGameAnimations'
 import { useKeyboardInput } from './hooks/useKeyboardInput'
@@ -152,17 +154,7 @@ function Game() {
 
 
   const handleModeChange = (newMode: TabValue) => {
-    if (newMode === 'treino') {
-      navigate('/treino')
-    } else if (newMode === 'termo') {
-      navigate('/')
-    } else if (newMode === 'dueto') {
-      navigate('/2')
-    } else if (newMode === 'quarteto') {
-      navigate('/4')
-    } else {
-      navigate('/6')
-    }
+    navigate(newMode === 'treino' ? TRAINING_PATH : MODE_PATHS[newMode])
   }
 
   // Inicia uma nova partida de treino (botão "Jogar de novo")
@@ -524,16 +516,16 @@ function App() {
       }}
     >
       <Routes>
-        <Route path="/" element={<Game />} />
-        <Route path="/2" element={<Game />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/termo" element={<Game />} />
         <Route path="/dueto" element={<Game />} />
-        <Route path="/4" element={<Game />} />
         <Route path="/quarteto" element={<Game />} />
-        <Route path="/6" element={<Game />} />
-        <Route path="/seis" element={<Game />} />
+        <Route path="/modo-seis" element={<Game />} />
         <Route path="/treino" element={<Game />} />
         <Route path="/sala" element={<RoomLobby />} />
         <Route path="/sala/:code" element={<RoomScreen />} />
+        {/* Rotas antigas (/2, /4, /6, /seis) e caminhos desconhecidos caem no hub */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   )

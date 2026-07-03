@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { NavigateFunction, Location } from 'react-router-dom'
 import { GameMode } from '@/game/types'
 import { getDayNumber } from '@/game/engine'
+import { getModeFromPath, TRAINING_PATH } from '@/lib/routes'
 
 interface UseGameModeOptions {
   location: Location
@@ -25,20 +26,12 @@ export function useGameMode({ location, navigate }: UseGameModeOptions): UseGame
     const diaParam = searchParams.get('dia')
 
     // Modo Treino: variante ilimitada de Termo (1 tabuleiro), sem vínculo com o dia
-    const training = path === '/treino'
+    const training = path === TRAINING_PATH
     if (training !== isTraining) {
       setIsTraining(training)
     }
 
-    let newMode: GameMode = 'termo'
-
-    if (path === '/2' || path === '/dueto') {
-      newMode = 'dueto'
-    } else if (path === '/4' || path === '/quarteto') {
-      newMode = 'quarteto'
-    } else if (path === '/6' || path === '/seis') {
-      newMode = 'seis'
-    }
+    const newMode: GameMode = getModeFromPath(path)
 
     if (newMode !== mode) {
       setMode(newMode)

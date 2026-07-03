@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { GameMode } from '@/game/types'
 import { getDayNumber, getDateFromDayNumber, getDayNumberFromDate } from '@/game/engine'
 import { getTodayNormalized } from '@/lib/dates'
+import { MODE_PATHS } from '@/lib/routes'
 import { useDialogAnimations } from '@/hooks/useDialogAnimations'
 import { DialogShell } from './DialogShell'
 import { ResponsiveScrollArea } from './ui/responsive-scroll-area'
@@ -36,9 +37,8 @@ export function ArchiveDialog({ open, onOpenChange, currentMode }: ArchiveDialog
         if (!selectedDate) return
 
         const dayNumber = getDayNumberFromDate(selectedDate)
-        const modePath = currentMode === 'termo' ? '' : currentMode
 
-        navigate(`/${modePath}?dia=${dayNumber}`)
+        navigate(`${MODE_PATHS[currentMode]}?dia=${dayNumber}`)
         onOpenChange(false)
     }
 
