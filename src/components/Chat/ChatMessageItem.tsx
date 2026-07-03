@@ -74,7 +74,7 @@ export function ChatMessageItem({
         )}
         
         {/* Texto da mensagem */}
-        <div className="text-sm break-words whitespace-pre-wrap break-all">
+        <div className="text-sm break-words whitespace-pre-wrap hyphens-auto">
           {message.text}
         </div>
         
