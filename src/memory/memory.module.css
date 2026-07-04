@@ -561,6 +561,13 @@
   letter-spacing: 0.3em;
   text-transform: uppercase;
 }
+.scoreBreakdown {
+  margin: 6px 0 0;
+  font-size: 11px;
+  color: var(--mem-muted);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
 
 .starsRow {
   display: flex;

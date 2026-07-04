@@ -70,9 +70,9 @@ const GAMES: GameEntry[] = [
     icon: Users,
   },
   {
-    title: 'Memória',
+    title: 'Arcanum',
     tag: 'Solo',
-    description: 'Arcanum: encontre os pares de sígilos arcanos em três níveis de desafio.',
+    description: 'Teste sua memória ao encontrar os pares de sígilos arcanos em três níveis de desafio.',
     path: MEMORY_PATH,
     icon: Sparkles,
   },

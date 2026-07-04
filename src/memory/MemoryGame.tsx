@@ -357,6 +357,9 @@ export default function MemoryGame() {
             <span className={styles.scoreLabel}>Pontuação: </span>
             <span className={styles.scoreValue}>{view.score}</span>
           </div>
+          <p className={styles.scoreBreakdown}>
+            Precisão {view.scoreEfficiency} · Tempo {view.scoreTime}
+          </p>
 
           <div className={styles.starsRow}>
             {[0, 1, 2].map((i) => (

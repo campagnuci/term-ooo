@@ -21,12 +21,14 @@ export interface DifficultyConfig {
   title: string
   /** Rótulo do botão na barra de dificuldade */
   label: string
+  /** Tempo-alvo (s): até aqui o bônus de tempo é integral; depois decai (ver computeTimeFactor) */
+  parSeconds: number
 }
 
 export const DIFFICULTIES: Record<Difficulty, DifficultyConfig> = {
-  apprentice: { cols: 4, rows: 4, pairs: 8, maxWidth: 480, title: 'Aprendiz Concluído', label: 'Aprendiz · 4×4' },
-  adept: { cols: 6, rows: 4, pairs: 12, maxWidth: 660, title: 'Adepto Ascendido', label: 'Adepto · 6×4' },
-  master: { cols: 6, rows: 6, pairs: 18, maxWidth: 720, title: 'Mestre do Arcano', label: 'Mestre · 6×6' },
+  apprentice: { cols: 4, rows: 4, pairs: 8, maxWidth: 480, title: 'Aprendiz Concluído', label: 'Aprendiz · 4×4', parSeconds: 40 },
+  adept: { cols: 6, rows: 4, pairs: 12, maxWidth: 660, title: 'Adepto Ascendido', label: 'Adepto · 6×4', parSeconds: 65 },
+  master: { cols: 6, rows: 6, pairs: 18, maxWidth: 720, title: 'Mestre do Arcano', label: 'Mestre · 6×6', parSeconds: 100 },
 }
 
 export const DIFFICULTY_ORDER: Difficulty[] = ['apprentice', 'adept', 'master']
@@ -71,6 +73,45 @@ export function starsForScore(score: number): number {
   return score >= STAR_THRESHOLDS.three ? 3 : score >= STAR_THRESHOLDS.two ? 2 : 1
 }
 
+/**
+ * Fator de tempo 0–1: integral (1) até o tempo-alvo da dificuldade e, depois,
+ * decai pela metade a cada tempo-alvo adicional (meia-vida). Suave, sem
+ * degraus, e nunca chega a zero — jogos lentos ainda pontuam algo no tempo.
+ * Ex.: par=40s → 40s=1.0, 80s=0.5, 120s=0.25.
+ */
+export function computeTimeFactor(seconds: number, parSeconds: number): number {
+  const t = Math.max(0, seconds)
+  if (t <= parSeconds) return 1
+  return Math.pow(0.5, (t - parSeconds) / parSeconds)
+}
+
+/**
+ * Pesos da pontuação da partida (total 1000). A precisão domina de propósito:
+ * é ela que define as estrelas; o tempo é bônus secundário.
+ */
+export const SCORE_WEIGHTS = { efficiency: 700, time: 300 }
+
+export interface MatchScore {
+  /** 0–1000 (= efficiencyPoints + timePoints, já arredondados) */
+  total: number
+  /** 0–700: precisão de jogadas (mesma eficiência que define as estrelas) */
+  efficiencyPoints: number
+  /** 0–300: bônus de tempo */
+  timePoints: number
+}
+
+/** Pontuação da partida 0–1000 combinando precisão e tempo. */
+export function computeMatchScore(
+  moves: number,
+  pairs: number,
+  seconds: number,
+  parSeconds: number
+): MatchScore {
+  const efficiencyPoints = Math.round(SCORE_WEIGHTS.efficiency * (computeScore(moves, pairs) / 100))
+  const timePoints = Math.round(SCORE_WEIGHTS.time * computeTimeFactor(seconds, parSeconds))
+  return { total: efficiencyPoints + timePoints, efficiencyPoints, timePoints }
+}
+
 export type GamePhase = 'dealing' | 'preview' | 'playing' | 'complete'
 
 export interface MemoryGameView {
@@ -90,8 +131,12 @@ export interface MemoryGameView {
   modalOpen: boolean
   litStars: number
   starCount: number
-  /** Pontuação final (0–100), arredondada; 0 até o fim da partida */
+  /** Pontuação da partida (0–1000 = precisão + tempo); 0 até o fim da partida */
   score: number
+  /** Componente de precisão da pontuação (0–700) */
+  scoreEfficiency: number
+  /** Componente de tempo da pontuação (0–300) */
+  scoreTime: number
 }
 
 export interface MemoryEffects {
@@ -105,7 +150,13 @@ export interface MemoryEffects {
   onVanish?: (indices: [number, number]) => void
   onMiss?: () => void
   /** Todos os pares encontrados (toca acorde de vitória) */
-  onComplete?: (result: { stars: number; score: number; moves: number; seconds: number; maxStreak: number }) => void
+  onComplete?: (result: {
+    stars: number
+    score: MatchScore
+    moves: number
+    seconds: number
+    maxStreak: number
+  }) => void
   /** Modal de vitória ficou visível (dispara confete) */
   onModalOpen?: () => void
   /** Estrela `index` (0-based) acendeu no modal */
@@ -133,6 +184,8 @@ interface InternalState {
   litStars: number
   starCount: number
   score: number
+  scoreEfficiency: number
+  scoreTime: number
 }
 
 function buildDeck(pairs: number): string[] {
@@ -171,6 +224,8 @@ function emptyState(): InternalState {
     litStars: 0,
     starCount: 0,
     score: 0,
+    scoreEfficiency: 0,
+    scoreTime: 0,
   }
 }
 
@@ -197,6 +252,8 @@ function freshState(difficulty: Difficulty, gameId: number): InternalState {
     litStars: 0,
     starCount: 0,
     score: 0,
+    scoreEfficiency: 0,
+    scoreTime: 0,
   }
 }
 
@@ -221,6 +278,8 @@ function toView(st: InternalState): MemoryGameView {
     litStars: st.litStars,
     starCount: st.starCount,
     score: st.score,
+    scoreEfficiency: st.scoreEfficiency,
+    scoreTime: st.scoreTime,
   }
 }
 
@@ -313,18 +372,29 @@ export function useMemoryGame(effects: MemoryEffects) {
         st.phase = 'complete'
         st.locked = true
         st.finalSeconds = st.startTime ? Math.floor((Date.now() - st.startTime) / 1000) : 0
-        // Estrelas derivam da pontuação exata (sem arredondar) para manter
-        // os cortes idênticos aos do demo; o valor exibido é arredondado
-        const exactScore = computeScore(st.moves, total)
-        st.score = Math.round(exactScore)
-        st.starCount = starsForScore(exactScore)
+        // Estrelas continuam derivando SÓ da eficiência exata (sem arredondar,
+        // cortes idênticos aos do demo); o tempo entra apenas na pontuação
+        st.starCount = starsForScore(computeScore(st.moves, total))
+        const match = computeMatchScore(
+          st.moves,
+          total,
+          st.finalSeconds,
+          DIFFICULTIES[st.difficulty].parSeconds
+        )
+        st.score = match.total
+        st.scoreEfficiency = match.efficiencyPoints
+        st.scoreTime = match.timePoints
         sync()
 
         after(COMPLETE_DELAY, () => {
           const cur = stRef.current!
           fxRef.current.onComplete?.({
             stars: cur.starCount,
-            score: cur.score,
+            score: {
+              total: cur.score,
+              efficiencyPoints: cur.scoreEfficiency,
+              timePoints: cur.scoreTime,
+            },
             moves: cur.moves,
             seconds: cur.finalSeconds ?? 0,
             maxStreak: cur.maxStreak,
