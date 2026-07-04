@@ -1,5 +1,5 @@
 // src/App.tsx
-import { useState, useEffect, useCallback, useRef, lazy, Suspense } from 'react'
+import { useState, useEffect, useCallback, useRef, lazy, Suspense, ReactNode } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
 import { RotateCcw } from 'lucide-react'
 import { Settings } from './game/types'
@@ -33,8 +33,10 @@ import { useSoundEffects } from './lib/sounds/useSoundEffects'
 
 // Jogo da memória em chunk separado: não pesa no bundle inicial dos jogos de palavras
 const MemoryGame = lazy(() => import('./memory/MemoryGame'))
+// Shinobi (Narutodle) também em chunk próprio: dataset de personagens só carrega na rota
+const NarutoGame = lazy(() => import('./naruto/NarutoGame'))
 
-function MemoryGameRoute() {
+function LazyRoute({ children }: { children: ReactNode }) {
   return (
     <Suspense
       fallback={
@@ -43,7 +45,7 @@ function MemoryGameRoute() {
         </div>
       }
     >
-      <MemoryGame />
+      {children}
     </Suspense>
   )
 }
@@ -541,7 +543,8 @@ function App() {
         <Route path="/treino" element={<Game />} />
         <Route path="/sala" element={<RoomLobby />} />
         <Route path="/sala/:code" element={<RoomScreen />} />
-        <Route path="/memoria" element={<MemoryGameRoute />} />
+        <Route path="/memoria" element={<LazyRoute><MemoryGame /></LazyRoute>} />
+        <Route path="/shinobi" element={<LazyRoute><NarutoGame /></LazyRoute>} />
         {/* Rotas antigas (/2, /4, /6, /seis) e caminhos desconhecidos caem no hub */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

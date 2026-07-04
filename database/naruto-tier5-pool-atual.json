@@ -1,0 +1,3094 @@
+{
+  "generatedFrom": "https://dattebayo-api.onrender.com/characters",
+  "criteria": "Pool curado manualmente usado hoje pelo jogo (nomes notáveis; mesmo conteúdo de src/naruto/data/characters.json).",
+  "count": 122,
+  "arcs": [
+    "Terra das Ondas",
+    "Exames Chūnin",
+    "Invasão de Konoha",
+    "Busca por Tsunade",
+    "Missões de Konoha (filler)",
+    "Resgate do Sasuke",
+    "Missões Especiais (filler)",
+    "Resgate do Kazekage",
+    "Ponte Tenchi",
+    "Doze Ninjas Guardiões (filler)",
+    "Imortais da Akatsuki",
+    "Aparição do Sanbi (filler)",
+    "Perseguição a Itachi",
+    "Fúria do Rokubi (filler)",
+    "Invasão de Pain",
+    "História de Konoha (filler)",
+    "Cúpula dos Cinco Kages",
+    "Paraíso a Bordo (filler)",
+    "Controle do Kyūbi",
+    "4ª Guerra: Confronto",
+    "4ª Guerra: Madara",
+    "Kakashi ANBU (filler)",
+    "4ª Guerra: Obito",
+    "Exames Chūnin do Passado (filler)",
+    "4ª Guerra: Final",
+    "Kaguya",
+    "Epílogo"
+  ],
+  "characters": [
+    {
+      "id": 6,
+      "name": "A (Fourth Raikage)",
+      "image": "https://static.wikia.nocookie.net/naruto/images/4/4c/Fourth_Raikage_2.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Kumogakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Taijutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Relâmpago",
+        "Terra",
+        "Água"
+      ],
+      "attributes": [],
+      "debutArc": "Invasão de Pain",
+      "arcOrder": 14,
+      "debutAnime": "Naruto Shippūden Episode #152"
+    },
+    {
+      "id": 5,
+      "name": "A (Third Raikage)",
+      "image": "https://static.wikia.nocookie.net/naruto/images/f/f5/Raikage3.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Kumogakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Relâmpago",
+        "Terra",
+        "Fogo"
+      ],
+      "attributes": [],
+      "debutArc": "Controle do Kyūbi",
+      "arcOrder": 18,
+      "debutAnime": "Naruto Shippūden Episode #244"
+    },
+    {
+      "id": 35,
+      "name": "Akatsuchi",
+      "image": "https://static.wikia.nocookie.net/naruto/images/1/16/Akatsuchi_Part_II.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Iwagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Terra"
+      ],
+      "attributes": [],
+      "debutArc": "Cúpula dos Cinco Kages",
+      "arcOrder": 16,
+      "debutAnime": "Naruto Shippūden Episode #199"
+    },
+    {
+      "id": 809,
+      "name": "Anko Mitarashi",
+      "image": "https://static.wikia.nocookie.net/naruto/images/b/bd/Anko_Part_I.png",
+      "gender": "Feminino",
+      "affiliations": [
+        "Konohagakure",
+        "Ryūchi Cave"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Fogo",
+        "Yin"
+      ],
+      "attributes": [],
+      "debutArc": "Exames Chūnin",
+      "arcOrder": 1,
+      "debutAnime": "Naruto Episode #21"
+    },
+    {
+      "id": 80,
+      "name": "Ao",
+      "image": "https://static.wikia.nocookie.net/naruto/images/7/72/Ao.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Kirigakure",
+        "Kara"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Byakugan"
+      ],
+      "natureTypes": [
+        "Água",
+        "Yin"
+      ],
+      "attributes": [
+        "Sensor",
+        "Caçador ANBU"
+      ],
+      "debutArc": "Cúpula dos Cinco Kages",
+      "arcOrder": 16,
+      "debutAnime": "Naruto Shippūden Episode #199"
+    },
+    {
+      "id": 1034,
+      "name": "Asuma Sarutobi",
+      "image": "https://static.wikia.nocookie.net/naruto/images/7/7c/Asuma.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Kenjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Vento",
+        "Fogo"
+      ],
+      "attributes": [],
+      "debutArc": "Terra das Ondas",
+      "arcOrder": 0,
+      "debutAnime": "Naruto Episode #3"
+    },
+    {
+      "id": 934,
+      "name": "Asura Ōtsutsuki",
+      "image": "https://static.wikia.nocookie.net/naruto/images/5/56/Asura_%C5%8Ctsutsuki.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Land of Ancestors"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Senjutsu",
+        "Ninjutsu Médico"
+      ],
+      "kekkeiGenkai": [
+        "Estilo Madeira"
+      ],
+      "natureTypes": [
+        "Madeira",
+        "Vento",
+        "Relâmpago",
+        "Terra",
+        "Água",
+        "Fogo",
+        "Yin",
+        "Yang",
+        "Yin-Yang"
+      ],
+      "attributes": [
+        "Sábio",
+        "Sensor"
+      ],
+      "debutArc": "Cúpula dos Cinco Kages",
+      "arcOrder": 16,
+      "debutAnime": "Naruto Shippūden Episode #203"
+    },
+    {
+      "id": 101,
+      "name": "Ayame",
+      "image": "https://static.wikia.nocookie.net/naruto/images/4/4f/Ayame.png",
+      "gender": "Feminino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [],
+      "kekkeiGenkai": [],
+      "natureTypes": [],
+      "attributes": [],
+      "debutArc": "Exames Chūnin",
+      "arcOrder": 1,
+      "debutAnime": "Naruto Episode #52"
+    },
+    {
+      "id": 107,
+      "name": "Baki",
+      "image": "https://static.wikia.nocookie.net/naruto/images/0/04/Baki_Infobox.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Sunagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Vento"
+      ],
+      "attributes": [],
+      "debutArc": "Exames Chūnin",
+      "arcOrder": 1,
+      "debutAnime": "Naruto Episode #37"
+    },
+    {
+      "id": 1425,
+      "name": "Black Zetsu",
+      "image": "https://static.wikia.nocookie.net/naruto/images/e/e9/Black_Zetsu.png",
+      "gender": "Desconhecido",
+      "affiliations": [
+        "Akatsuki"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Estilo Madeira",
+        "Rinnegan",
+        "Sharingan",
+        "Mangekyō Sharingan"
+      ],
+      "natureTypes": [
+        "Madeira",
+        "Terra",
+        "Água",
+        "Fogo",
+        "Vento",
+        "Relâmpago",
+        "Yin",
+        "Yang"
+      ],
+      "attributes": [
+        "Jinchūriki",
+        "Rank S",
+        "Sensor"
+      ],
+      "debutArc": "Resgate do Sasuke",
+      "arcOrder": 5,
+      "debutAnime": "Naruto Episode #134"
+    },
+    {
+      "id": 135,
+      "name": "C",
+      "image": "https://static.wikia.nocookie.net/naruto/images/7/7a/Shee.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Kumogakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Relâmpago",
+        "Yin"
+      ],
+      "attributes": [
+        "Ninja Médico",
+        "Sensor"
+      ],
+      "debutArc": "Cúpula dos Cinco Kages",
+      "arcOrder": 16,
+      "debutAnime": "Naruto Shippūden Episode #199"
+    },
+    {
+      "id": 148,
+      "name": "Chiyo",
+      "image": null,
+      "gender": "Feminino",
+      "affiliations": [
+        "Sunagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Kenjutsu",
+        "Fūinjutsu",
+        "Ninjutsu Médico",
+        "Marionetes"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [],
+      "attributes": [
+        "Ninja Médico"
+      ],
+      "debutArc": "Resgate do Kazekage",
+      "arcOrder": 7,
+      "debutAnime": "Naruto Shippūden Episode #9"
+    },
+    {
+      "id": 40,
+      "name": "Chōji Akimichi",
+      "image": "https://static.wikia.nocookie.net/naruto/images/7/7d/Ch%C5%8Dji_Akimichi.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Terra",
+        "Fogo",
+        "Yang"
+      ],
+      "attributes": [],
+      "debutArc": "Terra das Ondas",
+      "arcOrder": 0,
+      "debutAnime": "Naruto Episode #1"
+    },
+    {
+      "id": 152,
+      "name": "Chōjūrō",
+      "image": "https://static.wikia.nocookie.net/naruto/images/d/d8/Chojuro_2.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Kirigakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Kenjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Água"
+      ],
+      "attributes": [],
+      "debutArc": "Cúpula dos Cinco Kages",
+      "arcOrder": 16,
+      "debutAnime": "Naruto Shippūden Episode #199"
+    },
+    {
+      "id": 42,
+      "name": "Chōza Akimichi",
+      "image": "https://static.wikia.nocookie.net/naruto/images/a/a8/Ch%C5%8Dza_Akimichi.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Yang"
+      ],
+      "attributes": [],
+      "debutArc": "Exames Chūnin",
+      "arcOrder": 1,
+      "debutAnime": "Naruto Episode #59"
+    },
+    {
+      "id": 605,
+      "name": "Dan Katō",
+      "image": "https://static.wikia.nocookie.net/naruto/images/1/13/Dan_HDshot.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Fogo",
+        "Vento",
+        "Terra",
+        "Yin",
+        "Yang"
+      ],
+      "attributes": [],
+      "debutArc": "Busca por Tsunade",
+      "arcOrder": 3,
+      "debutAnime": "Naruto Episode #91"
+    },
+    {
+      "id": 1093,
+      "name": "Danzō Shimura",
+      "image": "https://static.wikia.nocookie.net/naruto/images/1/17/Danz%C5%8D.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure",
+        "Root"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Genjutsu",
+        "Kenjutsu",
+        "Fūinjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Sharingan",
+        "Mangekyō Sharingan",
+        "Estilo Madeira"
+      ],
+      "natureTypes": [
+        "Vento",
+        "Terra",
+        "Água",
+        "Fogo",
+        "Madeira",
+        "Yin",
+        "Yang"
+      ],
+      "attributes": [],
+      "debutArc": "Resgate do Kazekage",
+      "arcOrder": 7,
+      "debutAnime": "Naruto Shippūden Episode #32"
+    },
+    {
+      "id": 190,
+      "name": "Darui",
+      "image": "https://static.wikia.nocookie.net/naruto/images/4/45/Darui.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Kumogakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Estilo Tempestade"
+      ],
+      "natureTypes": [
+        "Tempestade",
+        "Relâmpago",
+        "Água",
+        "Vento"
+      ],
+      "attributes": [],
+      "debutArc": "Cúpula dos Cinco Kages",
+      "arcOrder": 16,
+      "debutAnime": "Naruto Shippūden Episode #199"
+    },
+    {
+      "id": 193,
+      "name": "Deidara",
+      "image": "https://static.wikia.nocookie.net/naruto/images/0/06/Deidara.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Iwagakure",
+        "Akatsuki"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Estilo Explosão"
+      ],
+      "natureTypes": [
+        "Explosão",
+        "Terra",
+        "Relâmpago"
+      ],
+      "attributes": [
+        "Rank S",
+        "Ninja Renegado",
+        "Mercenário"
+      ],
+      "debutArc": "Resgate do Kazekage",
+      "arcOrder": 7,
+      "debutAnime": "Naruto Shippūden Episode #2"
+    },
+    {
+      "id": 644,
+      "name": "Dosu Kinuta",
+      "image": "https://static.wikia.nocookie.net/naruto/images/b/b0/Dosu_Kinuta.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Otogakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [],
+      "attributes": [],
+      "debutArc": "Exames Chūnin",
+      "arcOrder": 1,
+      "debutAnime": "Naruto Episode #21"
+    },
+    {
+      "id": 212,
+      "name": "Ebisu",
+      "image": "https://static.wikia.nocookie.net/naruto/images/7/77/Ebisu.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Fogo"
+      ],
+      "attributes": [],
+      "debutArc": "Terra das Ondas",
+      "arcOrder": 0,
+      "debutAnime": "Naruto Episode #2"
+    },
+    {
+      "id": 221,
+      "name": "Fū",
+      "image": "https://static.wikia.nocookie.net/naruto/images/f/f6/Fu.png",
+      "gender": "Feminino",
+      "affiliations": [
+        "Takigakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [],
+      "attributes": [
+        "Jinchūriki"
+      ],
+      "debutArc": "Cúpula dos Cinco Kages",
+      "arcOrder": 16,
+      "debutAnime": "Naruto Shippūden Episode #205"
+    },
+    {
+      "id": 1289,
+      "name": "Fugaku Uchiha",
+      "image": "https://static.wikia.nocookie.net/naruto/images/f/f2/Fugaku.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Sharingan",
+        "Mangekyō Sharingan"
+      ],
+      "natureTypes": [
+        "Fogo",
+        "Yin"
+      ],
+      "attributes": [],
+      "debutArc": "Busca por Tsunade",
+      "arcOrder": 3,
+      "debutAnime": "Naruto Episode #84"
+    },
+    {
+      "id": 259,
+      "name": "Gaara",
+      "image": "https://static.wikia.nocookie.net/naruto/images/2/20/Gaara_in_Part_I.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Sunagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Kenjutsu",
+        "Shurikenjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Estilo Magnetismo"
+      ],
+      "natureTypes": [
+        "Magnetismo",
+        "Vento",
+        "Terra",
+        "Relâmpago"
+      ],
+      "attributes": [
+        "Jinchūriki",
+        "Sensor"
+      ],
+      "debutArc": "Exames Chūnin",
+      "arcOrder": 1,
+      "debutAnime": "Naruto Episode #20"
+    },
+    {
+      "id": 282,
+      "name": "Gari",
+      "image": "https://static.wikia.nocookie.net/naruto/images/0/03/Gari_Anime.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Iwagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Estilo Explosão"
+      ],
+      "natureTypes": [
+        "Explosão",
+        "Terra",
+        "Relâmpago"
+      ],
+      "attributes": [],
+      "debutArc": "Controle do Kyūbi",
+      "arcOrder": 18,
+      "debutAnime": "Naruto Shippūden Episode #256"
+    },
+    {
+      "id": 428,
+      "name": "Gengetsu Hōzuki",
+      "image": "https://static.wikia.nocookie.net/naruto/images/9/9f/Gengetsu_H%C5%8Dzuki.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Kirigakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Água",
+        "Fogo",
+        "Relâmpago",
+        "Terra",
+        "Yin",
+        "Yang"
+      ],
+      "attributes": [],
+      "debutArc": "Controle do Kyūbi",
+      "arcOrder": 18,
+      "debutAnime": "Naruto Shippūden Episode #267"
+    },
+    {
+      "id": 1110,
+      "name": "Genma Shiranui",
+      "image": "https://static.wikia.nocookie.net/naruto/images/9/90/Genma_Shiranui.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [],
+      "attributes": [],
+      "debutArc": "Exames Chūnin",
+      "arcOrder": 1,
+      "debutAnime": "Naruto Episode #55"
+    },
+    {
+      "id": 326,
+      "name": "Ginkaku",
+      "image": "https://static.wikia.nocookie.net/naruto/images/0/03/Ginkaku_268.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Kumogakure"
+      ],
+      "jutsuTypes": [],
+      "kekkeiGenkai": [],
+      "natureTypes": [],
+      "attributes": [
+        "Jinchūriki"
+      ],
+      "debutArc": "Controle do Kyūbi",
+      "arcOrder": 18,
+      "debutAnime": "Naruto Shippūden Episode #267"
+    },
+    {
+      "id": 341,
+      "name": "Guren",
+      "image": "https://static.wikia.nocookie.net/naruto/images/9/90/Guren.png",
+      "gender": "Feminino",
+      "affiliations": [
+        "Otogakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Estilo Cristal"
+      ],
+      "natureTypes": [
+        "Cristal",
+        "Terra"
+      ],
+      "attributes": [],
+      "debutArc": "Aparição do Sanbi (filler)",
+      "arcOrder": 11,
+      "debutAnime": "Naruto Shippūden Episode #89"
+    },
+    {
+      "id": 935,
+      "name": "Hagoromo Ōtsutsuki",
+      "image": "https://static.wikia.nocookie.net/naruto/images/6/62/Hagoromo.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Land of Ancestors",
+        "Mount Myōboku"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Senjutsu",
+        "Ninjutsu Médico"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Fogo",
+        "Vento",
+        "Relâmpago",
+        "Terra",
+        "Água",
+        "Yin",
+        "Yang",
+        "Yin-Yang"
+      ],
+      "attributes": [
+        "Jinchūriki",
+        "Sábio",
+        "Sensor"
+      ],
+      "debutArc": "4ª Guerra: Madara",
+      "arcOrder": 20,
+      "debutAnime": "Naruto Shippūden Episode #329"
+    },
+    {
+      "id": 356,
+      "name": "Haku",
+      "image": "https://static.wikia.nocookie.net/naruto/images/9/90/Haku.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Kirigakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Estilo Gelo"
+      ],
+      "natureTypes": [
+        "Gelo",
+        "Vento",
+        "Água"
+      ],
+      "attributes": [
+        "Mercenário"
+      ],
+      "debutArc": "Terra das Ondas",
+      "arcOrder": 0,
+      "debutAnime": "Naruto Episode #9"
+    },
+    {
+      "id": 936,
+      "name": "Hamura Ōtsutsuki",
+      "image": "https://static.wikia.nocookie.net/naruto/images/e/e8/Hamura.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Land of Ancestors",
+        "Mount Myōboku",
+        "Moon"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Senjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Fogo",
+        "Vento",
+        "Relâmpago",
+        "Terra",
+        "Água",
+        "Yin",
+        "Yang",
+        "Yin-Yang"
+      ],
+      "attributes": [
+        "Sábio"
+      ],
+      "debutArc": "4ª Guerra: Final",
+      "arcOrder": 24,
+      "debutAnime": "Naruto Shippūden Episode #420"
+    },
+    {
+      "id": 363,
+      "name": "Han",
+      "image": "https://static.wikia.nocookie.net/naruto/images/3/3c/Han.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Iwagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Estilo Vapor"
+      ],
+      "natureTypes": [
+        "Vapor",
+        "Fogo",
+        "Água"
+      ],
+      "attributes": [
+        "Jinchūriki"
+      ],
+      "debutArc": "Cúpula dos Cinco Kages",
+      "arcOrder": 16,
+      "debutAnime": "Naruto Shippūden Episode #205"
+    },
+    {
+      "id": 435,
+      "name": "Hanabi Hyūga",
+      "image": "https://static.wikia.nocookie.net/naruto/images/d/da/Hanabi_Hyuga.png",
+      "gender": "Feminino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Byakugan"
+      ],
+      "natureTypes": [],
+      "attributes": [],
+      "debutArc": "Exames Chūnin",
+      "arcOrder": 1,
+      "debutAnime": "Naruto Episode #46"
+    },
+    {
+      "id": 368,
+      "name": "Hanzō",
+      "image": "https://static.wikia.nocookie.net/naruto/images/7/7a/Hanz%C5%8D.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Amegakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Kenjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Fogo"
+      ],
+      "attributes": [],
+      "debutArc": "Perseguição a Itachi",
+      "arcOrder": 12,
+      "debutAnime": "Naruto Shippūden Episode #128"
+    },
+    {
+      "id": 1063,
+      "name": "Hashirama Senju",
+      "image": "https://static.wikia.nocookie.net/naruto/images/7/7e/Hashirama_Senju.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Senjutsu",
+        "Fūinjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Estilo Madeira"
+      ],
+      "natureTypes": [
+        "Madeira",
+        "Terra",
+        "Água",
+        "Fogo",
+        "Vento",
+        "Relâmpago",
+        "Yin",
+        "Yang"
+      ],
+      "attributes": [
+        "Sábio"
+      ],
+      "debutArc": "Invasão de Konoha",
+      "arcOrder": 2,
+      "debutAnime": "Naruto Episode #69"
+    },
+    {
+      "id": 293,
+      "name": "Hayate Gekkō",
+      "image": "https://static.wikia.nocookie.net/naruto/images/3/3a/Hayate_Gekk%C5%8D.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Kenjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [],
+      "attributes": [],
+      "debutArc": "Exames Chūnin",
+      "arcOrder": 1,
+      "debutAnime": "Naruto Episode #37"
+    },
+    {
+      "id": 436,
+      "name": "Hiashi Hyūga",
+      "image": "https://static.wikia.nocookie.net/naruto/images/e/ee/Hiashi_Hyuga.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Byakugan"
+      ],
+      "natureTypes": [],
+      "attributes": [],
+      "debutArc": "Exames Chūnin",
+      "arcOrder": 1,
+      "debutAnime": "Naruto Episode #46"
+    },
+    {
+      "id": 388,
+      "name": "Hidan",
+      "image": "https://static.wikia.nocookie.net/naruto/images/e/e3/Hidan.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Yugakure",
+        "Akatsuki"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [],
+      "attributes": [
+        "Rank S",
+        "Ninja Renegado"
+      ],
+      "debutArc": "Doze Ninjas Guardiões (filler)",
+      "arcOrder": 9,
+      "debutAnime": "Naruto Shippūden Episode #71"
+    },
+    {
+      "id": 437,
+      "name": "Hinata Hyūga",
+      "image": "https://static.wikia.nocookie.net/naruto/images/9/97/Hinata.png",
+      "gender": "Feminino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Taijutsu",
+        "Ninjutsu Médico"
+      ],
+      "kekkeiGenkai": [
+        "Byakugan"
+      ],
+      "natureTypes": [
+        "Fogo",
+        "Relâmpago"
+      ],
+      "attributes": [],
+      "debutArc": "Terra das Ondas",
+      "arcOrder": 0,
+      "debutAnime": "Naruto Episode #1"
+    },
+    {
+      "id": 1036,
+      "name": "Hiruzen Sarutobi",
+      "image": "https://static.wikia.nocookie.net/naruto/images/e/e4/Hiruzen_Sarutobi.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Taijutsu",
+        "Shurikenjutsu",
+        "Fūinjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Fogo",
+        "Vento",
+        "Relâmpago",
+        "Terra",
+        "Água",
+        "Yin",
+        "Yang"
+      ],
+      "attributes": [
+        "Sensor"
+      ],
+      "debutArc": "Terra das Ondas",
+      "arcOrder": 0,
+      "debutAnime": "Naruto Episode #1"
+    },
+    {
+      "id": 835,
+      "name": "Ibiki Morino",
+      "image": "https://static.wikia.nocookie.net/naruto/images/4/4b/Ibiki_Part_I.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [],
+      "attributes": [],
+      "debutArc": "Exames Chūnin",
+      "arcOrder": 1,
+      "debutAnime": "Naruto Episode #21"
+    },
+    {
+      "id": 938,
+      "name": "Indra Ōtsutsuki",
+      "image": "https://static.wikia.nocookie.net/naruto/images/b/bd/Indra_%C5%8Ctsutsuki.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Land of Ancestors"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Genjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Sharingan",
+        "Mangekyō Sharingan"
+      ],
+      "natureTypes": [
+        "Fogo",
+        "Relâmpago",
+        "Yin"
+      ],
+      "attributes": [
+        "Sensor"
+      ],
+      "debutArc": "Cúpula dos Cinco Kages",
+      "arcOrder": 16,
+      "debutAnime": "Naruto Shippūden Episode #203"
+    },
+    {
+      "id": 1365,
+      "name": "Ino Yamanaka",
+      "image": "https://static.wikia.nocookie.net/naruto/images/d/dd/Ino.png",
+      "gender": "Feminino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Ninjutsu Médico"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Terra",
+        "Água",
+        "Fogo",
+        "Yin",
+        "Yang"
+      ],
+      "attributes": [
+        "Sensor",
+        "Ninja Médico"
+      ],
+      "debutArc": "Terra das Ondas",
+      "arcOrder": 0,
+      "debutAnime": "Naruto Episode #1"
+    },
+    {
+      "id": 1367,
+      "name": "Inoichi Yamanaka",
+      "image": "https://static.wikia.nocookie.net/naruto/images/d/d2/Inoichi_Yamanaka.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Água"
+      ],
+      "attributes": [
+        "Sensor"
+      ],
+      "debutArc": "Exames Chūnin",
+      "arcOrder": 1,
+      "debutAnime": "Naruto Episode #59"
+    },
+    {
+      "id": 1325,
+      "name": "Iruka Umino",
+      "image": "https://static.wikia.nocookie.net/naruto/images/b/bc/Iruka.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Genjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Fogo",
+        "Água",
+        "Yin"
+      ],
+      "attributes": [],
+      "debutArc": "Terra das Ondas",
+      "arcOrder": 0,
+      "debutAnime": "Naruto Episode #1"
+    },
+    {
+      "id": 1293,
+      "name": "Itachi Uchiha",
+      "image": "https://static.wikia.nocookie.net/naruto/images/b/bb/Itachi.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure",
+        "Akatsuki"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Genjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Sharingan",
+        "Mangekyō Sharingan"
+      ],
+      "natureTypes": [
+        "Fogo",
+        "Vento",
+        "Água",
+        "Yin",
+        "Yang"
+      ],
+      "attributes": [
+        "Rank S",
+        "Ninja Renegado"
+      ],
+      "debutArc": "Invasão de Konoha",
+      "arcOrder": 2,
+      "debutAnime": "Naruto Episode #80"
+    },
+    {
+      "id": 571,
+      "name": "Izumo Kamizuki",
+      "image": "https://static.wikia.nocookie.net/naruto/images/5/5d/Izumo_Kamizuki.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Água"
+      ],
+      "attributes": [],
+      "debutArc": "Terra das Ondas",
+      "arcOrder": 0,
+      "debutAnime": "Naruto Episode #3"
+    },
+    {
+      "id": 1296,
+      "name": "Izuna Uchiha",
+      "image": "https://static.wikia.nocookie.net/naruto/images/8/83/Izuna_Uchiha.png",
+      "gender": "Masculino",
+      "affiliations": [],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Genjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Sharingan",
+        "Mangekyō Sharingan"
+      ],
+      "natureTypes": [
+        "Fogo",
+        "Yin"
+      ],
+      "attributes": [],
+      "debutArc": "Perseguição a Itachi",
+      "arcOrder": 12,
+      "debutAnime": "Naruto Shippūden Episode #136"
+    },
+    {
+      "id": 515,
+      "name": "Jiraiya",
+      "image": "https://static.wikia.nocookie.net/naruto/images/2/21/Profile_Jiraiya.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure",
+        "Mount Myōboku"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Taijutsu",
+        "Senjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Fogo",
+        "Vento",
+        "Terra",
+        "Água",
+        "Yin",
+        "Yang"
+      ],
+      "attributes": [
+        "Sábio",
+        "Sannin"
+      ],
+      "debutArc": "Exames Chūnin",
+      "arcOrder": 1,
+      "debutAnime": "Naruto Episode #52"
+    },
+    {
+      "id": 517,
+      "name": "Jirōbō",
+      "image": "https://static.wikia.nocookie.net/naruto/images/4/45/Jirobo_newshot.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Otogakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Terra"
+      ],
+      "attributes": [],
+      "debutArc": "Invasão de Konoha",
+      "arcOrder": 2,
+      "debutAnime": "Naruto Episode #68"
+    },
+    {
+      "id": 521,
+      "name": "Jūgo",
+      "image": "https://static.wikia.nocookie.net/naruto/images/4/42/Jugo.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Otogakure",
+        "Akatsuki"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Senjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Kekkei Genkai do Clã de Jūgo"
+      ],
+      "natureTypes": [
+        "Vento",
+        "Terra",
+        "Água",
+        "Yang"
+      ],
+      "attributes": [
+        "Sábio"
+      ],
+      "debutArc": "Perseguição a Itachi",
+      "arcOrder": 12,
+      "debutAnime": "Naruto Shippūden Episode #116"
+    },
+    {
+      "id": 1359,
+      "name": "Kabuto Yakushi",
+      "image": "https://static.wikia.nocookie.net/naruto/images/c/c9/Kabuto_Part_1.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure",
+        "Root",
+        "Konoha Orphanage",
+        "Otogakure",
+        "Ryūchi Cave",
+        "Akatsuki"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Kenjutsu",
+        "Senjutsu",
+        "Ninjutsu Médico"
+      ],
+      "kekkeiGenkai": [
+        "Kekkei Genkai do Clã de Jūgo",
+        "Kekkei Genkai de Sakon e Ukon",
+        "Shikotsumyaku"
+      ],
+      "natureTypes": [
+        "Terra",
+        "Água",
+        "Vento",
+        "Yin",
+        "Yang"
+      ],
+      "attributes": [
+        "Ninja Médico",
+        "Ninja Renegado",
+        "Sábio"
+      ],
+      "debutArc": "Exames Chūnin",
+      "arcOrder": 1,
+      "debutAnime": "Naruto Episode #23"
+    },
+    {
+      "id": 940,
+      "name": "Kaguya Ōtsutsuki",
+      "image": "https://static.wikia.nocookie.net/naruto/images/6/6c/Kaguya_%C5%8Ctsutsuki.png",
+      "gender": "Feminino",
+      "affiliations": [
+        "Land of Ancestors"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Genjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Fogo",
+        "Vento",
+        "Relâmpago",
+        "Terra",
+        "Água",
+        "Yin",
+        "Yang",
+        "Yin-Yang"
+      ],
+      "attributes": [
+        "Sensor"
+      ],
+      "debutArc": "4ª Guerra: Final",
+      "arcOrder": 24,
+      "debutAnime": "Naruto Shippūden Episode #458"
+    },
+    {
+      "id": 376,
+      "name": "Kakashi Hatake",
+      "image": "https://static.wikia.nocookie.net/naruto/images/2/27/Kakashi_Hatake.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure",
+        "Root"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Genjutsu",
+        "Taijutsu",
+        "Kenjutsu",
+        "Shurikenjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Sharingan",
+        "Mangekyō Sharingan"
+      ],
+      "natureTypes": [
+        "Relâmpago",
+        "Terra",
+        "Água",
+        "Fogo",
+        "Vento",
+        "Yin",
+        "Yang"
+      ],
+      "attributes": [],
+      "debutArc": "Terra das Ondas",
+      "arcOrder": 0,
+      "debutAnime": "Naruto Episode #3"
+    },
+    {
+      "id": 558,
+      "name": "Kakuzu",
+      "image": "https://static.wikia.nocookie.net/naruto/images/5/57/Kakuzu.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Takigakure",
+        "Akatsuki"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Terra",
+        "Água",
+        "Fogo",
+        "Vento",
+        "Relâmpago"
+      ],
+      "attributes": [
+        "Rank S",
+        "Ninja Renegado"
+      ],
+      "debutArc": "Doze Ninjas Guardiões (filler)",
+      "arcOrder": 9,
+      "debutAnime": "Naruto Shippūden Episode #71"
+    },
+    {
+      "id": 577,
+      "name": "Kankurō",
+      "image": "https://static.wikia.nocookie.net/naruto/images/7/7d/Kankur%C5%8D1.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Sunagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Marionetes"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Vento",
+        "Relâmpago",
+        "Terra",
+        "Água"
+      ],
+      "attributes": [],
+      "debutArc": "Exames Chūnin",
+      "arcOrder": 1,
+      "debutAnime": "Naruto Episode #20"
+    },
+    {
+      "id": 593,
+      "name": "Karin",
+      "image": "https://static.wikia.nocookie.net/naruto/images/7/72/Karin3.png",
+      "gender": "Feminino",
+      "affiliations": [
+        "Kusagakure",
+        "Otogakure",
+        "Akatsuki"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Ninjutsu Médico"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Terra",
+        "Água",
+        "Yin",
+        "Yang"
+      ],
+      "attributes": [
+        "Sensor"
+      ],
+      "debutArc": "Perseguição a Itachi",
+      "arcOrder": 12,
+      "debutAnime": "Naruto Shippūden Episode #115"
+    },
+    {
+      "id": 596,
+      "name": "Karui",
+      "image": "https://static.wikia.nocookie.net/naruto/images/c/c3/Karui.png",
+      "gender": "Feminino",
+      "affiliations": [
+        "Kumogakure",
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Relâmpago"
+      ],
+      "attributes": [],
+      "debutArc": "Invasão de Pain",
+      "arcOrder": 14,
+      "debutAnime": "Naruto Shippūden Episode #156"
+    },
+    {
+      "id": 466,
+      "name": "Kiba Inuzuka",
+      "image": "https://static.wikia.nocookie.net/naruto/images/0/03/Kiba.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Terra",
+        "Yang"
+      ],
+      "attributes": [],
+      "debutArc": "Terra das Ondas",
+      "arcOrder": 0,
+      "debutAnime": "Naruto Episode #1"
+    },
+    {
+      "id": 626,
+      "name": "Kidōmaru",
+      "image": "https://static.wikia.nocookie.net/naruto/images/e/e8/Kid%C5%8Dmaru.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Otogakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [],
+      "attributes": [
+        "Sensor"
+      ],
+      "debutArc": "Invasão de Konoha",
+      "arcOrder": 2,
+      "debutAnime": "Naruto Episode #68"
+    },
+    {
+      "id": 636,
+      "name": "Killer B",
+      "image": "https://static.wikia.nocookie.net/naruto/images/6/63/Killer_B.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Kumogakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Taijutsu",
+        "Fūinjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Relâmpago",
+        "Água",
+        "Fogo",
+        "Yang"
+      ],
+      "attributes": [
+        "Jinchūriki"
+      ],
+      "debutArc": "Perseguição a Itachi",
+      "arcOrder": 12,
+      "debutAnime": "Naruto Shippūden Episode #142"
+    },
+    {
+      "id": 637,
+      "name": "Kimimaro",
+      "image": "https://static.wikia.nocookie.net/naruto/images/c/c8/Kimimaro_infobox.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Otogakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Shikotsumyaku"
+      ],
+      "natureTypes": [],
+      "attributes": [],
+      "debutArc": "Resgate do Sasuke",
+      "arcOrder": 5,
+      "debutAnime": "Naruto Episode #118"
+    },
+    {
+      "id": 1265,
+      "name": "Kin Tsuchi",
+      "image": "https://static.wikia.nocookie.net/naruto/images/f/f3/Kin_Tsuchi.png",
+      "gender": "Feminino",
+      "affiliations": [
+        "Otogakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Genjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Yin"
+      ],
+      "attributes": [],
+      "debutArc": "Exames Chūnin",
+      "arcOrder": 1,
+      "debutAnime": "Naruto Episode #21"
+    },
+    {
+      "id": 641,
+      "name": "Kinkaku",
+      "image": "https://static.wikia.nocookie.net/naruto/images/f/f4/Kinkaku_268.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Kumogakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [],
+      "attributes": [
+        "Jinchūriki"
+      ],
+      "debutArc": "Controle do Kyūbi",
+      "arcOrder": 18,
+      "debutAnime": "Naruto Shippūden Episode #267"
+    },
+    {
+      "id": 421,
+      "name": "Kisame Hoshigaki",
+      "image": "https://static.wikia.nocookie.net/naruto/images/2/25/Kisame.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Kirigakure",
+        "Akatsuki"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Água",
+        "Fogo",
+        "Vento",
+        "Terra"
+      ],
+      "attributes": [
+        "Rank S",
+        "Ninja Renegado"
+      ],
+      "debutArc": "Invasão de Konoha",
+      "arcOrder": 2,
+      "debutAnime": "Naruto Episode #80"
+    },
+    {
+      "id": 684,
+      "name": "Konan",
+      "image": "https://static.wikia.nocookie.net/naruto/images/5/58/Konan_Infobox.png",
+      "gender": "Feminino",
+      "affiliations": [
+        "Amegakure",
+        "Akatsuki"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Kenjutsu",
+        "Shurikenjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Vento",
+        "Terra",
+        "Água",
+        "Yang"
+      ],
+      "attributes": [
+        "Rank S",
+        "Sensor"
+      ],
+      "debutArc": "Perseguição a Itachi",
+      "arcOrder": 12,
+      "debutAnime": "Naruto Shippūden Episode #125"
+    },
+    {
+      "id": 1037,
+      "name": "Konohamaru Sarutobi",
+      "image": "https://static.wikia.nocookie.net/naruto/images/8/89/Konohamaru_p1.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure",
+        "Mount Myōboku"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Shurikenjutsu",
+        "Fūinjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Fogo",
+        "Vento",
+        "Relâmpago",
+        "Yang"
+      ],
+      "attributes": [],
+      "debutArc": "Terra das Ondas",
+      "arcOrder": 0,
+      "debutAnime": "Naruto Episode #2"
+    },
+    {
+      "id": 348,
+      "name": "Kotetsu Hagane",
+      "image": "https://static.wikia.nocookie.net/naruto/images/8/81/Kotetsu_Hagane.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Genjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Yin"
+      ],
+      "attributes": [],
+      "debutArc": "Terra das Ondas",
+      "arcOrder": 0,
+      "debutAnime": "Naruto Episode #3"
+    },
+    {
+      "id": 1397,
+      "name": "Kurenai Yūhi",
+      "image": "https://static.wikia.nocookie.net/naruto/images/6/67/Kurenai_Part_I.png",
+      "gender": "Feminino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Yin"
+      ],
+      "attributes": [
+        "Sensor"
+      ],
+      "debutArc": "Terra das Ondas",
+      "arcOrder": 0,
+      "debutAnime": "Naruto Episode #3"
+    },
+    {
+      "id": 725,
+      "name": "Kurotsuchi",
+      "image": "https://static.wikia.nocookie.net/naruto/images/2/29/Kurotsuchi_Part_II.png",
+      "gender": "Feminino",
+      "affiliations": [
+        "Iwagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Fūinjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Estilo Lava"
+      ],
+      "natureTypes": [
+        "Lava",
+        "Fogo",
+        "Terra",
+        "Água",
+        "Yin"
+      ],
+      "attributes": [],
+      "debutArc": "Cúpula dos Cinco Kages",
+      "arcOrder": 16,
+      "debutAnime": "Naruto Shippūden Episode #199"
+    },
+    {
+      "id": 1341,
+      "name": "Kushina Uzumaki",
+      "image": "https://static.wikia.nocookie.net/naruto/images/d/db/Kushina.png",
+      "gender": "Feminino",
+      "affiliations": [
+        "Uzushiogakure",
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Vento",
+        "Água",
+        "Yin"
+      ],
+      "attributes": [
+        "Jinchūriki"
+      ],
+      "debutArc": "Perseguição a Itachi",
+      "arcOrder": 12,
+      "debutAnime": "Naruto Shippūden Episode #128"
+    },
+    {
+      "id": 1299,
+      "name": "Madara Uchiha",
+      "image": "https://static.wikia.nocookie.net/naruto/images/f/fd/Madara.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure",
+        "Akatsuki"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Genjutsu",
+        "Senjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Sharingan",
+        "Eternal Mangekyō Sharingan",
+        "Rinnegan",
+        "Estilo Madeira",
+        "Estilo Tempestade"
+      ],
+      "natureTypes": [
+        "Fogo",
+        "Vento",
+        "Relâmpago",
+        "Terra",
+        "Água",
+        "Madeira",
+        "Tempestade",
+        "Yin",
+        "Yang",
+        "Yin-Yang"
+      ],
+      "attributes": [
+        "Jinchūriki",
+        "Ninja Renegado",
+        "Sensor",
+        "Sábio"
+      ],
+      "debutArc": "Perseguição a Itachi",
+      "arcOrder": 12,
+      "debutAnime": "Naruto Shippūden Episode #130"
+    },
+    {
+      "id": 429,
+      "name": "Mangetsu Hōzuki",
+      "image": "https://static.wikia.nocookie.net/naruto/images/c/ce/Hozuki_Mangetsu.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Kirigakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Água"
+      ],
+      "attributes": [],
+      "debutArc": "Controle do Kyūbi",
+      "arcOrder": 18,
+      "debutAnime": "Naruto Shippūden Episode #265"
+    },
+    {
+      "id": 1223,
+      "name": "Mei Terumī",
+      "image": "https://static.wikia.nocookie.net/naruto/images/6/6f/Mei.png",
+      "gender": "Feminino",
+      "affiliations": [
+        "Kirigakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Estilo Lava",
+        "Estilo Vapor"
+      ],
+      "natureTypes": [
+        "Lava",
+        "Vapor",
+        "Água",
+        "Fogo",
+        "Relâmpago",
+        "Terra"
+      ],
+      "attributes": [],
+      "debutArc": "Cúpula dos Cinco Kages",
+      "arcOrder": 16,
+      "debutAnime": "Naruto Shippūden Episode #199"
+    },
+    {
+      "id": 794,
+      "name": "Mifune",
+      "image": "https://static.wikia.nocookie.net/naruto/images/e/ee/Mifune.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Land of Iron"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Kenjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [],
+      "attributes": [
+        "Samurai"
+      ],
+      "debutArc": "Cúpula dos Cinco Kages",
+      "arcOrder": 16,
+      "debutAnime": "Naruto Shippūden Episode #199"
+    },
+    {
+      "id": 210,
+      "name": "Might Duy",
+      "image": "https://static.wikia.nocookie.net/naruto/images/b/b7/Might_Duy.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [],
+      "attributes": [],
+      "debutArc": "4ª Guerra: Final",
+      "arcOrder": 24,
+      "debutAnime": "Naruto Shippūden Episode #418"
+    },
+    {
+      "id": 344,
+      "name": "Might Guy",
+      "image": "https://static.wikia.nocookie.net/naruto/images/3/31/Might_Guy.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Taijutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Fogo",
+        "Relâmpago"
+      ],
+      "attributes": [],
+      "debutArc": "Exames Chūnin",
+      "arcOrder": 1,
+      "debutAnime": "Naruto Episode #21"
+    },
+    {
+      "id": 1300,
+      "name": "Mikoto Uchiha",
+      "image": "https://static.wikia.nocookie.net/naruto/images/8/8e/Mikoto_Uchiha.png",
+      "gender": "Feminino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [],
+      "kekkeiGenkai": [],
+      "natureTypes": [],
+      "attributes": [],
+      "debutArc": "Busca por Tsunade",
+      "arcOrder": 3,
+      "debutAnime": "Naruto Episode #84"
+    },
+    {
+      "id": 865,
+      "name": "Minato Namikaze",
+      "image": "https://static.wikia.nocookie.net/naruto/images/7/71/Minato_Namikaze.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure",
+        "Mount Myōboku"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Senjutsu",
+        "Fūinjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Fogo",
+        "Vento",
+        "Relâmpago",
+        "Yin",
+        "Yang"
+      ],
+      "attributes": [
+        "Jinchūriki",
+        "Sábio",
+        "Sensor"
+      ],
+      "debutArc": "Terra das Ondas",
+      "arcOrder": 0,
+      "debutAnime": "Naruto Episode #1"
+    },
+    {
+      "id": 818,
+      "name": "Mizuki",
+      "image": "https://static.wikia.nocookie.net/naruto/images/9/9c/Mizuki.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure",
+        "Otogakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Genjutsu",
+        "Marionetes"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Terra",
+        "Yin"
+      ],
+      "attributes": [
+        "Ninja Renegado"
+      ],
+      "debutArc": "Terra das Ondas",
+      "arcOrder": 0,
+      "debutAnime": "Naruto Episode #1"
+    },
+    {
+      "id": 618,
+      "name": "Moegi Kazamatsuri",
+      "image": "https://static.wikia.nocookie.net/naruto/images/b/b7/Moegi_p1.png",
+      "gender": "Feminino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Estilo Madeira"
+      ],
+      "natureTypes": [
+        "Madeira",
+        "Terra",
+        "Água"
+      ],
+      "attributes": [
+        "Sensor"
+      ],
+      "debutArc": "Exames Chūnin",
+      "arcOrder": 1,
+      "debutAnime": "Naruto Episode #20"
+    },
+    {
+      "id": 844,
+      "name": "Mū",
+      "image": "https://static.wikia.nocookie.net/naruto/images/d/d5/M%C5%AB.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Iwagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Poeira",
+        "Terra",
+        "Água",
+        "Fogo",
+        "Vento",
+        "Relâmpago",
+        "Yang"
+      ],
+      "attributes": [
+        "Sensor"
+      ],
+      "debutArc": "Controle do Kyūbi",
+      "arcOrder": 18,
+      "debutAnime": "Naruto Shippūden Episode #256"
+    },
+    {
+      "id": 861,
+      "name": "Nagato",
+      "image": "https://static.wikia.nocookie.net/naruto/images/4/46/Nagato.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Amegakure",
+        "Akatsuki"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Rinnegan"
+      ],
+      "natureTypes": [
+        "Fogo",
+        "Vento",
+        "Relâmpago",
+        "Terra",
+        "Água",
+        "Yang"
+      ],
+      "attributes": [
+        "Rank S",
+        "Sensor"
+      ],
+      "debutArc": "Perseguição a Itachi",
+      "arcOrder": 12,
+      "debutAnime": "Naruto Shippūden Episode #128"
+    },
+    {
+      "id": 1344,
+      "name": "Naruto Uzumaki",
+      "image": "https://static.wikia.nocookie.net/naruto/images/d/d6/Naruto_Part_I.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure",
+        "Mount Myōboku"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Taijutsu",
+        "Kenjutsu",
+        "Shurikenjutsu",
+        "Senjutsu",
+        "Fūinjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Estilo Lava",
+        "Estilo Magnetismo",
+        "Estilo Vapor"
+      ],
+      "natureTypes": [
+        "Vento",
+        "Relâmpago",
+        "Terra",
+        "Água",
+        "Fogo",
+        "Lava",
+        "Magnetismo",
+        "Vapor",
+        "Yin",
+        "Yang",
+        "Yin-Yang"
+      ],
+      "attributes": [
+        "Jinchūriki",
+        "Sábio",
+        "Sensor"
+      ],
+      "debutArc": "Terra das Ondas",
+      "arcOrder": 0,
+      "debutAnime": "Naruto Episode #1"
+    },
+    {
+      "id": 444,
+      "name": "Neji Hyūga",
+      "image": "https://static.wikia.nocookie.net/naruto/images/7/7e/Neji_Part_I.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Byakugan"
+      ],
+      "natureTypes": [
+        "Fogo",
+        "Terra",
+        "Água"
+      ],
+      "attributes": [],
+      "debutArc": "Exames Chūnin",
+      "arcOrder": 1,
+      "debutAnime": "Naruto Episode #21"
+    },
+    {
+      "id": 1303,
+      "name": "Obito Uchiha",
+      "image": "https://static.wikia.nocookie.net/naruto/images/4/4a/Obito_Uchiha.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure",
+        "Akatsuki",
+        "Kirigakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Genjutsu",
+        "Senjutsu",
+        "Fūinjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Sharingan",
+        "Mangekyō Sharingan",
+        "Rinnegan",
+        "Estilo Madeira"
+      ],
+      "natureTypes": [
+        "Fogo",
+        "Vento",
+        "Relâmpago",
+        "Terra",
+        "Água",
+        "Madeira",
+        "Yin",
+        "Yang",
+        "Yin-Yang"
+      ],
+      "attributes": [
+        "Jinchūriki",
+        "Ninja Renegado",
+        "Rank S",
+        "Sensor"
+      ],
+      "debutArc": "Resgate do Kazekage",
+      "arcOrder": 7,
+      "debutAnime": "Naruto Shippūden Episode #32"
+    },
+    {
+      "id": 920,
+      "name": "Omoi",
+      "image": "https://static.wikia.nocookie.net/naruto/images/9/9f/Omoi_Part_II.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Kumogakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Relâmpago"
+      ],
+      "attributes": [],
+      "debutArc": "Invasão de Pain",
+      "arcOrder": 14,
+      "debutAnime": "Naruto Shippūden Episode #156"
+    },
+    {
+      "id": 925,
+      "name": "Ōnoki",
+      "image": "https://static.wikia.nocookie.net/naruto/images/6/67/%C5%8Cnoki.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Iwagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Estilo Lava"
+      ],
+      "natureTypes": [
+        "Poeira",
+        "Lava",
+        "Terra",
+        "Fogo",
+        "Vento",
+        "Relâmpago",
+        "Yang"
+      ],
+      "attributes": [],
+      "debutArc": "Cúpula dos Cinco Kages",
+      "arcOrder": 16,
+      "debutAnime": "Naruto Shippūden Episode #199"
+    },
+    {
+      "id": 928,
+      "name": "Orochimaru",
+      "image": "https://static.wikia.nocookie.net/naruto/images/1/14/Orochimaru_Infobox.png",
+      "gender": "Desconhecido",
+      "affiliations": [
+        "Konohagakure",
+        "Root",
+        "Akatsuki",
+        "Otogakure",
+        "Ryūchi Cave"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Genjutsu",
+        "Kenjutsu",
+        "Shurikenjutsu",
+        "Fūinjutsu",
+        "Ninjutsu Médico",
+        "Marionetes"
+      ],
+      "kekkeiGenkai": [
+        "Kekkei Genkai do Clã de Jūgo",
+        "Kekkei Genkai de Sakon e Ukon",
+        "Shikotsumyaku",
+        "Estilo Madeira"
+      ],
+      "natureTypes": [
+        "Vento",
+        "Relâmpago",
+        "Terra",
+        "Água",
+        "Fogo",
+        "Madeira",
+        "Yin",
+        "Yang"
+      ],
+      "attributes": [
+        "Ninja Renegado",
+        "Rank S",
+        "Sannin"
+      ],
+      "debutArc": "Exames Chūnin",
+      "arcOrder": 1,
+      "debutAnime": "Naruto Episode #27"
+    },
+    {
+      "id": 950,
+      "name": "Pakura",
+      "image": "https://static.wikia.nocookie.net/naruto/images/7/71/ParukaAnime.png",
+      "gender": "Feminino",
+      "affiliations": [
+        "Sunagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Estilo Chama Ardente"
+      ],
+      "natureTypes": [
+        "Chama Ardente",
+        "Fogo",
+        "Vento"
+      ],
+      "attributes": [],
+      "debutArc": "Controle do Kyūbi",
+      "arcOrder": 18,
+      "debutAnime": "Naruto Shippūden Episode #261"
+    },
+    {
+      "id": 967,
+      "name": "Rasa",
+      "image": "https://static.wikia.nocookie.net/naruto/images/2/24/Yondaime_Kazekage.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Sunagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Kenjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Estilo Magnetismo"
+      ],
+      "natureTypes": [
+        "Magnetismo",
+        "Vento",
+        "Terra",
+        "Água",
+        "Yin"
+      ],
+      "attributes": [],
+      "debutArc": "Exames Chūnin",
+      "arcOrder": 1,
+      "debutAnime": "Naruto Episode #57"
+    },
+    {
+      "id": 903,
+      "name": "Rin Nohara",
+      "image": "https://static.wikia.nocookie.net/naruto/images/b/bc/Rin_Nohara.png",
+      "gender": "Feminino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Fogo",
+        "Água",
+        "Yang"
+      ],
+      "attributes": [
+        "Ninja Médico",
+        "Jinchūriki"
+      ],
+      "debutArc": "Perseguição a Itachi",
+      "arcOrder": 12,
+      "debutAnime": "Naruto Shippūden Episode #119"
+    },
+    {
+      "id": 739,
+      "name": "Rock Lee",
+      "image": "https://static.wikia.nocookie.net/naruto/images/9/97/Rock_Lee_Part_I.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Taijutsu",
+        "Kenjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [],
+      "attributes": [],
+      "debutArc": "Exames Chūnin",
+      "arcOrder": 1,
+      "debutAnime": "Naruto Episode #21"
+    },
+    {
+      "id": 983,
+      "name": "Rōshi",
+      "image": "https://static.wikia.nocookie.net/naruto/images/c/c9/Roshi.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Iwagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Estilo Lava"
+      ],
+      "natureTypes": [
+        "Lava",
+        "Fogo",
+        "Terra"
+      ],
+      "attributes": [
+        "Jinchūriki"
+      ],
+      "debutArc": "Perseguição a Itachi",
+      "arcOrder": 12,
+      "debutAnime": "Naruto Shippūden Episode #121"
+    },
+    {
+      "id": 1008,
+      "name": "Sai",
+      "image": "https://static.wikia.nocookie.net/naruto/images/0/07/Sai_Infobox.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure",
+        "Root"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Fūinjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Terra",
+        "Água",
+        "Fogo",
+        "Yang"
+      ],
+      "attributes": [],
+      "debutArc": "Resgate do Kazekage",
+      "arcOrder": 7,
+      "debutAnime": "Naruto Shippūden Episode #32"
+    },
+    {
+      "id": 1015,
+      "name": "Sakon and Ukon",
+      "image": "https://static.wikia.nocookie.net/naruto/images/2/2e/Sakon_and_Ukon.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Otogakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Kekkei Genkai de Sakon e Ukon"
+      ],
+      "natureTypes": [],
+      "attributes": [],
+      "debutArc": "Invasão de Konoha",
+      "arcOrder": 2,
+      "debutAnime": "Naruto Episode #68"
+    },
+    {
+      "id": 374,
+      "name": "Sakura Haruno",
+      "image": "https://static.wikia.nocookie.net/naruto/images/6/64/Sakura_Part_1.png",
+      "gender": "Feminino",
+      "affiliations": [
+        "Konohagakure",
+        "Shikkotsu Forest"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Fūinjutsu",
+        "Ninjutsu Médico",
+        "Marionetes"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Terra",
+        "Água",
+        "Fogo",
+        "Yin",
+        "Yang"
+      ],
+      "attributes": [
+        "Ninja Médico"
+      ],
+      "debutArc": "Terra das Ondas",
+      "arcOrder": 0,
+      "debutAnime": "Naruto Episode #1"
+    },
+    {
+      "id": 1019,
+      "name": "Samui",
+      "image": "https://static.wikia.nocookie.net/naruto/images/2/23/Samui.png",
+      "gender": "Feminino",
+      "affiliations": [
+        "Kumogakure"
+      ],
+      "jutsuTypes": [],
+      "kekkeiGenkai": [],
+      "natureTypes": [],
+      "attributes": [],
+      "debutArc": "Invasão de Pain",
+      "arcOrder": 14,
+      "debutAnime": "Naruto Shippūden Episode #156"
+    },
+    {
+      "id": 1042,
+      "name": "Sasori",
+      "image": "https://static.wikia.nocookie.net/naruto/images/f/f7/Sasori.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Sunagakure",
+        "Akatsuki"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Marionetes"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [],
+      "attributes": [
+        "Rank S",
+        "Ninja Renegado"
+      ],
+      "debutArc": "Resgate do Kazekage",
+      "arcOrder": 7,
+      "debutAnime": "Naruto Shippūden Episode #2"
+    },
+    {
+      "id": 1307,
+      "name": "Sasuke Uchiha",
+      "image": "https://static.wikia.nocookie.net/naruto/images/2/21/Sasuke_Part_1.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure",
+        "Otogakure",
+        "Ryūchi Cave",
+        "Akatsuki"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Genjutsu",
+        "Taijutsu",
+        "Kenjutsu",
+        "Shurikenjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Sharingan",
+        "Eternal Mangekyō Sharingan",
+        "Rinnegan"
+      ],
+      "natureTypes": [
+        "Relâmpago",
+        "Fogo",
+        "Vento",
+        "Terra",
+        "Água",
+        "Yin"
+      ],
+      "attributes": [
+        "Ninja Renegado"
+      ],
+      "debutArc": "Terra das Ondas",
+      "arcOrder": 0,
+      "debutAnime": "Naruto Episode #1"
+    },
+    {
+      "id": 877,
+      "name": "Shikaku Nara",
+      "image": "https://static.wikia.nocookie.net/naruto/images/e/e0/Shikaku_Nara.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Yin"
+      ],
+      "attributes": [],
+      "debutArc": "Exames Chūnin",
+      "arcOrder": 1,
+      "debutAnime": "Naruto Episode #59"
+    },
+    {
+      "id": 878,
+      "name": "Shikamaru Nara",
+      "image": "https://static.wikia.nocookie.net/naruto/images/4/44/Shikamaru_Part_I.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Kenjutsu",
+        "Shurikenjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Fogo",
+        "Terra",
+        "Yin"
+      ],
+      "attributes": [],
+      "debutArc": "Terra das Ondas",
+      "arcOrder": 0,
+      "debutAnime": "Naruto Episode #1"
+    },
+    {
+      "id": 13,
+      "name": "Shino Aburame",
+      "image": "https://static.wikia.nocookie.net/naruto/images/9/9c/Shino.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Shurikenjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Terra",
+        "Fogo",
+        "Yang"
+      ],
+      "attributes": [],
+      "debutArc": "Terra das Ondas",
+      "arcOrder": 0,
+      "debutAnime": "Naruto Episode #1"
+    },
+    {
+      "id": 1310,
+      "name": "Shisui Uchiha",
+      "image": "https://static.wikia.nocookie.net/naruto/images/4/4c/Shisui_Uchiha.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Genjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Sharingan",
+        "Mangekyō Sharingan"
+      ],
+      "natureTypes": [
+        "Fogo",
+        "Vento",
+        "Relâmpago",
+        "Yin"
+      ],
+      "attributes": [],
+      "debutArc": "Cúpula dos Cinco Kages",
+      "arcOrder": 16,
+      "debutAnime": "Naruto Shippūden Episode #201"
+    },
+    {
+      "id": 1122,
+      "name": "Shizune",
+      "image": "https://static.wikia.nocookie.net/naruto/images/0/0a/Shizune_Infobox.png",
+      "gender": "Feminino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Ninjutsu Médico"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [],
+      "attributes": [
+        "Ninja Médico"
+      ],
+      "debutArc": "Busca por Tsunade",
+      "arcOrder": 3,
+      "debutAnime": "Naruto Episode #85"
+    },
+    {
+      "id": 430,
+      "name": "Suigetsu Hōzuki",
+      "image": "https://static.wikia.nocookie.net/naruto/images/3/3e/Suigetsu_H%C5%8Dzuki.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Kirigakure",
+        "Otogakure",
+        "Akatsuki"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Água",
+        "Vento"
+      ],
+      "attributes": [],
+      "debutArc": "Perseguição a Itachi",
+      "arcOrder": 12,
+      "debutAnime": "Naruto Shippūden Episode #115"
+    },
+    {
+      "id": 1203,
+      "name": "Tayuya",
+      "image": "https://static.wikia.nocookie.net/naruto/images/7/78/Tayuya_Shot.png",
+      "gender": "Feminino",
+      "affiliations": [
+        "Otogakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Yin"
+      ],
+      "attributes": [],
+      "debutArc": "Invasão de Konoha",
+      "arcOrder": 2,
+      "debutAnime": "Naruto Episode #68"
+    },
+    {
+      "id": 1208,
+      "name": "Temari",
+      "image": "https://static.wikia.nocookie.net/naruto/images/b/bb/Temari_newshot.png",
+      "gender": "Feminino",
+      "affiliations": [
+        "Sunagakure",
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Vento"
+      ],
+      "attributes": [],
+      "debutArc": "Exames Chūnin",
+      "arcOrder": 1,
+      "debutAnime": "Naruto Episode #20"
+    },
+    {
+      "id": 1216,
+      "name": "Tenten",
+      "image": "https://static.wikia.nocookie.net/naruto/images/d/da/Tenten_Part_1.png",
+      "gender": "Feminino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Taijutsu",
+        "Kenjutsu",
+        "Shurikenjutsu",
+        "Fūinjutsu",
+        "Marionetes"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [],
+      "attributes": [],
+      "debutArc": "Exames Chūnin",
+      "arcOrder": 1,
+      "debutAnime": "Naruto Episode #21"
+    },
+    {
+      "id": 1227,
+      "name": "Teuchi",
+      "image": "https://static.wikia.nocookie.net/naruto/images/d/d6/Teuchi_Infobox.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [],
+      "kekkeiGenkai": [],
+      "natureTypes": [],
+      "attributes": [],
+      "debutArc": "Exames Chūnin",
+      "arcOrder": 1,
+      "debutAnime": "Naruto Episode #52"
+    },
+    {
+      "id": 1066,
+      "name": "Tobirama Senju",
+      "image": "https://static.wikia.nocookie.net/naruto/images/b/be/Tobirama_Senju.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Água",
+        "Fogo",
+        "Vento",
+        "Relâmpago",
+        "Terra",
+        "Yin",
+        "Yang"
+      ],
+      "attributes": [
+        "Sensor"
+      ],
+      "debutArc": "Invasão de Konoha",
+      "arcOrder": 2,
+      "debutAnime": "Naruto Episode #69"
+    },
+    {
+      "id": 1280,
+      "name": "Tsunade",
+      "image": "https://static.wikia.nocookie.net/naruto/images/b/b3/Tsunade_infobox2.png",
+      "gender": "Feminino",
+      "affiliations": [
+        "Konohagakure",
+        "Shikkotsu Forest"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Genjutsu",
+        "Ninjutsu Médico"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Relâmpago",
+        "Terra",
+        "Água",
+        "Fogo",
+        "Yin",
+        "Yang"
+      ],
+      "attributes": [
+        "Ninja Médico",
+        "Sannin"
+      ],
+      "debutArc": "Busca por Tsunade",
+      "arcOrder": 3,
+      "debutAnime": "Naruto Episode #83"
+    },
+    {
+      "id": 477,
+      "name": "Udon Ise",
+      "image": "https://static.wikia.nocookie.net/naruto/images/7/76/Udon_p1.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Água"
+      ],
+      "attributes": [],
+      "debutArc": "Exames Chūnin",
+      "arcOrder": 1,
+      "debutAnime": "Naruto Episode #20"
+    },
+    {
+      "id": 1335,
+      "name": "Utakata",
+      "image": "https://static.wikia.nocookie.net/naruto/images/2/27/Utakata.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Kirigakure",
+        "Tsuchigumo Clan"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Água"
+      ],
+      "attributes": [
+        "Sensor",
+        "Jinchūriki",
+        "Ninja Renegado"
+      ],
+      "debutArc": "Fúria do Rokubi (filler)",
+      "arcOrder": 13,
+      "debutAnime": "Naruto Shippūden Episode #144"
+    },
+    {
+      "id": 1426,
+      "name": "White Zetsu",
+      "image": "https://static.wikia.nocookie.net/naruto/images/5/5f/White_Zetsu.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Akatsuki"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Estilo Madeira"
+      ],
+      "natureTypes": [
+        "Madeira",
+        "Terra",
+        "Água",
+        "Fogo",
+        "Vento",
+        "Relâmpago",
+        "Yin",
+        "Yang"
+      ],
+      "attributes": [
+        "Rank S"
+      ],
+      "debutArc": "Resgate do Sasuke",
+      "arcOrder": 5,
+      "debutAnime": "Naruto Episode #134"
+    },
+    {
+      "id": 591,
+      "name": "Yagura Karatachi",
+      "image": "https://static.wikia.nocookie.net/naruto/images/e/e0/Yagura.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Kirigakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Água",
+        "Vento"
+      ],
+      "attributes": [
+        "Jinchūriki"
+      ],
+      "debutArc": "Cúpula dos Cinco Kages",
+      "arcOrder": 16,
+      "debutAnime": "Naruto Shippūden Episode #200"
+    },
+    {
+      "id": 1356,
+      "name": "Yahiko",
+      "image": "https://static.wikia.nocookie.net/naruto/images/7/76/Yahiko.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Amegakure",
+        "Akatsuki"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Água",
+        "Fogo",
+        "Vento"
+      ],
+      "attributes": [],
+      "debutArc": "Perseguição a Itachi",
+      "arcOrder": 12,
+      "debutAnime": "Naruto Shippūden Episode #128"
+    },
+    {
+      "id": 1373,
+      "name": "Yamato",
+      "image": "https://static.wikia.nocookie.net/naruto/images/f/f7/Yamato_newshot.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Konohagakure",
+        "Root"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [
+        "Estilo Madeira"
+      ],
+      "natureTypes": [
+        "Madeira",
+        "Terra",
+        "Água",
+        "Yang"
+      ],
+      "attributes": [],
+      "debutArc": "Ponte Tenchi",
+      "arcOrder": 8,
+      "debutAnime": "Naruto Shippūden Episode #34"
+    },
+    {
+      "id": 898,
+      "name": "Yugito Nii",
+      "image": "https://static.wikia.nocookie.net/naruto/images/2/2f/Yugito.png",
+      "gender": "Feminino",
+      "affiliations": [
+        "Kumogakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Fogo"
+      ],
+      "attributes": [
+        "Jinchūriki"
+      ],
+      "debutArc": "Doze Ninjas Guardiões (filler)",
+      "arcOrder": 9,
+      "debutAnime": "Naruto Shippūden Episode #71"
+    },
+    {
+      "id": 831,
+      "name": "Zabuza Momochi",
+      "image": "https://static.wikia.nocookie.net/naruto/images/3/37/Zabuza_Momochi.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Kirigakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu",
+        "Kenjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [
+        "Água"
+      ],
+      "attributes": [
+        "Ninja Renegado",
+        "Mercenário"
+      ],
+      "debutArc": "Terra das Ondas",
+      "arcOrder": 0,
+      "debutAnime": "Naruto Episode #6"
+    },
+    {
+      "id": 8,
+      "name": "Zaku Abumi",
+      "image": "https://static.wikia.nocookie.net/naruto/images/4/40/Zaku_Abumi.png",
+      "gender": "Masculino",
+      "affiliations": [
+        "Otogakure"
+      ],
+      "jutsuTypes": [
+        "Ninjutsu"
+      ],
+      "kekkeiGenkai": [],
+      "natureTypes": [],
+      "attributes": [],
+      "debutArc": "Exames Chūnin",
+      "arcOrder": 1,
+      "debutAnime": "Naruto Episode #21"
+    }
+  ]
+}

@@ -18,6 +18,9 @@ export const ROOM_PATH = '/sala'
 /** Rota do jogo da memória (Arcanum), single player. */
 export const MEMORY_PATH = '/memoria'
 
+/** Rota do Shinobi (adivinhe o personagem de Naruto, estilo Narutodle). */
+export const SHINOBI_PATH = '/shinobi'
+
 /** Mapeia um pathname para o modo de jogo correspondente (Treino usa o modo 'termo'). */
 export function getModeFromPath(path: string): GameMode {
   const entry = (Object.entries(MODE_PATHS) as [GameMode, string][]).find(
