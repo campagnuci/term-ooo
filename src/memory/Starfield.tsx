@@ -47,8 +47,8 @@ export function Starfield({ className }: { className?: string }) {
     if (!ctx) return
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const goldSprite = makeStarSprite('rgba(244, 210, 122, 1)', 'rgba(232, 182, 90, 0.35)')
-    const creamSprite = makeStarSprite('rgba(245, 230, 211, 1)', 'rgba(245, 230, 211, 0.25)')
+    const accentSprite = makeStarSprite('rgba(205, 234, 173, 1)', 'rgba(178, 217, 139, 0.35)')
+    const creamSprite = makeStarSprite('rgba(230, 241, 226, 1)', 'rgba(230, 241, 226, 0.25)')
 
     let stars: Star[] = []
     let w = 0
@@ -74,7 +74,7 @@ export function Starfield({ className }: { className?: string }) {
           baseAlpha: Math.random() * 0.5 + 0.25,
           phase: Math.random() * Math.PI * 2,
           speed: Math.random() * 0.6 + 0.2,
-          sprite: Math.random() < 0.15 ? goldSprite : creamSprite,
+          sprite: Math.random() < 0.15 ? accentSprite : creamSprite,
         })
       }
     }

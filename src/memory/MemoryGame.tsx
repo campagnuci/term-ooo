@@ -187,9 +187,9 @@ export default function MemoryGame() {
             <svg className={styles.brandSeal} viewBox="0 0 56 56" aria-hidden="true">
               <defs>
                 <linearGradient id="memSealGrad" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0" stopColor="#fff5d6" />
-                  <stop offset="0.5" stopColor="#e8b65a" />
-                  <stop offset="1" stopColor="#a87a30" />
+                  <stop offset="0" stopColor="#eafbe0" />
+                  <stop offset="0.5" stopColor="#b2d98b" />
+                  <stop offset="1" stopColor="#1d665d" />
                 </linearGradient>
               </defs>
               <circle cx="28" cy="28" r="26" fill="none" stroke="url(#memSealGrad)" strokeWidth="1" />
@@ -338,9 +338,9 @@ export default function MemoryGame() {
           <svg className={styles.modalRune} viewBox="0 0 56 56" aria-hidden="true">
             <defs>
               <linearGradient id="memRuneGrad" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stopColor="#fff5d6" />
-                <stop offset="0.5" stopColor="#e8b65a" />
-                <stop offset="1" stopColor="#a87a30" />
+                <stop offset="0" stopColor="#eafbe0" />
+                <stop offset="0.5" stopColor="#b2d98b" />
+                <stop offset="1" stopColor="#1d665d" />
               </linearGradient>
             </defs>
             <circle cx="28" cy="28" r="24" fill="none" stroke="url(#memRuneGrad)" strokeWidth="1" />
@@ -353,6 +353,11 @@ export default function MemoryGame() {
           <h2 id="memModalTitle">{diff.title}</h2>
           <p className={styles.modalSubtitle}>O cosmos se alinha a seu favor</p>
 
+          <div className={styles.scoreRow}>
+            <span className={styles.scoreLabel}>Pontuação: </span>
+            <span className={styles.scoreValue}>{view.score}</span>
+          </div>
+
           <div className={styles.starsRow}>
             {[0, 1, 2].map((i) => (
               <div
@@ -363,15 +368,15 @@ export default function MemoryGame() {
                 <svg viewBox="0 0 60 60" width="64" height="64">
                   <defs>
                     <linearGradient id={`memStarGrad${i}`} x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0" stopColor="#fff5d6" />
-                      <stop offset="0.5" stopColor="#f4d27a" />
-                      <stop offset="1" stopColor="#a87a30" />
+                      <stop offset="0" stopColor="#eafbe0" />
+                      <stop offset="0.5" stopColor="#b2d98b" />
+                      <stop offset="1" stopColor="#1d665d" />
                     </linearGradient>
                   </defs>
                   <path
                     d="M30 4 L37 22 L56 22 L41 33 L47 52 L30 41 L13 52 L19 33 L4 22 L23 22 Z"
                     fill={`url(#memStarGrad${i})`}
-                    stroke="#fff5d6"
+                    stroke="#eafbe0"
                     strokeWidth="1.2"
                   />
                 </svg>
@@ -398,6 +403,10 @@ export default function MemoryGame() {
             <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={handleRestart}>
               Jogar Novamente
             </button>
+            <Link to="/" className={styles.btn}>
+              <Home size={14} aria-hidden="true" />
+              <span>Início</span>
+            </Link>
           </div>
         </div>
       </div>

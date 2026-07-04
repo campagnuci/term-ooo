@@ -50,6 +50,27 @@ const STAR_START_DELAY = 650
 const STAR_STAGGER = 320
 const DEAL_STAGGER = 35
 
+/**
+ * Pontuação 0–100 por eficiência de jogadas: pares ÷ jogadas × 100.
+ * O mínimo teórico de jogadas é 1 por par, então jogo perfeito = 100 e cada
+ * jogada extra é uma dedução natural. Base para a futura pontuação entre jogos.
+ */
+export function computeScore(moves: number, pairs: number): number {
+  if (moves <= 0) return 0
+  return (pairs / moves) * 100
+}
+
+/**
+ * Cortes de estrelas derivados da pontuação. Equivalem exatamente aos cortes
+ * do demo original em razão de jogadas (ratio = jogadas/pares = 100/score):
+ * ratio ≤ 1.6 ⇔ score ≥ 62.5 (3★); ratio ≤ 2.3 ⇔ score ≥ 100/2.3 ≈ 43.5 (2★).
+ */
+export const STAR_THRESHOLDS = { three: 62.5, two: 100 / 2.3 }
+
+export function starsForScore(score: number): number {
+  return score >= STAR_THRESHOLDS.three ? 3 : score >= STAR_THRESHOLDS.two ? 2 : 1
+}
+
 export type GamePhase = 'dealing' | 'preview' | 'playing' | 'complete'
 
 export interface MemoryGameView {
@@ -69,6 +90,8 @@ export interface MemoryGameView {
   modalOpen: boolean
   litStars: number
   starCount: number
+  /** Pontuação final (0–100), arredondada; 0 até o fim da partida */
+  score: number
 }
 
 export interface MemoryEffects {
@@ -82,7 +105,7 @@ export interface MemoryEffects {
   onVanish?: (indices: [number, number]) => void
   onMiss?: () => void
   /** Todos os pares encontrados (toca acorde de vitória) */
-  onComplete?: (result: { stars: number; moves: number; seconds: number; maxStreak: number }) => void
+  onComplete?: (result: { stars: number; score: number; moves: number; seconds: number; maxStreak: number }) => void
   /** Modal de vitória ficou visível (dispara confete) */
   onModalOpen?: () => void
   /** Estrela `index` (0-based) acendeu no modal */
@@ -109,6 +132,7 @@ interface InternalState {
   modalOpen: boolean
   litStars: number
   starCount: number
+  score: number
 }
 
 function buildDeck(pairs: number): string[] {
@@ -146,6 +170,7 @@ function emptyState(): InternalState {
     modalOpen: false,
     litStars: 0,
     starCount: 0,
+    score: 0,
   }
 }
 
@@ -171,6 +196,7 @@ function freshState(difficulty: Difficulty, gameId: number): InternalState {
     modalOpen: false,
     litStars: 0,
     starCount: 0,
+    score: 0,
   }
 }
 
@@ -194,6 +220,7 @@ function toView(st: InternalState): MemoryGameView {
     modalOpen: st.modalOpen,
     litStars: st.litStars,
     starCount: st.starCount,
+    score: st.score,
   }
 }
 
@@ -286,14 +313,18 @@ export function useMemoryGame(effects: MemoryEffects) {
         st.phase = 'complete'
         st.locked = true
         st.finalSeconds = st.startTime ? Math.floor((Date.now() - st.startTime) / 1000) : 0
-        const ratio = st.moves / total
-        st.starCount = ratio <= 1.6 ? 3 : ratio <= 2.3 ? 2 : 1
+        // Estrelas derivam da pontuação exata (sem arredondar) para manter
+        // os cortes idênticos aos do demo; o valor exibido é arredondado
+        const exactScore = computeScore(st.moves, total)
+        st.score = Math.round(exactScore)
+        st.starCount = starsForScore(exactScore)
         sync()
 
         after(COMPLETE_DELAY, () => {
           const cur = stRef.current!
           fxRef.current.onComplete?.({
             stars: cur.starCount,
+            score: cur.score,
             moves: cur.moves,
             seconds: cur.finalSeconds ?? 0,
             maxStreak: cur.maxStreak,

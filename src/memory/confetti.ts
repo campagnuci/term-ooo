@@ -10,7 +10,8 @@
 import confetti from 'canvas-confetti'
 import type { CreateTypes } from 'canvas-confetti'
 
-const COLORS = ['#f4d27a', '#e8b65a', '#fff5d6', '#3dd68c', '#6ff0b0', '#ff9a8b', '#ff6b6b', '#f5e6d3']
+/* Paleta da marca: pistache/eucalipto + jade, com toques de coral para contraste */
+const COLORS = ['#b2d98b', '#cdeaad', '#eafbe0', '#3dd68c', '#6ff0b0', '#ff9a8b', '#ff6b6b', '#e6f1e2']
 
 export class MemoryConfetti {
   private instance: CreateTypes | null = null

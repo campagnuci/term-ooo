@@ -116,9 +116,9 @@ export class ParticleField {
     if (!this.canvas || this.reducedMotion) return
     const {
       count = 20,
-      hueBase = 40,
+      hueBase = 92, /* pistache (#b2d98b ≈ hue 90) */
       hueSpread = 30,
-      sat = 90,
+      sat = 55,
       speedMin = 70,
       speedMax = 180,
       lift = -50,
@@ -151,17 +151,18 @@ export class ParticleField {
     this.ensureLoop()
   }
 
-  /** Explosão dourada ao encontrar um par (equivale a burstParticles) */
+  /** Explosão pistache ao encontrar um par (equivale a burstParticles) */
   burst(cx: number, cy: number) {
     this.spawn(cx, cy, { count: 22 })
   }
 
-  /** Explosão a partir do indicador de sequência (tons coral/dourado) */
+  /** Explosão a partir do indicador de sequência (tons coral, o acento "quente") */
   streakBurst(cx: number, cy: number) {
     this.spawn(cx, cy, {
       count: 18,
-      hueBase: 45,
-      hueSpread: 60,
+      hueBase: 8,
+      hueSpread: 20,
+      sat: 90,
       speedMin: 70,
       speedMax: 200,
       lift: -40,
@@ -175,9 +176,9 @@ export class ParticleField {
   sparkle(cx: number, cy: number) {
     this.spawn(cx, cy, {
       count: 8,
-      hueBase: 46,
-      hueSpread: 8,
-      sat: 80,
+      hueBase: 92,
+      hueSpread: 10,
+      sat: 55,
       speedMin: 30,
       speedMax: 80,
       lift: 0,
