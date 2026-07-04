@@ -8,6 +8,11 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 ## [Unreleased]
 
 ### Added
+- 🃏 **Jogo da Memória (Arcanum):** novo jogo single player na rota `/memoria` (card "Memória" no hub), port do protótipo `demo.html`. Três dificuldades (Aprendiz 4×4, Adepto 6×4, Mestre 6×6), prévia das cartas, sequências (streaks) com fanfarra, avaliação por estrelas, música ambiente e efeitos 100% sintetizados via Web Audio (sem arquivos de áudio). Módulo isolado em `src/memory/` com CSS Modules (não interfere nos jogos de palavras nem no multiplayer) e carregado por chunk separado (lazy) — o bundle inicial dos outros modos não muda
+- Dependência `canvas-confetti` (confete da vitória renderizado em Web Worker/OffscreenCanvas, fora do thread principal)
+
+### Performance
+- Animações do Jogo da Memória otimizadas em relação ao protótipo (o fim de jogo travava): partículas em canvas único com sprites pré-renderizados (antes: dezenas de `<div>` com `box-shadow` animados), starfield com sprites (antes: centenas de `createRadialGradient` por frame), remoção de `backdrop-filter` sob camadas animadas e keyframes usando apenas `transform`/`opacity` — sequência de vitória medida a 60fps sem frames perdidos
 - ⏱️ **Modo Time Trial (multiplayer):** terceiro tipo de sala competitivo com tempo fixo no relógio (host escolhe presets 1/2/3/5 min ou valor personalizado de 30s–15min). Cronômetro regressivo compartilhado; pontuação por tempo restante + tentativas não usadas; pódio/ranking por pontos. Encerramento autoritativo via *alarm* do Durable Object (ou quando todos terminam). Não altera os modos Cooperativo e Competição
 - ⏱️ Cronômetro de resolução em tempo real (discreto) em todos os modos single player (Termo, Dueto, Quarteto, Treino) — inicia na primeira letra digitada e congela ao fim da partida
 - Tempo médio por solução na tabela de Estatísticas (média das vitórias cronometradas) e tempo da partida no diálogo de resultado (incl. Treino)

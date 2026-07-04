@@ -1,5 +1,5 @@
 // src/App.tsx
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
 import { RotateCcw } from 'lucide-react'
 import { Settings } from './game/types'
@@ -30,6 +30,23 @@ import { useStatsTracker } from './hooks/useStatsTracker'
 import { StarsBackground } from './components/animate-ui/components/backgrounds/stars'
 import { APP_VERSION } from './lib/version'
 import { useSoundEffects } from './lib/sounds/useSoundEffects'
+
+// Jogo da memória em chunk separado: não pesa no bundle inicial dos jogos de palavras
+const MemoryGame = lazy(() => import('./memory/MemoryGame'))
+
+function MemoryGameRoute() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gradient-to-b from-night via-[#0a201a] to-night flex items-center justify-center">
+          <div className="text-foreground text-xl">Carregando...</div>
+        </div>
+      }
+    >
+      <MemoryGame />
+    </Suspense>
+  )
+}
 
 function Game() {
   const navigate = useNavigate()
@@ -524,6 +541,7 @@ function App() {
         <Route path="/treino" element={<Game />} />
         <Route path="/sala" element={<RoomLobby />} />
         <Route path="/sala/:code" element={<RoomScreen />} />
+        <Route path="/memoria" element={<MemoryGameRoute />} />
         {/* Rotas antigas (/2, /4, /6, /seis) e caminhos desconhecidos caem no hub */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
