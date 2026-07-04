@@ -17,6 +17,8 @@
 - [Features Implementadas](#-features-implementadas)
 - [Modo Treino](#-modo-treino)
 - [Multiplayer: Salas](#-multiplayer-salas)
+- [Arcanum: Jogo da Memória](#-arcanum-jogo-da-memória)
+- [Shinobi: Narutodle](#-shinobi-narutodle)
 - [Compartilhamento](#-compartilhamento)
 - [Sistema de Efeitos Sonoros](#-sistema-de-efeitos-sonoros)
 - [Dialogs Responsivos](#-dialogs-responsivos)
@@ -43,14 +45,16 @@ Adivinhe a palavra do dia em português! Cada palpite revela dicas sobre as letr
 
 ## 🕹️ Modos de Jogo
 
-### Single player
+> 🧭 A raiz `/` é o **hub** (landing page) com um card para cada jogo. Rotas antigas (`/2`, `/4`, `/6`, `/seis`) e caminhos desconhecidos redirecionam para o hub.
+
+### Jogos de palavras (single player)
 
 | Modo | Tabuleiros | Letras | Tentativas | Rota |
 |------|-----------|--------|-----------|------|
-| **Termo** | 1 palavra | 5 | 6 | `/` |
-| **Dueto** | 2 palavras | 5 | 7 | `/2` ou `/dueto` |
-| **Quarteto** | 4 palavras | 5 | 9 | `/4` ou `/quarteto` |
-| **🔠 Modo 6** | 1 palavra | **6** | 6 | `/6` ou `/seis` |
+| **Termo** | 1 palavra | 5 | 6 | `/termo` |
+| **Dueto** | 2 palavras | 5 | 7 | `/dueto` |
+| **Quarteto** | 4 palavras | 5 | 9 | `/quarteto` |
+| **🔠 Modo 6** | 1 palavra | **6** | 6 | `/modo-seis` |
 | **🎮 Treino** | 1 palavra (aleatória, ilimitado) | 5 | 6 | `/treino` |
 | **🕰️ Arquivo** | qualquer modo, dias anteriores | — | — | `?dia=N` |
 
@@ -65,6 +69,13 @@ Adivinhe a palavra do dia em português! Cada palpite revela dicas sobre as letr
 | **⏱️ Time Trial** | Tempo fixo no relógio (escolhido pelo host); **partida de N rodadas** somando **pontos** (rapidez + menos tentativas) — vence o **maior total** | `/sala`, `/sala/:code` |
 
 > 🔁 Competição e Time Trial são **multi-rodada** (3/5/10 ou personalizado, 1–20): a pontuação **acumula** a cada rodada e cada rodada começa com uma **contagem regressiva 5→1 "Vai!"** (animada e com som), igual para todos.
+
+### Outros jogos do hub
+
+| Jogo | Como funciona | Rota |
+|------|---------------|------|
+| **🃏 Arcanum** | Jogo da memória: encontre os pares de sígilos arcanos em 3 dificuldades (4×4, 6×4, 6×6), com sequências, estrelas e pontuação | `/memoria` |
+| **🥷 Shinobi** | Estilo **Narutodle**: adivinhe o **personagem de Naruto do dia** com dicas por categoria (gênero, afiliações, jutsus, kekkei genkai, naturezas, atributos e arco de estreia); palpites ilimitados | `/shinobi` |
 
 ---
 
@@ -109,6 +120,8 @@ Adivinhe a palavra do dia em português! Cada palpite revela dicas sobre as letr
 ### 📱 Recursos Adicionais
 - 🔠 **Modo 6** — palavras de 6 letras (engine genérico no tamanho da palavra; dicionário próprio do `br-utf8.txt`)
 - 🎮 **Modo Treino** ilimitado com palavras aleatórias
+- 🃏 **Arcanum** — jogo da memória com 3 dificuldades, estrelas, streaks e áudio sintetizado (Web Audio)
+- 🥷 **Shinobi** — Narutodle: personagem de Naruto do dia com dicas por categoria e palpites ilimitados
 - 🏆 **Salas multiplayer** (Cooperativo, Competição e Time Trial) via WebSocket
 - 🔁 **Partidas multi-rodada** competitivas com pontuação/tempo **acumulados** entre rodadas (3/5/10 ou personalizado)
 - 🚦 **Contagem regressiva 5→1 "Vai!"** antes de cada rodada — animada (Framer Motion), com som sintetizado e sincronizada entre os jogadores
@@ -213,6 +226,44 @@ Um blip de rede ou reload no meio da partida **não** faz você perder o tabulei
 **Componentes:** `RoomLobby`, `RoomScreen`, `RoomHeader`, `RoomSidebar`, `RoomInfoPanel`, `RoomChatPanel`, `RoundEndControls`, `CompetitionPanel`, `TimeTrialPanel`, `RoomTimer`, `RoundCountdown` (contagem regressiva), `MatchScore` (seletor de rodadas + ranking acumulado).
 **Helpers:** `src/game/standings.ts` (ordenação do ranking acumulado).
 **Hook orquestrador:** `useGameRoom` (sobre `useChatConnection`).
+
+---
+
+## 🃏 Arcanum: Jogo da Memória
+
+Jogo da memória single player na rota `/memoria` — encontre os pares de **sígilos arcanos**.
+
+- 🎚️ **3 dificuldades:** Aprendiz (4×4, 8 pares), Adepto (6×4, 12 pares) e Mestre (6×6, 18 pares), com prévia das cartas na largada
+- 🔥 **Sequências (streaks)** com fanfarra, banner e explosão de partículas
+- ⭐ **Avaliação por estrelas** derivada só da **precisão** (pares ÷ jogadas: ≥ 62,5% → 3★) — o tempo nunca muda as estrelas
+- 🧮 **Pontuação 0–1000** = `700 × precisão + 300 × bônus de tempo` (bônus integral até o tempo-alvo da dificuldade: 40s/65s/100s, decaindo pela metade a cada tempo-alvo extra)
+- 🎵 **Áudio 100% sintetizado via Web Audio** (música ambiente + efeitos, sem arquivos de áudio) com toggle persistido
+- 🎉 Confete da vitória via `canvas-confetti` (Web Worker/OffscreenCanvas, fora do thread principal); partículas e starfield em canvas otimizado (60fps)
+- 📦 **Módulo isolado** em `src/memory/` (CSS Modules, não interfere nos jogos de palavras) e carregado em **chunk separado** (lazy) — o bundle inicial não muda
+
+**Arquivos principais:** `src/memory/MemoryGame.tsx`, `useMemoryGame.ts`, `MemoryCard.tsx`, `Starfield.tsx`, `audio.ts`, `particles.ts`, `confetti.ts`
+
+---
+
+## 🥷 Shinobi: Narutodle
+
+Jogo diário estilo [Narutodle](https://narutodle.net/classic) na rota `/shinobi`: adivinhe o **personagem de Naruto/Naruto Shippūden do dia** com **palpites ilimitados**.
+
+### Mecânica
+- Cada palpite compara **7 categorias** com o personagem do dia: **gênero, afiliações, tipos de jutsu, kekkei genkai, naturezas de chakra, atributos e arco de estreia**
+- 🟩 **Verde** = categoria idêntica · 🟨 **Amarelo** = interseção parcial · 🟥 **Vermelho** = nada em comum
+- Na **Estreia**, setas **↑/↓** indicam se o personagem do dia aparece num arco **posterior/anterior** ao chutado (linha do tempo de 27 arcos, de "Terra das Ondas" a "Epílogo")
+- 🔎 Busca com **autocomplete** (retratos + navegação por teclado) e normalização de diacríticos ("hyuga" encontra "Hyūga")
+- 🎲 Personagem sorteado **deterministicamente** pelo `dayNumber` (PRNG mulberry32) — **mesmo personagem para todos**, 100% client-side, sem repetir o do dia anterior
+- 💾 Persistência por dia + **sequência de vitórias** no `localStorage`; compartilhamento em grid de emojis (🟩🟨🟥🔼🔽); countdown para o próximo shinobi; "personagem de ontem"; tutorial na 1ª visita
+
+### Dataset (offline, sem API em runtime)
+- **122 personagens curados** (elenco notável de Naruto/Shippūden) em `src/naruto/data/characters.json`, versionado no repo
+- Gerado offline pela **Dattebayo API** (Narutopedia) — a API **não** é consumida em runtime (free tier hiberna e derrubaria o jogo)
+- Campos derivados por heurística + overrides manuais: **tipos de jutsu** (palavras-chave nas técnicas) e **arco de estreia** (episódio de estreia → faixa de arco)
+- Pipeline: `naruto-data-lib.mjs` (normalização compartilhada) → `node generate-naruto-data.mjs` (dataset do jogo) e `node generate-naruto-tiers.mjs` (5 datasets progressivos em `database/` para validação de pool: 1431 → 1164 → 871 → 369 → 122)
+
+**Arquivos principais:** `src/naruto/NarutoGame.tsx`, `useNarutoGame.ts`, `naruto-engine.ts`, `GuessGrid.tsx`, `CharacterSearch.tsx`, `CharacterAvatar.tsx`, `data/characters.json` — módulo isolado, **chunk lazy** próprio
 
 ---
 
@@ -422,7 +473,7 @@ on:
 ```
 term-ooo/
 ├── public/                       # Assets estáticos (sons, og-image, etc.)
-├── database/                     # Código original (referência/estudo)
+├── database/                     # Código original (referência/estudo) + datasets de validação do Shinobi (tiers)
 ├── .github/workflows/deploy.yml  # GitHub Actions CI/CD
 ├── src/
 │   ├── components/
@@ -483,11 +534,20 @@ term-ooo/
 │   │   ├── room-config.ts        # 🆕 Config das salas (URL WS, limites)
 │   │   ├── share-config.ts       # Branding/cores da imagem de share
 │   │   ├── dates.ts              # Módulo central de datas
+│   │   ├── routes.ts             # Paths nomeados de todas as rotas/jogos
 │   │   ├── utils.ts / z-index.ts / version.ts
+│   ├── memory/                   # 🃏 Arcanum — jogo da memória (módulo isolado, chunk lazy)
+│   ├── naruto/                   # 🥷 Shinobi — Narutodle (módulo isolado, chunk lazy)
+│   │   ├── NarutoGame.tsx / GuessGrid.tsx / CharacterSearch.tsx / CharacterAvatar.tsx
+│   │   ├── naruto-engine.ts / useNarutoGame.ts
+│   │   └── data/characters.json  # Dataset estático (gerado offline da Dattebayo API)
 │   ├── App.tsx                   # Rotas + state manager do jogo
 │   ├── main.tsx                  # Entry point
 │   └── index.css                 # Estilos globais + animações
 ├── ws-cloudflare/                # 🆕 Backend WebSocket (Cloudflare Workers + DO)
+├── naruto-data-lib.mjs           # 🥷 Normalização compartilhada do dataset do Shinobi
+├── generate-naruto-data.mjs      # 🥷 Gera src/naruto/data/characters.json (offline)
+├── generate-naruto-tiers.mjs     # 🥷 Gera datasets de validação em database/
 ├── changelog.md
 ├── ROADMAP_FEATURES.md
 ├── vite.config.ts / tailwind.config.cjs / eslint.config.js
@@ -524,9 +584,11 @@ Restantes: Marca ausentes (cinzas)
 
 Este projeto segue o [Semantic Versioning](https://semver.org/lang/pt-BR/) (SemVer).
 
-### Versão Atual: **v0.5.1**
+### Versão Atual: **v0.6.0**
 
 **Destaques desde a v0.4.x:**
+- 🧭 **Hub de jogos** na raiz (`/`) com card para cada jogo
+- 🃏 **Arcanum** (jogo da memória) e 🥷 **Shinobi** (Narutodle) — novos jogos em chunks lazy próprios
 - 🔠 **Modo 6** (palavras de 6 letras; engine genérico no `wordLength`)
 - 🎮 Modo Treino (jogo ilimitado com palavras aleatórias)
 - 🏆 Salas multiplayer: Cooperativo, Competição e Time Trial
@@ -536,6 +598,7 @@ Este projeto segue o [Semantic Versioning](https://semver.org/lang/pt-BR/) (SemV
 - 🌐 Rebranding para `termo.enresshou.dev`
 
 **Histórico de Releases:**
+- **v0.6.x** - Hub de jogos na raiz, **Arcanum** (jogo da memória) e **Shinobi** (Narutodle)
 - **v0.5.x** - Treino, salas multiplayer (coop + competição + Time Trial), partidas multi-rodada com contagem regressiva, **Modo 6 (6 letras)**, share como imagem
 - **v0.4.1** (2024-12-02) - Som de inatividade + fix settings
 - **v0.4.0** (2024-12-02) - Sistema de efeitos sonoros

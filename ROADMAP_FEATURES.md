@@ -300,6 +300,66 @@ Features bônus sugeridas para expansão do Term.ooo Clone.
 
 ---
 
+## 🎮 Jogos do Hub (além das palavras)
+
+A raiz `/` virou um **hub** de jogos: além dos modos de palavras, o app ganhou jogos independentes, cada um em **módulo isolado com chunk lazy próprio** (não pesam no bundle inicial).
+
+### 11. 🃏 Arcanum — Jogo da Memória
+**Status:** ✅ Concluído (Jun 2026)
+
+**Descrição:**
+- Jogo da memória single player (rota `/memoria`, card no hub): encontre os pares de sígilos arcanos
+- **3 dificuldades** — Aprendiz (4×4, 8 pares), Adepto (6×4, 12 pares), Mestre (6×6, 18 pares) — com prévia das cartas
+- **Sequências (streaks)** com fanfarra e partículas; **avaliação por estrelas** (só precisão: ≥ 62,5% → 3★)
+- **Pontuação 0–1000** = `700 × precisão + 300 × bônus de tempo` (tempo-alvo por dificuldade: 40s/65s/100s)
+- **Áudio 100% sintetizado via Web Audio** (música ambiente + efeitos, sem arquivos de áudio)
+
+**Benefícios:**
+- Variedade no hub além dos jogos de palavras; sessões curtas e rejogáveis
+- Zero impacto no bundle dos outros modos (chunk separado)
+
+**Complexidade:** ⭐⭐⭐ Média-Alta (animações a 60fps: partículas/starfield em canvas com sprites, confete via `canvas-confetti` em Web Worker)
+
+**Implementação final:**
+- ✅ `src/memory/MemoryGame.tsx` — página do jogo (layout, stats, modal de vitória)
+- ✅ `src/memory/useMemoryGame.ts` — estado, dificuldades, pontuação (`computeScore`/`computeMatchScore`/`starsForScore`)
+- ✅ `src/memory/MemoryCard.tsx` / `Starfield.tsx` / `memory.module.css` — cartas e visual (CSS Modules)
+- ✅ `src/memory/audio.ts` / `particles.ts` / `confetti.ts` — áudio Web Audio + efeitos em canvas
+- ✅ `src/App.tsx` — rota `/memoria` lazy; card "Arcanum" no hub (`LandingPage.tsx`)
+
+---
+
+### 12. 🥷 Shinobi — Narutodle (personagem do dia)
+**Status:** ✅ Concluído (Jul 2026)
+
+**Descrição:**
+- Jogo diário estilo [Narutodle](https://narutodle.net/classic) (rota `/shinobi`, card no hub): adivinhe o **personagem de Naruto/Shippūden do dia** com **palpites ilimitados**
+- Cada palpite compara **7 categorias** (gênero, afiliações, tipos de jutsu, kekkei genkai, naturezas, atributos, arco de estreia) com feedback 🟩/🟨/🟥 e setas ↑/↓ na estreia (linha do tempo de 27 arcos)
+- Busca com **autocomplete** (retratos, teclado, sem diacríticos); persistência por dia + streak; share em emojis; countdown; "personagem de ontem"; tutorial na 1ª visita
+- Personagem sorteado **deterministicamente** pelo `dayNumber` (mulberry32) — mesmo para todos, 100% client-side
+
+**Benefícios:**
+- Segundo jogo **diário** do hub (retenção): loop "volte amanhã" complementar ao Termo
+- Sem backend nem dependência de API em runtime
+
+**Complexidade:** ⭐⭐⭐ Média-Alta (pipeline de dados offline + heurísticas de categorias + UI de grade comparativa)
+
+**Implementação final:**
+- ✅ `src/naruto/naruto-engine.ts` — dataset, comparação por categoria, sorteio diário, busca, share
+- ✅ `src/naruto/useNarutoGame.ts` — palpites do dia (localStorage por `dateKey`), vitória e streak
+- ✅ `src/naruto/NarutoGame.tsx` / `GuessGrid.tsx` / `CharacterSearch.tsx` / `CharacterAvatar.tsx` — página, grade com flip, autocomplete e retratos (fallback p/ inicial)
+- ✅ `src/naruto/data/characters.json` — **122 personagens curados**, dataset estático versionado
+- ✅ `naruto-data-lib.mjs` + `generate-naruto-data.mjs` — pipeline offline (Dattebayo API → normalização pt-BR, jutsu types por heurística, arco por episódio de estreia, overrides manuais)
+- ✅ `generate-naruto-tiers.mjs` → `database/naruto-tier{1..5}-*.json` — 5 datasets progressivos (1431/1164/871/369/122) para validação de qual pool usar
+- ✅ `src/App.tsx` (rota lazy `/shinobi`), `src/lib/routes.ts` (`SHINOBI_PATH`), `LandingPage.tsx` (card "Shinobi")
+
+**Próximos passos possíveis:**
+- 📈 Expandir o pool (tiers em `database/` prontos para validação amostral; ver também exceções curadas: Orochimaru/Teuchi/Chiyo etc. fora do filtro automático)
+- 📊 Dialog de estatísticas dedicado (distribuição de tentativas) e share como imagem
+- 🎯 Modos extras do Narutodle (Jutsu, Eye, Quote) usando o mesmo dataset
+
+---
+
 ## 🎯 Prioridade Baixa
 
 ### 8. 🏅 Sistema de Conquistas
@@ -380,5 +440,5 @@ Contribuições são bem-vindas! Veja as issues para features específicas.
 
 ---
 
-**Última atualização:** Junho 2026
+**Última atualização:** Julho 2026
 
