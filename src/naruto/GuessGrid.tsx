@@ -3,7 +3,6 @@
 // categoria. Linhas novas entram com animação de flip escalonada por coluna.
 
 import { motion } from 'framer-motion'
-import { ArrowDown, ArrowUp } from 'lucide-react'
 import { CellStatus, GuessComparison } from './naruto-engine'
 import { CharacterAvatar } from './CharacterAvatar'
 
@@ -26,6 +25,23 @@ const STATUS_CLASSES: Record<CellStatus, string> = {
 
 const CELL_BASE =
   'w-[84px] h-[84px] sm:w-24 sm:h-24 rounded-md border-2 flex flex-col items-center justify-center text-center px-1 py-1 overflow-hidden'
+
+/** Seta cheia (preenchida) grande, usada como marca d'água ao fundo da célula. */
+function BigArrow({ up }: { up: boolean }) {
+  const path = up
+    ? 'M12 2 L22 13 H16.5 V22 H7.5 V13 H2 Z'
+    : 'M12 22 L2 11 H7.5 V2 H16.5 V11 H22 Z'
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className="absolute inset-0 m-auto h-[88px] w-[88px] opacity-25 pointer-events-none"
+      aria-label={up ? 'estreia depois' : 'estreia antes'}
+    >
+      <path d={path} />
+    </svg>
+  )
+}
 
 /** Célula de categoria com lista de valores (ou "Nenhum"). */
 function ValueCell({
@@ -56,11 +72,12 @@ function ValueCell({
   )
 }
 
+// Cada coluna entra com um atraso escalonado (efeito de flip por coluna).
+const STEP = 0.12
+
 export function GuessRow({ guess }: { guess: GuessComparison }) {
   const c = guess.character
   const arc = guess.debutArc
-  let delay = 0
-  const next = () => (delay += 0.12)
 
   return (
     <div className="flex gap-1.5 sm:gap-2">
@@ -78,28 +95,27 @@ export function GuessRow({ guess }: { guess: GuessComparison }) {
         </span>
       </motion.div>
 
-      <ValueCell values={[c.gender]} status={guess.gender} delay={next()} />
-      <ValueCell values={c.affiliations} status={guess.affiliations} delay={next()} />
-      <ValueCell values={c.jutsuTypes} status={guess.jutsuTypes} delay={next()} />
-      <ValueCell values={c.kekkeiGenkai} status={guess.kekkeiGenkai} delay={next()} />
-      <ValueCell values={c.natureTypes} status={guess.natureTypes} delay={next()} />
-      <ValueCell values={c.attributes} status={guess.attributes} delay={next()} />
+      <ValueCell values={[c.gender]} status={guess.gender} delay={STEP} />
+      <ValueCell values={c.affiliations} status={guess.affiliations} delay={STEP * 2} />
+      <ValueCell values={c.jutsuTypes} status={guess.jutsuTypes} delay={STEP * 3} />
+      <ValueCell values={c.kekkeiGenkai} status={guess.kekkeiGenkai} delay={STEP * 4} />
+      <ValueCell values={c.natureTypes} status={guess.natureTypes} delay={STEP * 5} />
+      <ValueCell values={c.attributes} status={guess.attributes} delay={STEP * 6} />
 
-      {/* Estreia: quando errada, seta aponta a direção da resposta na linha do tempo */}
+      {/* Estreia: quando errada, seta grande ao fundo aponta a direção da resposta */}
       <motion.div
         initial={{ rotateX: -90, opacity: 0 }}
         animate={{ rotateX: 0, opacity: 1 }}
-        transition={{ delay: next(), duration: 0.35 }}
-        className={`${CELL_BASE} ${STATUS_CLASSES[arc.status]}`}
+        transition={{ delay: STEP * 7, duration: 0.35 }}
+        className={`${CELL_BASE} relative ${STATUS_CLASSES[arc.status]}`}
         title={
           arc.status === 'correct'
             ? c.debutArc
             : `${c.debutArc} — o shinobi do dia estreia ${arc.direction === 'earlier' ? 'antes' : 'depois'}`
         }
       >
-        {arc.direction === 'earlier' && <ArrowDown className="w-4 h-4 mb-0.5" aria-label="estreia antes" />}
-        {arc.direction === 'later' && <ArrowUp className="w-4 h-4 mb-0.5" aria-label="estreia depois" />}
-        <span className="text-[9px] sm:text-[10px] font-semibold leading-tight break-words">
+        {arc.direction && <BigArrow up={arc.direction === 'later'} />}
+        <span className="relative text-[9px] sm:text-[10px] font-semibold leading-tight break-words">
           {c.debutArc}
         </span>
       </motion.div>

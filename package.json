@@ -9,7 +9,8 @@
     "lint": "npx eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "extract:termo": "node extract-words.js",
-    "extract:naruto": "node generate-naruto-tiers.mjs"
+    "extract:naruto": "node generate-naruto-tiers.mjs",
+    "extract:pokemon": "node generate-pokemon-data.mjs"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.0.5",

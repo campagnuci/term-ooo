@@ -32,3 +32,6 @@ dist-ssr
 
 .cursor
 .docs
+
+# Cache local do gerador de dados do Pokédle (regenerável via extract:pokemon)
+.pokemon-graphql-cache.json

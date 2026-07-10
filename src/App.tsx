@@ -35,6 +35,9 @@ import { useSoundEffects } from './lib/sounds/useSoundEffects'
 const MemoryGame = lazy(() => import('./memory/MemoryGame'))
 // Shinobi (Narutodle) também em chunk próprio: dataset de personagens só carrega na rota
 const NarutoGame = lazy(() => import('./naruto/NarutoGame'))
+// Pokédle: seleção de modo e jogo em chunk próprio (dataset grande de Pokémon)
+const PokemonHome = lazy(() => import('./pokemon/PokemonHome'))
+const PokemonGame = lazy(() => import('./pokemon/PokemonGame'))
 
 function LazyRoute({ children }: { children: ReactNode }) {
   return (
@@ -545,6 +548,9 @@ function App() {
         <Route path="/sala/:code" element={<RoomScreen />} />
         <Route path="/memoria" element={<LazyRoute><MemoryGame /></LazyRoute>} />
         <Route path="/shinobi" element={<LazyRoute><NarutoGame /></LazyRoute>} />
+        <Route path="/pokedle" element={<LazyRoute><PokemonHome /></LazyRoute>} />
+        <Route path="/pokedle/:mode" element={<LazyRoute><PokemonGame /></LazyRoute>} />
+        <Route path="/pokedle/:mode/treino" element={<LazyRoute><PokemonGame /></LazyRoute>} />
         {/* Rotas antigas (/2, /4, /6, /seis) e caminhos desconhecidos caem no hub */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

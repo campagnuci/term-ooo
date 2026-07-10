@@ -21,6 +21,14 @@ export const MEMORY_PATH = '/memoria'
 /** Rota do Shinobi (adivinhe o personagem de Naruto, estilo Narutodle). */
 export const SHINOBI_PATH = '/shinobi'
 
+/** Rota do Pokédle (seleção de modo/geração; adivinhe o Pokémon). */
+export const POKEDLE_PATH = '/pokedle'
+
+/** Monta a rota de jogo do Pokédle para um modo e ritmo (diário/treino). */
+export function pokedlePath(mode: string, isDaily: boolean): string {
+  return `${POKEDLE_PATH}/${mode}${isDaily ? '' : '/treino'}`
+}
+
 /** Mapeia um pathname para o modo de jogo correspondente (Treino usa o modo 'termo'). */
 export function getModeFromPath(path: string): GameMode {
   const entry = (Object.entries(MODE_PATHS) as [GameMode, string][]).find(

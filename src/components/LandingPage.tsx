@@ -1,10 +1,10 @@
 // src/components/LandingPage.tsx
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Gamepad2, Users, Sparkles, Scroll, LucideIcon } from 'lucide-react'
+import { Gamepad2, Users, Sparkles, Scroll, Zap, LucideIcon } from 'lucide-react'
 import { StarsBackground } from './animate-ui/components/backgrounds/stars'
 import { APP_VERSION } from '@/lib/version'
-import { MODE_PATHS, TRAINING_PATH, ROOM_PATH, MEMORY_PATH, SHINOBI_PATH } from '@/lib/routes'
+import { MODE_PATHS, TRAINING_PATH, ROOM_PATH, MEMORY_PATH, SHINOBI_PATH, POKEDLE_PATH } from '@/lib/routes'
 
 // Cada letra do logo com o estado visual de um tile do jogo
 const HERO_TILES: { letter: string; className: string }[] = [
@@ -82,6 +82,13 @@ const GAMES: GameEntry[] = [
     description: 'Adivinhe o personagem de Naruto do dia com dicas de afiliação, jutsus, kekkei genkai e mais.',
     path: SHINOBI_PATH,
     icon: Scroll,
+  },
+  {
+    title: 'Pokédle',
+    tag: 'Diário / Treino',
+    description: 'Adivinhe o Pokémon por geração, Pokédex completa ou ultra-hard, com dicas de tipo, habitat, cor e mais.',
+    path: POKEDLE_PATH,
+    icon: Zap,
   },
 ]
 
