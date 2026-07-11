@@ -2,7 +2,7 @@
 // Campo de busca com autocomplete, restrito ao pool do modo atual
 // (navegável por teclado).
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Search } from 'lucide-react'
 import { Pokemon, PokemonMode, searchPokemon } from './pokemon-engine'
 import { PokemonSprite } from './PokemonSprite'
@@ -18,10 +18,22 @@ export function PokemonSearch({ mode, guessedIds, onSelect, disabled }: PokemonS
   const [query, setQuery] = useState('')
   const [rawActiveIndex, setActiveIndex] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
+  const listRef = useRef<HTMLUListElement>(null)
 
   const results = searchPokemon(mode, query, guessedIds)
   // Índice ativo sempre dentro dos resultados (a lista muda a cada tecla).
   const activeIndex = Math.min(rawActiveIndex, Math.max(results.length - 1, 0))
+
+  // Volta a lista ao topo sempre que a busca muda.
+  useEffect(() => {
+    listRef.current?.scrollTo({ top: 0 })
+  }, [query])
+
+  // Mantém o item destacado visível ao navegar pelo teclado (lista rolável).
+  useEffect(() => {
+    const active = listRef.current?.children[activeIndex] as HTMLElement | undefined
+    active?.scrollIntoView({ block: 'nearest' })
+  }, [activeIndex])
 
   const select = (pokemon: Pokemon) => {
     setQuery('')
@@ -55,7 +67,10 @@ export function PokemonSearch({ mode, guessedIds, onSelect, disabled }: PokemonS
           type="text"
           value={query}
           disabled={disabled}
-          onChange={e => setQuery(e.target.value)}
+          onChange={e => {
+            setQuery(e.target.value)
+            setActiveIndex(0)
+          }}
           onKeyDown={handleKeyDown}
           placeholder="Digite o nome de um Pokémon..."
           autoComplete="off"
@@ -71,9 +86,10 @@ export function PokemonSearch({ mode, guessedIds, onSelect, disabled }: PokemonS
 
       {results.length > 0 && (
         <ul
+          ref={listRef}
           id="pokedle-search-results"
           role="listbox"
-          className="absolute z-30 mt-1 w-full rounded-lg border border-night-600 bg-night-800/95 backdrop-blur-md shadow-xl overflow-hidden"
+          className="absolute z-30 mt-1 w-full max-h-[26rem] overflow-y-auto rounded-lg border border-night-600 bg-night-800/95 backdrop-blur-md shadow-xl"
         >
           {results.map((pokemon, i) => (
             <li key={pokemon.id} role="option" aria-selected={i === activeIndex}>

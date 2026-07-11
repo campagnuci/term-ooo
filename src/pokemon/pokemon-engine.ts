@@ -238,20 +238,30 @@ export function normalizeSearch(text: string): string {
     .replace(/[̀-ͯ]/g, '')
 }
 
-/** Pokémon do pool cujo nome contém a query, excluindo ids já usados. */
+/**
+ * Pokémon do pool que casam com a query, excluindo ids já usados.
+ *
+ * Regra de casamento:
+ *  - Query curta (até 2 letras, sem símbolos): casa por prefixo (o nome começa
+ *    com a query). Evita que uma única letra comum retorne dezenas de nomes.
+ *  - Query maior (3+ letras) ou contendo símbolos (ex.: "-"): casa por substring
+ *    (o nome contém a query em qualquer posição).
+ */
 export function searchPokemon(
   mode: PokemonMode,
   query: string,
   excludeIds: Set<number>,
-  limit = 8
+  limit = 20
 ): Pokemon[] {
   const q = normalizeSearch(query.trim())
   if (!q) return []
+  const usePrefix = q.length <= 2 && !/[^a-z]/.test(q)
   const pool = getPool(mode)
   const results: Pokemon[] = []
   for (const p of pool) {
     if (excludeIds.has(p.id)) continue
-    if (normalizeSearch(p.name).includes(q)) {
+    const name = normalizeSearch(p.name)
+    if (usePrefix ? name.startsWith(q) : name.includes(q)) {
       results.push(p)
       if (results.length >= limit) break
     }
