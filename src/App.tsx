@@ -38,6 +38,8 @@ const NarutoGame = lazy(() => import('./naruto/NarutoGame'))
 // Pokédle: seleção de modo e jogo em chunk próprio (dataset grande de Pokémon)
 const PokemonHome = lazy(() => import('./pokemon/PokemonHome'))
 const PokemonGame = lazy(() => import('./pokemon/PokemonGame'))
+// Smashdle (lutadores de Super Smash Bros.) também em chunk próprio
+const SmashGame = lazy(() => import('./smash/SmashGame'))
 
 function LazyRoute({ children }: { children: ReactNode }) {
   return (
@@ -548,6 +550,7 @@ function App() {
         <Route path="/sala/:code" element={<RoomScreen />} />
         <Route path="/memoria" element={<LazyRoute><MemoryGame /></LazyRoute>} />
         <Route path="/shinobi" element={<LazyRoute><NarutoGame /></LazyRoute>} />
+        <Route path="/smashdle" element={<LazyRoute><SmashGame /></LazyRoute>} />
         <Route path="/pokedle" element={<LazyRoute><PokemonHome /></LazyRoute>} />
         <Route path="/pokedle/:mode" element={<LazyRoute><PokemonGame /></LazyRoute>} />
         <Route path="/pokedle/:mode/treino" element={<LazyRoute><PokemonGame /></LazyRoute>} />

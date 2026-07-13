@@ -24,6 +24,9 @@ export const SHINOBI_PATH = '/shinobi'
 /** Rota do Pokédle (seleção de modo/geração; adivinhe o Pokémon). */
 export const POKEDLE_PATH = '/pokedle'
 
+/** Rota do Smashdle (adivinhe o lutador de Super Smash Bros. do dia). */
+export const SMASHDLE_PATH = '/smashdle'
+
 /** Monta a rota de jogo do Pokédle para um modo e ritmo (diário/treino). */
 export function pokedlePath(mode: string, isDaily: boolean): string {
   return `${POKEDLE_PATH}/${mode}${isDaily ? '' : '/treino'}`
